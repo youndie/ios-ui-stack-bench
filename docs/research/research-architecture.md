@@ -241,6 +241,26 @@ Because the collector runs on a timer and on pressure, a peak sampled every 250 
 the GC ran; RQ4's peak is read from the same 250 ms series in every arm, and the GC
 timing is a reason for its spread, not a variable to tune.
 
+### 1.11 What the bridges compile against, found by building them (B-05)
+
+| Fact | Where verified |
+|---|---|
+| SKIE 0.10.15 **refuses to configure** with Kotlin 2.4.21: "SKIE 0.10.15 does not support Kotlin 2.4.21", listing 2.4.20 as the newest it supports | the Gradle configuration of `bridge-skie` with Kotlin 2.4.21, 2026-10-10 (B-05) |
+| Swift export on Kotlin **2.4.20 and 2.4.21** generates Swift for kotlinx-serialization-core that does not compile: `invalid redeclaration of 'decodeSequentially()'` and four more, each an opt-in interface member with a default emitted twice | the B3 build, both versions, 2026-10-10 (B-05) |
+| The defect is **KT-87791** ("[Swift Export] OptIn interface member with default implementation fails to compile"), fixed and "available in 2.5.0-Beta1"; KT-88225, reporting exactly this redeclaration, was closed as its duplicate | youtrack.jetbrains.com/issue/KT-87791, /issue/KT-88225 |
+| With kotlinx-serialization's types out of the shared module's **public** API (the `@Serializable` class internal, the public `Item` a plain class), Swift export on 2.4.20 compiles and B3 builds and runs | the B3 build after the change, 2026-10-10 (B-05) |
+| Swift export hands Swift the `StateFlow<List<Item>>` as a typed `KotlinTypedStateFlow<[Item]>`, iterated with `asAsyncSequence()`; over the Objective-C export (B1) it is the non-generic `Kotlinx_coroutines_coreStateFlow`, collected through a `FlowCollector` with `Any?` values | the generated `SharedLogic.swift` and `Shared.h` of B-05's builds |
+
+**Consequence 1 — I14 is settled by the toolchain, not by preference.** No stable Kotlin satisfies
+both B2 and B3 untouched: SKIE stops at 2.4.20, and Swift export's fix is in 2.5.0. Development is
+on **2.4.20** (the newest SKIE accepts) with D8's workaround for B3; the pin is still B-01's.
+
+**Consequence 2 — the workaround changes the shared module for every Kotlin arm**, which keeps the
+rule that matters — B1, B2, B3 and C link the same module bytes — and breaks the item text B-21 was
+written with ("the shared module is not reshaped to suit it"). It is recorded as D8 and flagged to
+the owner; the alternatives are B3 "not measured" until Kotlin 2.5.0 is stable and SKIE supports
+it, or a different Kotlin for B3 alone, which would make B3's module different bytes.
+
 ---
 
 ## 2. Where the frozen brief cannot be applied as written
@@ -264,7 +284,7 @@ amendment in BRIEF.md by [B-01](../backlog/B-01-pins-and-the-amendment-window.md
 | I11 | Context | Three source details are wrong (§1.1) | nothing to amend; the write-up cites the sources directly |
 | I12 | Fairness, parity | "Screenshot diff of the first screen within a small tolerance" has no number, and A against C cannot pass a whole-screen diff on the iOS 27 SDK (§1.7) | the tolerance, the region, and the treatment of the system chrome, before the first diff |
 | I13 | Prerequisites | "Latest stable Xcode": the Mac has only a beta (§1.2). Latest stable Kotlin is 2.4.21 (2026-10-08) and CMP 1.12.1 (2026-09-22); SKIE does not yet claim 2.4.21 | pins in BRIEF.md, by build number and commit |
-| I14 | Prerequisites, A1.1 | B2 needs SKIE, and SKIE 0.10.15 claims Kotlin 2.4.20, not the latest stable 2.4.21 (§1.8). The shared module must be one Kotlin build for every Kotlin arm | the Kotlin pin: the newest version all three bridges compile against — checked by building the hello-world arms, not read off a compatibility page. If that is 2.4.20, it is a deviation from "latest stable" stated as such |
+| I14 | Prerequisites, A1.1 | B2 needs SKIE, and SKIE 0.10.15 claims Kotlin 2.4.20, not the latest stable 2.4.21 (§1.8). The shared module must be one Kotlin build for every Kotlin arm | the Kotlin pin: the newest version all three bridges compile against — checked by building the hello-world arms, not read off a compatibility page. If that is 2.4.20, it is a deviation from "latest stable" stated as such. **Checked in B-05 (§1.11):** SKIE refuses 2.4.21, and Swift export needs D8 on both |
 
 ---
 
@@ -336,6 +356,18 @@ file sizes inside the `.app`, which hold no Kotlin or Skiko file once linking is
 ### D7. Install the released Xcode 27.0 (27A266a) before anything runs on a device
 
 §1.2. The beta stays installed only if disk allows; nothing is built for a measurement with it.
+
+### D8. kotlinx-serialization stays inside the shared module *(B-05; the owner may overturn it)*
+
+Brief: B and C's logic is "shared Kotlin module, kotlinx-serialization, `StateFlow`" — still true.
+Decision: the fixture is decoded into an `internal` `@Serializable` class and mapped to a public,
+plain `Item`, so no kotlinx-serialization type is in the module's public API. Why: Swift export on
+every stable Kotlin cannot compile kotlinx-serialization's exported API (§1.11, KT-87791), and this
+is the one change that lets B3 build without making its module differ from B1's, B2's and C's. The
+price: every Kotlin arm pays one extra object per item at load (the DTO, then the `Item`) — the same
+in all four, and arm A maps its `Codable` struct to the views' row type too. Rejected: B3 "not
+measured" until Kotlin 2.5.0 (it would hold B3 hostage to two releases, Kotlin's and SKIE's); a
+newer Kotlin for B3 alone (its module would no longer be the others').
 
 ---
 

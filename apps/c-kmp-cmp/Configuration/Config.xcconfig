@@ -1,0 +1,11 @@
+// Arm-specific values; everything else is the template's (apps/generate_projects.py).
+// TEAM_ID stays empty here: a Personal Team id goes into Local.xcconfig, which git ignores.
+TEAM_ID=
+#include? "Local.xcconfig"
+
+PRODUCT_NAME=BenchC
+// Fixed once and never changed: a free account may create 10 App IDs per 7 days (B-05).
+PRODUCT_BUNDLE_IDENTIFIER=io.github.youndie.iosbench.c
+
+CURRENT_PROJECT_VERSION=1
+MARKETING_VERSION=1.0

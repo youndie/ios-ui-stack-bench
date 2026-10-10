@@ -21,6 +21,10 @@ inheriting from `Any` — and it is **Alpha**, with breaking changes expected
   Kotlin, with nothing hand-patched. The shared module is not reshaped to suit it: if a type the
   module exposes cannot be exported, B3's adapter works around it in Swift and the workaround is
   listed — the module is the same bytes for every arm, or the A→B comparison stops being one.
+  **Corrected 2026-10-10 by [B-05](B-05-hello-world-variants.md):** on stable Kotlin, Swift export
+  cannot compile kotlinx-serialization's API (KT-87791, fixed in 2.5.0), so the shared module keeps
+  serialization internal for every arm (research §1.11, D8). The rule that survives is the one in
+  bold: the same bytes for every arm.
 - **A B3 that cannot carry the spec is a result, not a delay.** If the hello-world in
   [B-05](B-05-hello-world-variants.md) or this item cannot build or cannot observe the state, B3 is
   reported "not measured" with the failure verbatim and the Kotlin version it was hit on, and the

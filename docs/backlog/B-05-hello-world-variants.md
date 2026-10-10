@@ -1,7 +1,7 @@
 ---
 id: B-05
 title: "Hello-world arms A, B1, B2, B3 and C with the instrumentation the study will measure through"
-status: wip
+status: done
 priority: P0
 size: M
 stage: stage-0-gate
@@ -46,3 +46,42 @@ injects a 50 ms main-thread stall on demand.
   inject it without a build of its own.
 - Anchors: `apps/a-native/`, `apps/b1-objc/`, `apps/b2-skie/`, `apps/b3-swift-export/`,
   `apps/c-kmp-cmp/`, `shared/`, `instrumentation/` (all target).
+
+---
+
+## Findings — 2026-10-10
+
+**Done on the simulator; the devices come with the owner's go (amendment A1.3).** All five arms
+build in Release with Xcode 27.0 (27A266a), Kotlin 2.4.20, CMP 1.12.1 and SKIE 0.10.15, and run on
+the iOS 27 simulator with the same instrumentation: `scripts/build-arms.sh`, then
+`scripts/sim-smoke.sh` (the pull request carries both logs). No simulator number is recorded here.
+
+What exists now:
+
+| Piece | Where |
+|---|---|
+| The shared Kotlin module: `Catalog` (parse, filter, `StateFlow`), `Item`, a test of the filter (mutation-checked: `ignoreCase = false` fails it) | `shared/` |
+| One framework module per bridge, and arm C's Compose UI | `bridge-objc/`, `bridge-skie/`, `bridge-swift-export/`, `compose-ui/` |
+| The instrumentation every arm compiles — signposts, NDJSON log, frame logger, footprint sampler, stall injector; its log format is in the file's header | `apps/common/Instrumentation/Bench.swift` |
+| The SwiftUI views of A, B1, B2, B3, and the fixture loader | `apps/common/ListUI/`, `apps/common/Fixture/` |
+| Five Xcode projects, generated from the KMP wizard's template | `apps/generate_projects.py`, `apps/*/iosApp.xcodeproj` |
+| Each arm's own code: A's Swift catalog, B1/B2/B3's adapters, C's host | `apps/*/iosApp/BenchApp.swift` |
+| The non-default flags | `docs/flags.md` |
+
+Decisions made on the way, each where it will be read:
+
+- **One source, not one package** for the instrumentation and the views: the shared Swift files are
+  synchronized folders compiled into each app's own module, so no arm pays a module boundary the
+  others do not. The item said "one Swift package"; the reason it says so — one implementation,
+  not five — is kept (research D2).
+- **`listPopulated` is the first display-link tick after the first row appeared.** A row "appears"
+  (SwiftUI `onAppear`, Compose's first composition of the row) before the frame that shows it; the
+  first version marked the appearance and logged `listPopulated` before `firstFrame` in two arms.
+  Both markers are now quantised to frames the same way in every arm (`Bench.swift` header).
+- **Swift export cannot compile kotlinx-serialization on stable Kotlin (KT-87791)**; the shared
+  module keeps serialization internal, for every arm (research §1.11, D8 — the owner may overturn
+  it). **SKIE 0.10.15 refuses Kotlin 2.4.21**, so development stays on 2.4.20 (I14, B-01 pins).
+- Bundle ids `io.github.youndie.iosbench.{a,b1,b2,b3,c}`, fixed; a Personal Team id goes into the
+  git-ignored `apps/*/Configuration/Local.xcconfig`.
+
+Not covered here: the full spec (B-07–B-10, B-20, B-21), devices and signing (B-04, B-06), CI (B-22).

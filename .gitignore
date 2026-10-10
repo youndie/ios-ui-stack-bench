@@ -9,3 +9,4 @@ build/
 .kotlin/
 # Raw .trace bundles are large; their hashes and exports live in logs/ (brief: "Raw .trace hashes")
 *.trace/
+apps/*/Configuration/Local.xcconfig
