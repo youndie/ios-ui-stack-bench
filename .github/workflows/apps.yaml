@@ -5,11 +5,42 @@
 # that build among the runner's Xcodes and fails, saying so, when the image does not carry it:
 # a red job on a missing toolchain is the honest state, a green one on another toolchain is not.
 # CI never measures anything; it only builds, unsigned, for the simulator.
+#
+# It runs only when something it builds changed (owner, 2026-10-10): a change to the documents alone
+# runs the `check` workflow and not this one, whose macOS job takes a quarter of an hour. The list is
+# everything the build reads; a new top-level input has to be added here, or it will not trigger the
+# build that depends on it.
 name: apps
 
 on:
   push:
+    paths:
+      - "apps/**"
+      - "shared/**"
+      - "bridge-*/**"
+      - "compose-ui/**"
+      - "harness/**"
+      - "fixtures/**"
+      - "scripts/**"
+      - "gradle/**"
+      - "*.gradle.kts"
+      - "gradle.properties"
+      - "gradlew"
+      - ".github/workflows/apps.yaml"
   pull_request:
+    paths:
+      - "apps/**"
+      - "shared/**"
+      - "bridge-*/**"
+      - "compose-ui/**"
+      - "harness/**"
+      - "fixtures/**"
+      - "scripts/**"
+      - "gradle/**"
+      - "*.gradle.kts"
+      - "gradle.properties"
+      - "gradlew"
+      - ".github/workflows/apps.yaml"
   workflow_dispatch:
 
 jobs:
