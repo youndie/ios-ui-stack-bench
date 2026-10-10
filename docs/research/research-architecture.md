@@ -298,6 +298,7 @@ amendment in BRIEF.md by [B-01](../backlog/B-01-pins-and-the-amendment-window.md
 | I12 | Fairness, parity | "Screenshot diff of the first screen within a small tolerance" has no number, and A against C cannot pass a whole-screen diff on the iOS 27 SDK (§1.7) | the tolerance, the region, and the treatment of the system chrome, before the first diff |
 | I13 | Prerequisites | "Latest stable Xcode": the Mac has only a beta (§1.2). Latest stable Kotlin is 2.4.21 (2026-10-08) and CMP 1.12.1 (2026-09-22); SKIE does not yet claim 2.4.21 | pins in BRIEF.md, by build number and commit |
 | I14 | Prerequisites, A1.1 | B2 needs SKIE, and SKIE 0.10.15 claims Kotlin 2.4.20, not the latest stable 2.4.21 (§1.8). The shared module must be one Kotlin build for every Kotlin arm | the Kotlin pin: the newest version all three bridges compile against — checked by building the hello-world arms, not read off a compatibility page. If that is 2.4.20, it is a deviation from "latest stable" stated as such. **Checked in B-05 (§1.11):** SKIE refuses 2.4.21, and Swift export needs D8 on both |
+| I15 | RQ1, RQ4, RQ5 | "MB" is not defined: 2 MB, 12 MB, 20 MB, 5 MB and 50 MB read as 10^6 or 2^20 bytes differ by 4.9 % | proposed in `analysis/verdicts.py`: decimal, 10^6 bytes, as Apple's size reports count |
 
 ---
 

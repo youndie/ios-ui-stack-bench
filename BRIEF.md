@@ -51,8 +51,8 @@ what changes, the evidence that forced it, and whether it can move a verdict —
 move one towards green, what is published beside it. These are held by being appended and by review
 of `git log -p BRIEF.md`; the script does not freeze them.
 
-[Research §2](docs/research/research-architecture.md) lists fourteen places where the frozen text
-cannot be applied as written (I1–I14); [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md)
+[Research §2](docs/research/research-architecture.md) lists fifteen places where the frozen text
+cannot be applied as written (I1–I15); [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md)
 settles each here, or records it as left as written, before the window closes. None of them asks for
 a threshold to move. The two below are the owner's answers to the brief's open decisions.
 

@@ -99,6 +99,7 @@ gate: docs-gate
 	$(PY) fixtures/generate.py --check
 	$(PY) harness/generate_project.py --check
 	$(PY) analysis/inapp_reader_control.py
+	$(PY) analysis/verdicts_control.py
 
 report: docs-report
 
