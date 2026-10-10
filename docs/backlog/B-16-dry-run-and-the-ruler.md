@@ -5,7 +5,7 @@ status: open
 priority: P1
 size: M
 stage: stage-2-harness
-blocked_by: [B-15]
+blocked_by: [B-15, B-24]
 ---
 
 # B-16 — Dry run, ruler, contamination

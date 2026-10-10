@@ -98,6 +98,7 @@ gate: docs-gate
 	$(PY) apps/generate_projects.py --check
 	$(PY) fixtures/generate.py --check
 	$(PY) harness/generate_project.py --check
+	$(PY) analysis/inapp_reader_control.py
 
 report: docs-report
 
