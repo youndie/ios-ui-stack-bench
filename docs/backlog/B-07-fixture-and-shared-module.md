@@ -5,7 +5,7 @@ status: open
 priority: P1
 size: M
 stage: stage-1-build
-blocked_by: [B-06]
+blocked_by: [B-05]
 ---
 
 # B-07 — The fixture and the shared Kotlin module

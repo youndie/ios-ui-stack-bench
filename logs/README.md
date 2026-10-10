@@ -17,6 +17,12 @@ What goes here, per run:
   versions, the variant's bundle id, its build's commit and the `sha256` of its main executable,
   battery level, Low Power Mode, thermal state at start and end.
 
+**Only measurements of the arms go here.** The first file under `logs/` closes the amendment window,
+so what is not a measurement lives elsewhere: probes of the stand — what free provisioning allows,
+whether an instrument records at all — under `stand/b-NN/`, and anything from the simulator in the
+pull request that used it, never in this repository's data (the brief: simulator results "are never
+reported").
+
 Logs are captured on the Mac that drives the device, by the command that runs the session, and are
 not edited after capture. The first file added here closes the amendment window of
 [BRIEF.md](../BRIEF.md): `make check` refuses a measurement committed before, or together with, the

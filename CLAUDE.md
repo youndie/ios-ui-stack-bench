@@ -73,17 +73,29 @@ effect produces exactly the evidence of one that saw nothing to measure.
 ## Where the work runs
 
 Everything iOS — `xcodebuild`, Kotlin/Native framework builds for `ios*` targets, `xctrace`, the
-devices — runs on the Mac, because nothing of it builds elsewhere. **A run log is captured by the
+devices — runs on the Mac, because nothing of it builds elsewhere. The Xcode is the pinned build,
+`27A266a`, selected with `xcode-select`; a build script checks it and refuses another one.
+**Development is checked on the simulator** (amendment A1.3) — that is what the simulator is for;
+a simulator number is never written into a document or under `logs/`, and a pull request that used
+one says so. **A run log is captured by the
 Mac that drives the device**, by the session command, into `logs/b-NN/`, with the header described
 in [logs/README.md](logs/README.md). `.trace` bundles are not committed; their `sha256` and their
 exports are.
 
 ## Pull requests
 
-One backlog item per pull request (the `backlog-item` loop). Whether the loop merges its own pull
-requests has not been decided by the owner; until it is, it does not. `make check` is green before a
-pull request is opened, an item is `done` only when its acceptance was exercised on a device where
-it says so, and a `question` item waits for a person. **Merge, do not squash, any branch that
+One backlog item per pull request (the `backlog-item` loop). **The loop merges its own pull
+requests** — stated by the owner on 2026-10-10 — once every check is green **on the head commit of
+the branch** (compare `gh pr view --json headRefOid` with the run's `headSha`; pass the full sha to
+`--match-head-commit`). What does not change: red is never merged and no check is weakened to make it
+green; `make check` is green locally before a pull request is opened, and the pull request carries
+the log of the local build or simulator run its acceptance rests on; an item is `done` only when its
+acceptance was exercised — on a device where it says so; a `question` item waits for a person; a
+defect found on the way becomes an item of its own; a pull request opened by anything other than the
+loop is not the loop's to merge.
+
+**Which items the loop takes** is in [backlog.md](backlog.md): since amendment A1.3 the device work
+waits for the owner's go, so the loop works the items that need no device. **Merge, do not squash, any branch that
 touches `BRIEF.md` or `docs/research/source-brief.md`**: a squash keeps no trace of an edit made and
 undone on the branch, which is the one thing the freeze's history check exists to see.
 

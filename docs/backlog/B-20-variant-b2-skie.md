@@ -27,7 +27,7 @@ instrumentation of [B-05](B-05-hello-world-variants.md), unchanged.
 - Not covered: parity — [B-11](B-11-parity-check.md); B2's views must be the same files as A's.
 
 - AC: Release build with the pinned toolchain and SKIE version and the brief's fairness flags;
-  installs on both devices via free provisioning.
+  runs on the simulator; installs on both devices once the device work starts (amendment A1.3).
 - AC: the shared module's klib digest equals B1's and C's ([B-07](B-07-fixture-and-shared-module.md));
   the framework digest is recorded.
 - AC: 2,000 rows reachable by scrolling, filtering by the shared test vector gives the expected ids,

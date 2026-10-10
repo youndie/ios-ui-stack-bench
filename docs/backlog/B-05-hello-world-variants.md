@@ -5,7 +5,7 @@ status: open
 priority: P0
 size: M
 stage: stage-0-gate
-blocked_by: [B-02, B-04]
+blocked_by: [B-02]
 ---
 
 # B-05 — Hello-world arms, instrumented
@@ -23,7 +23,8 @@ injects a 50 ms main-thread stall on demand.
 - The sampler and the logger run off the main thread where they can, and their own cost is
   measured in [B-16](B-16-dry-run-and-the-ruler.md) (the brief's kill criterion 5 is about the test
   runner, but an instrument that costs a frame is the same contamination from inside).
-- The bundle ids are those fixed in [B-04](B-04-free-provisioning-probe.md). Since amendment A1.1
+- The bundle ids are fixed here and never changed (a free account may create 10 App IDs per 7 days;
+  [B-04](B-04-free-provisioning-probe.md) installs them on the devices later, amendment A1.3). Since amendment A1.1
   there are five arms: A, the three bridge arms of [B-02](B-02-swift-bridge.md) — B1 Objective-C
   export with a Swift adapter, B2 SKIE, B3 Swift export — and C. Each bridge is proven here, on the
   hello-world, because a bridge that cannot carry a `StateFlow` to the SwiftUI views on the pinned
@@ -35,7 +36,8 @@ injects a 50 ms main-thread stall on demand.
   non-default flag is listed in `docs/flags.md` (target) — including any 120 Hz or design-system
   Info.plist key that [research §1.6 and §1.7](../research/research-architecture.md) shows to be
   needed.
-- AC: each arm installs on both devices via free provisioning and logs its signposts, frame intervals
+- AC (amendment A1.3: simulator now, devices when the owner starts the device work): each arm runs
+  on the simulator and logs its signposts, frame intervals
   and footprint samples through the same code path; the log format is the one the readers of
   [B-14](B-14-trace-export-and-readers.md) will parse.
 - AC: the three bridge arms show the same state in the same SwiftUI views; each arm's adapter is the
