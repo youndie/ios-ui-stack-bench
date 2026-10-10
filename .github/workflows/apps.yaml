@@ -51,6 +51,10 @@ jobs:
       - name: Shared module tests
         run: ./gradlew --console=plain :shared:allTests
 
+      # Arm A's Swift filter against the same vector the Kotlin test reads (B-07).
+      - name: Arm A's filter against the test vector
+        run: scripts/check-filter-vectors.sh
+
       - name: Build every arm
         run: scripts/build-arms.sh
 

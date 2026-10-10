@@ -19,3 +19,13 @@ kotlin {
         }
     }
 }
+
+// The filter vector test reads the fixture from the repository (FilterVectorTest). A simulator test
+// process gets its environment through simctl, which passes SIMCTL_CHILD_-prefixed variables on.
+tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest>().configureEach {
+    environment("SIMCTL_CHILD_BENCH_REPO", rootDir.absolutePath)
+    environment("BENCH_REPO", rootDir.absolutePath)
+}
+tasks.withType<org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeHostTest>().configureEach {
+    environment("BENCH_REPO", rootDir.absolutePath)
+}

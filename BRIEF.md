@@ -29,7 +29,7 @@ build number or commit behind it, because a tag moves. Rows still open name the 
 | Older device | **open** — candidate iPhone XS (`iPhone11,2`, A12, 4 GB, 60 Hz), iOS 18 at most | `xcrun devicectl list devices`; research §1.2. B-01 |
 | Newer device | **open** — a 120 Hz ProMotion iPhone; the owner confirmed one will be available (2026-10-10) | B-01 |
 | Bundle ids | **open** — fixed once and never changed (App IDs are capped at 10 per 7 days) | [B-04](docs/backlog/B-04-free-provisioning-probe.md) |
-| Fixture and thumbnails | **open** — `sha256` of the generated JSON and of each PNG | [B-07](docs/backlog/B-07-fixture-and-shared-module.md) |
+| Fixture and thumbnails | `apps/common/Fixture/items.json`: 2,000 items, 1,058,836 bytes, sha256 `7a9693d18f2901f4c6ab12e962721fa5477e09affd56002e4141ce6431f98a3e`. The 50 thumbnails (400 × 400 px): sha256 `0dd4f22b2b893a1916641320a4032bce77b5f7e38b496edb4223192b0e1e7cda` over their per-file digests in name order. The filter test vector `fixtures/filter-vectors.json`: sha256 `d8d2e8327a164c1ee95836ce9f6b3ffdb3c0af1578d7e3d8e3df2118f1e11b78` | `fixtures/generate.py`, seed 20261010; `make check` holds every byte (`--check`), [B-07](docs/backlog/B-07-fixture-and-shared-module.md) |
 | Non-default flags | `docs/flags.md`, once a variant exists; proposed so far: `CADisableMinimumFrameDurationOnPhone = YES` in A and B (C's default) | research D3 |
 
 ## What was believed, answered

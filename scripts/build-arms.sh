@@ -24,6 +24,24 @@ python3 "$ROOT/apps/generate_projects.py" --check
 
 arms=${*:-"a-native b1-objc b2-skie b3-swift-export c-kmp-cmp"}
 failed=""
+klibs=""
+
+# The shared module's compiled library: an unpacked klib directory, digested file by file in path
+# order. Every Kotlin arm must link the same bytes (B-07); a flag that differed would show here.
+klib_digest() {
+    dir="$ROOT/shared/build/classes/kotlin/iosSimulatorArm64/main/klib/shared"
+    (cd "$dir" && find . -type f | LC_ALL=C sort | xargs shasum -a 256) | shasum -a 256 | cut -c1-16
+}
+
+# What each bridge produces from that klib - a framework, or Swift export's merged static library.
+kotlin_binary() {
+    case $1 in
+        b1-objc) echo "$ROOT"/bridge-objc/build/xcode-frameworks/Release/iphonesimulator*/Shared.framework/Shared ;;
+        b2-skie) echo "$ROOT"/bridge-skie/build/xcode-frameworks/Release/iphonesimulator*/Shared.framework/Shared ;;
+        b3-swift-export) echo "$ROOT"/bridge-swift-export/build/MergedLibraries/iosSimulator/Release/libShared.a ;;
+        c-kmp-cmp) echo "$ROOT"/compose-ui/build/xcode-frameworks/Release/iphonesimulator*/ComposeApp.framework/ComposeApp ;;
+    esac
+}
 for arm in $arms; do
     log="$DERIVED/$arm.log"
     mkdir -p "$DERIVED"
@@ -31,6 +49,11 @@ for arm in $arms; do
         -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
         -derivedDataPath "$DERIVED/$arm" CODE_SIGNING_ALLOWED=NO build >"$log" 2>&1; then
         echo "$arm: built ($(find "$DERIVED/$arm/Build/Products/Release-iphonesimulator" -maxdepth 1 -name '*.app' -exec basename {} \;))"
+        if [ "$arm" != a-native ]; then
+            k=$(klib_digest)
+            klibs="$klibs $k"
+            echo "    shared klib $k, Kotlin binary $(shasum -a 256 $(kotlin_binary "$arm") | cut -c1-16)"
+        fi
     else
         echo "$arm: FAILED - $log"
         grep -E 'error:|\*\* BUILD FAILED' "$log" | head -20 | sed 's/^/    /'
@@ -38,3 +61,8 @@ for arm in $arms; do
     fi
 done
 [ -z "$failed" ] || { echo "failed:$failed" >&2; exit 1; }
+distinct=$(echo $klibs | tr ' ' '\n' | sort -u | grep -c . || true)
+if [ "$distinct" -gt 1 ]; then
+    echo "the Kotlin arms linked different builds of the shared module:$klibs" >&2
+    exit 1
+fi

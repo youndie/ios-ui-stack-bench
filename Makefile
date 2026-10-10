@@ -96,6 +96,7 @@ gate: docs-gate
 	$(PY) scripts/brief_freeze.py --history --window logs
 	$(PY) scripts/brief_freeze.py --control
 	$(PY) apps/generate_projects.py --check
+	$(PY) fixtures/generate.py --check
 
 report: docs-report
 

@@ -1,7 +1,7 @@
 ---
 id: B-07
 title: "The fixture and the shared Kotlin module: 2,000 items, 50 thumbnails, parse, filter, state"
-status: wip
+status: done
 priority: P1
 size: M
 stage: stage-1-build
@@ -31,3 +31,34 @@ bundled PNG thumbnails. B and C share one Kotlin module byte for byte — kotlin
 - AC: the four Kotlin arms print the digest of the shared module's klib, and all four are equal;
   each prints its framework's digest beside it.
 - Anchors: `fixtures/`, `shared/`, `apps/a-native/` (all target).
+
+---
+
+## Findings — 2026-10-10
+
+**Done.** Checked on the simulator and the Mac; nothing measured.
+
+- **The fixture** — `fixtures/generate.py`, seed 20261010, standard library only (its PNG writer is
+  zlib). It writes `apps/common/Fixture/items.json` (2,000 items, 1,058,836 bytes: title, subtitle,
+  detail, ten paragraphs for the detail screen, badge, thumbnail index) and 50 thumbnails,
+  400 × 400 px, into `apps/common/Fixture/`, which every arm bundles — Xcode copies them flat to the
+  bundle root in all five. The outputs live next to the apps rather than in `fixtures/` (the item's
+  anchor) because the synchronized folder that bundles them is the one the arms already share. The
+  digests are BRIEF.md pins, and `make check` runs `fixtures/generate.py --check`.
+- **The filter semantics**, written once: a case-insensitive substring of the title, the query
+  trimmed, a blank query showing every item in fixture order. Titles are ASCII so that the three
+  languages' case folding cannot differ.
+- **One test vector, two implementations.** `fixtures/filter-vectors.json`: every prefix of the S3
+  query `amber harbor`, plus blank, whitespace-only, upper-case, a no-match and a padded query — 18
+  in all. Kotlin: `shared/src/iosTest/kotlin/bench/shared/FilterVectorTest.kt`, on the real fixture
+  (the simulator test reads the repository through `SIMCTL_CHILD_BENCH_REPO`). Swift: arm A's own
+  `SwiftCatalog.swift`, compiled for macOS by `scripts/check-filter-vectors.sh`, which CI's `build`
+  job runs. Both mutation-checked: dropping the trim fails each (Swift on `'   '`, Kotlin 2 of 3 tests).
+- **The same klib in every Kotlin arm.** `scripts/build-arms.sh` digests the shared module's klib after
+  each of B1, B2, B3 and C and fails if any differs; it prints each arm's Kotlin binary beside it (the
+  framework, or Swift export's merged static library). On this branch all four print klib
+  `b2b8e00650058d6b`, and four different binaries. The comparison's own control: two different
+  digests count as two.
+- `Item` gained `paragraphs`. The views do not draw them yet — that is the full spec, B-08–B-10.
+- `scripts/sim-smoke.sh` now waits for `listPopulated` (up to 30 s) instead of a fixed pause: the first
+  app launched after a reinstall once took longer than the pause on the simulator and looked broken.
