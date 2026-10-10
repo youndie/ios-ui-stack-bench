@@ -1,7 +1,7 @@
 ---
 id: B-25
 title: "One command per session: preflight, install, rotated runs, collection, runs.csv"
-status: open
+status: wip
 priority: P1
 size: M
 stage: stage-2-harness
