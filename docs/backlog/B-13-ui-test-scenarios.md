@@ -1,11 +1,11 @@
 ---
 id: B-13
 title: "The UI-test scenarios S1–S4, one target driving every arm by bundle id"
-status: open
+status: wip
 priority: P1
 size: M
 stage: stage-2-harness
-blocked_by: [B-11]
+blocked_by: [B-10, B-20, B-21]
 ---
 
 # B-13 — The scenarios S1–S4
@@ -40,3 +40,8 @@ Two things the brief does not say and the numbers depend on:
 - AC: a scenario run whose phase markers are incomplete is marked invalid by the reader, not
   silently shortened.
 - Anchors: `harness/` (target).
+
+**Blocker changed 2026-10-10:** it was B-11 (parity), whose check runs on the devices. Since
+amendment A1.3 the harness is built on the simulator before the device work, and what the scenarios
+need is the five arms, not their parity; the blockers are now the last arms built (B-10, B-20, B-21).
+Parity still comes before any measurement — that order is B-16's and B-17's.
