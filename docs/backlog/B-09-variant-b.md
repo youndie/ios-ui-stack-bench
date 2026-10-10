@@ -1,7 +1,7 @@
 ---
 id: B-09
 title: "Variant B1 — KMP + SwiftUI over the Objective-C export: the full spec"
-status: open
+status: wip
 priority: P1
 size: M
 stage: stage-1-build
