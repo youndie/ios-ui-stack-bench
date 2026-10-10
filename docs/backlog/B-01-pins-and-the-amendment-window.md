@@ -44,3 +44,16 @@ that does not fit an absolute threshold, a device not named for three of five qu
 - AC: the first commit that adds a measurement under `logs/` is named in BRIEF.md as the window's
   close, and `make check` (`brief_freeze.py --history --window logs`) is green on it.
 - Anchors: `BRIEF.md`, `docs/research/source-brief.md`, `scripts/brief_freeze.py`.
+
+---
+
+## Progress — 2026-10-11
+
+The owner approved every proposal of research §2 (I1–I15) and D3, D4: amendment A1.4 in BRIEF.md.
+The pins are filled by version and commit, Kotlin at 2.4.20. **Still open in this item:**
+- I5's session plan, which needs B-04's measured cap;
+- I12's tolerance number, which B-11 sets;
+- both device rows;
+- the window's close at the first file under `logs/`.
+
+All of it waits for the devices. The status stays `open`.

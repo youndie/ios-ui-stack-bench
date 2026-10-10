@@ -22,15 +22,15 @@ build number or commit behind it, because a tag moves. Rows still open name the 
 | Row | Pin | Where it came from |
 |---|---|---|
 | Xcode | **27.0, build `27A266a`** (released 2026-09-14), selected with `xcode-select`; iOS SDK `iphoneos27.0`. The beta (`27A5228h`) stays installed and builds nothing for this study | `xcodebuild -version` and `xcode-select -p` on the driving Mac, 2026-10-10; developer.apple.com/news/releases |
-| Kotlin | **open** — latest stable on 2026-10-10 is 2.4.21 (2026-10-08) | Maven Central `kotlin-gradle-plugin` metadata; JetBrains/kotlin releases. B-01 |
-| Compose Multiplatform | **open** — latest stable on 2026-10-10 is 1.12.1 (2026-09-22); `1.13.0-alpha02` is a pre-release that Maven's `<release>` tag points at | Maven Central `org.jetbrains.compose.gradle.plugin` metadata; JetBrains/compose-multiplatform releases. B-01 |
+| Kotlin | **2.4.20**, tag `v2.4.20` at `890ac1d94fdb80eb85f0eeb5be5e4352df987b2f` — not the latest stable (2.4.21): SKIE 0.10.15 refuses 2.4.21 (A1.4, I14). 2.5.0 is B-23's round, for Swift export | `git ls-remote` JetBrains/kotlin, 2026-10-11; the SKIE build, research §1.11; owner, 2026-10-11 |
+| Compose Multiplatform | **1.12.1**, tag `v1.12.1` at `bdd8e879b2fc4960934a99959d82400c96b7c590` (compose-multiplatform) and `a1a7f3533363aa93849541cf451af2363fc2070a` (compose-multiplatform-core); material3 1.12.0-alpha03 as the wizard's template carries it; navigation-compose 2.9.2 | `git ls-remote`, 2026-10-11; `gradle/libs.versions.toml` |
 | CMP `parallelRendering` | the framework default (`true` since 1.11.0), recorded because its default changed between versions | research §1.4 |
-| Swift bridges | **all three, one B arm each** (A1.1): B1 Objective-C export + Swift adapter, B2 SKIE, B3 Swift export; C uses the Objective-C export. Versions **open** — SKIE's and the Kotlin pin bound each other (research §2, I14) | owner, 2026-10-10, [B-02](docs/backlog/B-02-swift-bridge.md); versions in B-01 |
+| Swift bridges | **all three, one B arm each** (A1.1): B1 Objective-C export + Swift adapter, B2 **SKIE 0.10.15** (tag at `7e7b8b597a4da8ba121a33775799ad51e517beb5`, no configuration), B3 Swift export of Kotlin 2.4.20 with D8; C uses the Objective-C export | owner, 2026-10-10 ([B-02](docs/backlog/B-02-swift-bridge.md)); `git ls-remote` touchlab/SKIE, 2026-10-11 |
 | Older device | **open** — candidate iPhone XS (`iPhone11,2`, A12, 4 GB, 60 Hz), iOS 18 at most | `xcrun devicectl list devices`; research §1.2. B-01 |
 | Newer device | **open** — a 120 Hz ProMotion iPhone; the owner confirmed one will be available (2026-10-10) | B-01 |
-| Bundle ids | **open** — fixed once and never changed (App IDs are capped at 10 per 7 days) | [B-04](docs/backlog/B-04-free-provisioning-probe.md) |
+| Bundle ids | `io.github.youndie.iosbench.{a,b1,b2,b3,c}`, and `.harness` for the UI-test runner — fixed, never changed (App IDs are capped at 10 per 7 days) | `apps/*/Configuration/Config.xcconfig`, `harness/generate_project.py` (B-05, B-13) |
 | Fixture and thumbnails | `apps/common/Fixture/items.json`: 2,000 items, 1,058,836 bytes, sha256 `7a9693d18f2901f4c6ab12e962721fa5477e09affd56002e4141ce6431f98a3e`. The 50 thumbnails (400 × 400 px): sha256 `0dd4f22b2b893a1916641320a4032bce77b5f7e38b496edb4223192b0e1e7cda` over their per-file digests in name order. The filter test vector `fixtures/filter-vectors.json`: sha256 `d8d2e8327a164c1ee95836ce9f6b3ffdb3c0af1578d7e3d8e3df2118f1e11b78` | `fixtures/generate.py`, seed 20261010; `make check` holds every byte (`--check`), [B-07](docs/backlog/B-07-fixture-and-shared-module.md) |
-| Non-default flags | `docs/flags.md`, once a variant exists; proposed so far: `CADisableMinimumFrameDurationOnPhone = YES` in A and B (C's default) | research D3 |
+| Non-default flags | [docs/flags.md](docs/flags.md) — `CADisableMinimumFrameDurationOnPhone` in A and B (D3, approved in A1.4), the bundle ids, Kotlin 2.4.20, D8, navigation-compose and Compose resources in C | B-05, B-10; owner, 2026-10-11 |
 
 ## What was believed, answered
 
@@ -96,6 +96,34 @@ no arm is measured before RQ0 is green on a device. The simulator stays what the
 the build effort spent before it is lost, and the stop is written up with that effort counted; and
 the protocol decisions B-04 informs (the session plan, I5) are made after the arms exist rather
 than before — they change how the arms are installed and driven, not how they are built.
+
+### A1.4 — the incoherences of research §2 settled as proposed (2026-10-11, owner, before the first measurement)
+
+The owner approved every proposal of [research §2](docs/research/research-architecture.md), I1–I15,
+and decisions D3 and D4, as written. **No threshold moves.** What each now means:
+
+| # | Settled as |
+|---|---|
+| I1 | Kill criterion 4 is applied to each scenario at the counted runs it has: 19 for S1, 9 for each of S2–S4 (the first run of each batch is the warm-up) |
+| I2 | A difference threshold (RQ2, RQ5) is held by the bootstrap interval of the median difference; RQ3's absolute thresholds by the interval of C's median; RQ4's ratio by the interval of the ratio of medians; "no single hitch ≥ 100 ms / ≥ 250 ms" by the maximum over the counted runs, with no interval; RQ1 is deterministic and compared as numbers. Green and red both need the median **and** the whole interval on their side (`analysis/verdicts.py`) |
+| I3 | RQ4 and RQ5 are read on both devices; green only if green on both, red if red on either. RQ2 stays on the older device, RQ3 on both, as the brief says |
+| I4 | The in-app logger's hitch time ratio is defined in `analysis/inapp_reader.py` (a missed vsync, inside S2's scroll windows, ms/s). If Animation Hitches cannot see C's frames (RQ0 grey), RQ3 is computed from the logger, and the write-up says so |
+| I5 | Sessions share A as their anchor; B1 and C share a session; a comparison of two arms from different sessions is printed with A's figures from both. The exact session plan follows from the free-account cap that [B-04](docs/backlog/B-04-free-provisioning-probe.md) measures, and is appended here before the first session |
+| I6 | Kill criterion 5's "overhead" is the shift in **the app's** figures with the UI-test runner attached against the app launched without it (B-16) |
+| I7 | RQ4's growth is the footprint sample after the 50th exit from the detail screen minus the sample after the 5th |
+| I8 | S1 is run as written and named a warm launch, in Apple's terms, in the write-up |
+| I9 | The thresholds stand; the write-up does not claim to reproduce or refute JetBrains' 9 MB, whose metric is unstated |
+| I10 | The thresholds stand; "Apple's bands" cites WWDC20 session 10077 |
+| I11 | Nothing to amend; the write-up cites the sources, not the brief's Context |
+| I12 | Parity is geometry by number (item count, row height, thumbnail and text sizes) plus a pixel diff over the list content, with the system chrome excluded; the tolerance number is fixed by [B-11](docs/backlog/B-11-parity-check.md) before its first diff and appended here |
+| I13 | Pinned in the table above |
+| I14 | Kotlin 2.4.20 for every Kotlin arm (above) |
+| I15 | "MB" is 10^6 bytes |
+| D3 | `CADisableMinimumFrameDurationOnPhone = YES` in every arm |
+| D4 | Liquid Glass stays where the platform puts it; parity as in I12 |
+
+Two rows are still to be completed inside the window, each by the item named: I5's session plan
+(B-04) and I12's tolerance (B-11).
 
 ## Amendment set 2 — after the window
 
