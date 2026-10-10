@@ -1,7 +1,7 @@
 ---
 id: B-21
 title: "Variant B3 — KMP + SwiftUI over Swift export: the full spec, or the reason it cannot be built"
-status: open
+status: done
 priority: P1
 size: M
 stage: stage-1-build
@@ -38,3 +38,29 @@ inheriting from `Any` — and it is **Alpha**, with breaking changes expected
 - AC: 2,000 rows reachable by scrolling, filtering by the shared test vector gives the expected ids,
   the detail animation loops; "first frame" and "list populated" fire once per launch, in that order.
 - Anchors: `apps/b3-swift-export/` (target), `logs/b-21/`.
+
+---
+
+## Findings — 2026-10-10
+
+**Done on the simulator** (the devices come with the owner's go, amendment A1.3). B3 builds and
+carries the spec, so it is not "not measured". The price is the one recorded in research §1.11 and
+D8: on stable Kotlin, Swift export cannot compile kotlinx-serialization's API (KT-87791), so the shared
+module keeps serialization internal for every arm. Nothing else needed a workaround.
+
+- Swift export is configured as its documentation's starting point
+  (`bridge-swift-export/build.gradle.kts`). Xcode runs `embedSwiftExportForXcode`.
+- The `StateFlow<List<Item>>` reaches Swift as `KotlinTypedStateFlow<[Item]>`. The adapter iterates
+  `asAsyncSequence()` in a main-actor `Task`, with no casts. Kotlin `Int` arrives as `Int32` and is
+  widened.
+- Walked by driving the app:
+  - the list shows the fixture;
+  - `amber harbor` leaves the vector's five rows;
+  - a row opens its detail with the ten paragraphs, and the square turns (two screenshots 0.7 s apart
+    differ);
+  - `launch`, `firstFrame` and `listPopulated` fire once, in order;
+  - the shared klib is the same as in the other Kotlin arms.
+- B3's merged static library is the one Kotlin binary whose digest moved between two builds with
+  unchanged sources; that is recorded in [B-12](B-12-rq1-size.md).
+
+**Not walked here:** scrolling to row 2,000, which is [B-13](B-13-ui-test-scenarios.md)'s.
