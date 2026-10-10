@@ -35,7 +35,7 @@ final class CatalogAdapter {
             do {
                 for try await items in catalog.visible.asAsyncSequence() {
                     model.items = items.map {
-                        RowItem(id: Int($0.id), title: $0.title, subtitle: $0.subtitle, detail: $0.detail, badge: Int($0.badge), thumbnail: Int($0.thumbnail))
+                        RowItem(id: Int($0.id), title: $0.title, subtitle: $0.subtitle, detail: $0.detail, paragraphs: $0.paragraphs, badge: Int($0.badge), thumbnail: Int($0.thumbnail))
                     }
                 }
             } catch {

@@ -6,6 +6,7 @@ struct RowItem: Identifiable, Hashable {
     let title: String
     let subtitle: String
     let detail: String
+    let paragraphs: [String]
     let badge: Int
     let thumbnail: Int
 }

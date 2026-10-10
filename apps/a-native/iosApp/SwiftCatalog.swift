@@ -8,6 +8,7 @@ final class SwiftCatalog {
         let title: String
         let subtitle: String
         let detail: String
+        let paragraphs: [String]
         let badge: Int
         let thumbnail: Int
     }
@@ -19,7 +20,7 @@ final class SwiftCatalog {
         do {
             let items = try JSONDecoder().decode([Item].self, from: Data(json.utf8))
             all = items.map {
-                RowItem(id: $0.id, title: $0.title, subtitle: $0.subtitle, detail: $0.detail, badge: $0.badge, thumbnail: $0.thumbnail)
+                RowItem(id: $0.id, title: $0.title, subtitle: $0.subtitle, detail: $0.detail, paragraphs: $0.paragraphs, badge: $0.badge, thumbnail: $0.thumbnail)
             }
         } catch {
             fatalError("the fixture does not decode: \(error)")

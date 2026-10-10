@@ -44,7 +44,7 @@ final class CatalogAdapter {
         func emit(value: Any?, completionHandler: @escaping (Error?) -> Void) {
             let items = (value as? [Item]) ?? []
             model.items = items.map {
-                RowItem(id: Int($0.id), title: $0.title, subtitle: $0.subtitle, detail: $0.detail, badge: Int($0.badge), thumbnail: Int($0.thumbnail))
+                RowItem(id: Int($0.id), title: $0.title, subtitle: $0.subtitle, detail: $0.detail, paragraphs: $0.paragraphs, badge: Int($0.badge), thumbnail: Int($0.thumbnail))
             }
             completionHandler(nil)
         }
