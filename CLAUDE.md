@@ -92,10 +92,13 @@ exports are.
 ## Pull requests
 
 One backlog item per pull request (the `backlog-item` loop). **The loop merges its own pull
-requests** — stated by the owner on 2026-10-10 — once every check is green **on the head commit of
-the branch** — `check` (the documents) and `build` (every arm, `.github/workflows/apps.yaml`) (compare `gh pr view --json headRefOid` with the run's `headSha`; pass the full sha to
-`--match-head-commit`). What does not change: red is never merged and no check is weakened to make it
-green; `make check` is green locally before a pull request is opened, and the pull request carries
+requests, without waiting for CI** — stated by the owner on 2026-10-10, first as "on green", then the
+same day "merge, don't wait for the checks". The local run is therefore the gate: `make check`, and
+for anything the apps build reads `scripts/build-arms.sh` and `scripts/check-filter-vectors.sh`, all
+green on the branch before it is pushed. CI — `check` for the documents on every change, `build` for
+the apps only when their inputs change (`.github/workflows/apps.yaml`) — runs after the merge, and a
+red run on `main` is fixed before the next item starts. What does not change: no check is weakened to
+make it green; and the pull request carries
 the log of the local build or simulator run its acceptance rests on; an item is `done` only when its
 acceptance was exercised — on a device where it says so; a `question` item waits for a person; a
 defect found on the way becomes an item of its own; a pull request opened by anything other than the
