@@ -1,7 +1,7 @@
 ---
 id: B-07
 title: "The fixture and the shared Kotlin module: 2,000 items, 50 thumbnails, parse, filter, state"
-status: open
+status: wip
 priority: P1
 size: M
 stage: stage-1-build
