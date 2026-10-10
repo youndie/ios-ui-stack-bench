@@ -1,7 +1,7 @@
 ---
 id: B-20
 title: "Variant B2 — KMP + SwiftUI over SKIE: the full spec"
-status: wip
+status: done
 priority: P1
 size: M
 stage: stage-1-build
@@ -33,3 +33,24 @@ instrumentation of [B-05](B-05-hello-world-variants.md), unchanged.
 - AC: 2,000 rows reachable by scrolling, filtering by the shared test vector gives the expected ids,
   the detail animation loops; "first frame" and "list populated" fire once per launch, in that order.
 - Anchors: `apps/b2-skie/` (target).
+
+---
+
+## Findings — 2026-10-10
+
+**Done on the simulator** (the devices come with the owner's go, amendment A1.3). Nothing in B2 had
+to change for the full spec. The views are arm A's (B-08); the adapter in
+`apps/b2-skie/iosApp/BenchApp.swift` already maps every field. SKIE 0.10.15 runs with no
+configuration at all (`bridge-skie/build.gradle.kts` applies the plugin and sets nothing), which is
+the "defaults" this item asks for. Walked by driving the app:
+
+- The list shows the fixture from the Kotlin `Catalog`.
+- `amber harbor` leaves the vector's five rows. The adapter iterates `catalog.visible` as SKIE's typed
+  `AsyncSequence` in a main-actor `Task`; there are no casts, unlike B1.
+- A row opens its detail with the ten paragraphs, and the square turns (two screenshots 0.7 s apart
+  differ).
+- `launch`, `firstFrame` and `listPopulated` fire once, in order.
+- The shared klib is the same as in the other Kotlin arms (`scripts/build-arms.sh`).
+
+The Kotlin pin is still the development pin, 2.4.20; SKIE refuses 2.4.21 (research §1.11). B-01 decides it.
+**Not walked here:** scrolling to row 2,000, which is [B-13](B-13-ui-test-scenarios.md)'s.
