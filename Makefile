@@ -97,6 +97,7 @@ gate: docs-gate
 	$(PY) scripts/brief_freeze.py --control
 	$(PY) apps/generate_projects.py --check
 	$(PY) fixtures/generate.py --check
+	$(PY) harness/generate_project.py --check
 
 report: docs-report
 

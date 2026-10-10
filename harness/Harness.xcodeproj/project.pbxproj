@@ -1,0 +1,211 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXFileReference section */
+		0D7AA3AA41FEA44305B60BC7 /* HarnessUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HarnessUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		995804B5C85396E3B475D763 /* HarnessUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = HarnessUITests;
+			sourceTree = "<group>";
+		};
+		3E4B0E4FDA906885815EA275 /* Configuration */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Configuration;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6185A3F3DBEA43F4B0C93B27 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5B120D6D6A9403BAE047DD94 = {
+			isa = PBXGroup;
+			children = (
+				3E4B0E4FDA906885815EA275 /* Configuration */,
+				995804B5C85396E3B475D763 /* HarnessUITests */,
+				C4523698338B8C244D0B745A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C4523698338B8C244D0B745A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0D7AA3AA41FEA44305B60BC7 /* HarnessUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		34CDAE73AC0E75DD25A7C213 /* HarnessUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0DB0EDC5A02358AEF5925AF /* Build configuration list for PBXNativeTarget "HarnessUITests" */;
+			buildPhases = (
+				B67F1BBD4C89517C643D69F2 /* Sources */,
+				6185A3F3DBEA43F4B0C93B27 /* Frameworks */,
+				93154FF02F1E3610E7384220 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				995804B5C85396E3B475D763 /* HarnessUITests */,
+			);
+			name = HarnessUITests;
+			packageProductDependencies = (
+			);
+			productName = HarnessUITests;
+			productReference = 0D7AA3AA41FEA44305B60BC7 /* HarnessUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0DDDB1C69B32B5F179A2E4E7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
+			};
+			buildConfigurationList = 2F07F03085D3E964E596D087 /* Build configuration list for PBXProject "Harness" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5B120D6D6A9403BAE047DD94;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = C4523698338B8C244D0B745A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				34CDAE73AC0E75DD25A7C213 /* HarnessUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		93154FF02F1E3610E7384220 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B67F1BBD4C89517C643D69F2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		4BACCB9237377D1C4E39B2E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 3E4B0E4FDA906885815EA275 /* Configuration */;
+			baseConfigurationReferenceRelativePath = Config.xcconfig;
+			buildSettings = {
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		425A26064F9492D8741A764C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 3E4B0E4FDA906885815EA275 /* Configuration */;
+			baseConfigurationReferenceRelativePath = Config.xcconfig;
+			buildSettings = {
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+		AD3AF920D55EC557CCA7C8E3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "${TEAM_ID}";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.youndie.iosbench.harness;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		258FAFD011D39BE263851DA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "${TEAM_ID}";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.youndie.iosbench.harness;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2F07F03085D3E964E596D087 /* Build configuration list for PBXProject "Harness" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4BACCB9237377D1C4E39B2E7 /* Debug */,
+				425A26064F9492D8741A764C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C0DB0EDC5A02358AEF5925AF /* Build configuration list for PBXNativeTarget "HarnessUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AD3AF920D55EC557CCA7C8E3 /* Debug */,
+				258FAFD011D39BE263851DA3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0DDDB1C69B32B5F179A2E4E7 /* Project object */;
+}

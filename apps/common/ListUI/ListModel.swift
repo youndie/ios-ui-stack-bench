@@ -18,7 +18,11 @@ struct RowItem: Identifiable, Hashable {
 final class ListModel {
     var items: [RowItem] = []
     var query: String = "" {
-        didSet { if query != oldValue { onQuery?(query) } }
+        didSet {
+            guard query != oldValue else { return }
+            Bench.shared.phase("query")
+            onQuery?(query)
+        }
     }
     @ObservationIgnored var onQuery: ((String) -> Void)?
 }
