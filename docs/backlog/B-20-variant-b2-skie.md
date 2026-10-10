@@ -1,7 +1,7 @@
 ---
 id: B-20
 title: "Variant B2 — KMP + SwiftUI over SKIE: the full spec"
-status: open
+status: wip
 priority: P1
 size: M
 stage: stage-1-build
