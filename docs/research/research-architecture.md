@@ -1,0 +1,361 @@
+---
+id: research-architecture
+title: iOS UI stack benchmark — the evidence the study starts from
+type: research
+status: active
+date: 2026-10-10
+---
+
+# Research: what the study starts from
+
+One app, three times — native SwiftUI (A), a shared Kotlin module under the same SwiftUI views (B),
+the same module under Compose Multiplatform (C) — measured on physical iPhones for size, startup,
+scroll smoothness and memory. The questions, thresholds and kill criteria are the frozen
+[source brief](source-brief.md); what the study decided around them is [BRIEF.md](../../BRIEF.md).
+
+This document records what was **verified** before any code existed — read in a source, an
+artefact or on the Mac that will drive the devices — what follows from each fact, the places
+where the frozen brief cannot be applied as written, and the risks with the machinery that answers
+each. Anything not verified is called a hypothesis and names the item that will check it. It is
+amended, never rewritten: when a device proves a line here wrong, the correction goes at that line.
+
+Everything below was checked on **2026-10-10**. Apple's documentation pages were read through their
+JSON mirrors (`developer.apple.com/tutorials/data/documentation/<path>.json`), because the HTML is
+rendered by script; two Medium articles were read in a browser after Medium refused the fetcher.
+
+---
+
+## 1. Verified facts
+
+### 1.1 The prior work, as its sources report it
+
+The brief's Context summarises four sources. Read at the source, three of the summaries are right,
+and three details are not — which matters, because the write-up will set its numbers beside them.
+
+| Fact | Where verified |
+|---|---|
+| **Commencis** (Ali Taha Dinçer, 2024-01-29): one coin-list app built 15 ways; iOS on the "iPhone 15 Pro Max" **simulator** after writing results on a physical iPhone 11 failed; release mode; FPS from `CADisplayLink`, memory from in-app kernel calls, each from a separate build; a manual 40-scroll gesture; one chart per variant, repetitions never mentioned; CMP for iOS "still in its alpha stage", no version given | Part 1 ("Testing", "FPS Measurer", "Memory Measurer") and Part 2 introduction, medium.com/commencis, URLs in the brief's Sources |
+| Commencis' **375–400 MB is one variant: a CMP list inside UIKit navigation** (`KMPiOSCMPUIKit`). The full-screen CMP variants settle at about 275–300 MB; KMP with UIKit 110–120 MB; plain UIKit 40–50 MB. App sizes: UIKit 631 KB, SwiftUI 950 KB, KMP 7.2 MB, CMP 29.4 MB. Freezes reported in four CMP variants; one crashed after 7–10 scrolls | Part 2, §3.1, 3.3, 3.5, 3.6, 3.9 |
+| **Software Mansion** (Artur Gęsiarz, 2026-07-02): CMP **1.10.0** with Kotlin 2.3.0 against React Native with Expo; iPhone 13 mini (A15, 4 GB), iPhone 16, iPhone 17; Release, Ad-Hoc | swmansion.com blog, URL in the brief |
+| Software Mansion's CMP figures: average footprint 157.0 / 230.2 / 251.4 MB; **800–870 ms is time to initial display** (870 / 822 / 802), time to full display 1 203–1 364 ms; 11.2 MB download, 32.1 MB installed. No native baseline; frame rate measured on Android only | same, "iOS memory", "startup", "app size" |
+| **Zhuravko** (2026-06-22): **Swift 29.10 MiB, CMP 55.75 MiB** of "Persistent Heap + VM" in Instruments (1.9×); **Swift bundle 484 KB, CMP 38 MB**. One profiling session per app (32 s and 39 s); the device is never named, nor whether it was a simulator | medium.com/@zhuravl321, "iOS: Swift vs Compose Multiplatform", "Stability and App Size" |
+| **JetBrains** (2025-05-06, CMP 1.8.0): "startup time is comparable to native apps", with no numbers; CMP adds "about 9 MB" against a SwiftUI app with the same UI — **without saying whether download or install size, which app, or which architecture** | blog.jetbrains.com, "Performance that's ready for production" |
+
+**Consequence 1 — the brief's Context carries three errors the write-up must not repeat.** The
+brief prints Zhuravko's pairs in the reverse order ("55.75 vs 29.10 MiB … 38 MB vs 484 KB" under
+"Swift vs CMP"); it attributes Commencis' 375–400 MB to "CMP" when it is the hybrid embedding the
+brief's own non-goals exclude; and it calls Software Mansion's figure "time to first frame" without
+naming it TTID. The frozen text stays as it is. The write-up cites the sources as this table does
+([B-19](../backlog/B-19-write-up.md)).
+
+**Consequence 2 — "the consistent signal is a 2–4× memory premium" is not what the sources show.**
+Zhuravko measured 1.9× on one metric that is not footprint; Commencis' full-screen CMP against
+UIKit is about 6× on a simulator; Software Mansion has no native baseline. The brief's RQ4
+thresholds (green ≤ 2×, red > 3×) are therefore a prior of the author's, not a summary of
+evidence — which is fine for a pre-registered threshold, and is said once so nobody later cites the
+Context as its justification.
+
+**Consequence 3 — the prior CMP numbers describe a different renderer.** Software Mansion measured
+CMP 1.10.0. From 1.11.0 CMP renders on a dedicated thread by default and presents through a layer
+of its own (§1.4). Whatever C shows on the pinned version, a difference from Software Mansion's
+figures cannot be read as a difference between devices or methods alone.
+
+### 1.2 The stand on 2026-10-10
+
+| Fact | Where verified |
+|---|---|
+| The only Xcode on the driving Mac is `/Applications/Xcode-beta.app`, **Xcode 27.0 build 27A5228h — beta 4** (2026-07-20). The released Xcode 27.0 is build **27A266a** (2026-09-14) | `xcodebuild -version`; `ls /Applications`; developer.apple.com/news/releases; xcodereleases.com `data.json` |
+| Xcode 27 deploys to iOS 15–27 and installs and debugs on devices running **iOS 17 or later** | developer.apple.com/support/xcode, Xcode 27 row and legend |
+| Paired physical device: **iPhone XS** (`iPhone11,2`, A12, 4 GB, 60 Hz), not connected at the time. No ProMotion device is paired yet; the owner confirmed one will be available | `xcrun devicectl list devices` |
+| The iPhone XS runs **iOS 18 at most**: the iOS 26 list starts at iPhone 11 and SE (2nd gen) | support.apple.com/en-us/104985 (iOS 18 models), support.apple.com/en-us/123705 (iOS 26 models) |
+| The `xctrace` templates the brief names exist in this Xcode: **App Launch, Animation Hitches, Allocations, CPU Profiler**; so do the instruments **Hitches, VM Tracker, os_signpost, Display** | `xcrun xctrace list templates`, `xcrun xctrace list instruments` |
+| Free disk on the Mac: 47 GiB | `df -h /` |
+
+**Consequence 1 — nothing may be measured with the installed Xcode.** The brief pins "the latest
+stable Xcode"; a beta is neither stable nor what anybody reproducing the study will have. Xcode
+27.0 (27A266a) is installed before [B-04](../backlog/B-04-free-provisioning-probe.md), and its build
+number, not its marketing version, is the pin.
+
+**Consequence 2 — the two devices will run different iOS major versions.** The older-device slot
+is held by an XS on iOS 18; any current ProMotion iPhone runs iOS 26 or later. SwiftUI's `List`,
+navigation bar and search field differ between those versions (§1.7). Every RQ compares variants
+*within* a device, so the verdicts survive; a sentence comparing devices would compare operating
+systems as much as chips, and the write-up says so.
+
+### 1.3 "Cold start" as the brief defines it is a warm launch in Apple's terms
+
+| Fact | Where verified |
+|---|---|
+| Apple: a launch soon after the app was terminated "is commonly referred to as a 'warm launch'"; a cold launch is one after the app was evicted from memory — for instance after a memory-intensive app — "or a launch immediately after boot". Apple calls them a spectrum | developer.apple.com/documentation/xcode/reducing-your-app-s-launch-time, "Understand cold and warm launch" |
+
+**Consequence.** S1 — terminate, wait 10 s, launch — measures a warm launch: the app's pages, its
+frameworks' pages and the dyld closure are still cached. That is a perfectly good repeatable
+measurement, and it is the one the brief's thresholds were written for; the brief's word for it is
+not Apple's. Twenty real cold launches per variant would need twenty reboots or a memory-pressure
+step that adds a variable of its own. The protocol stays; what it is called is settled in
+[B-01](../backlog/B-01-pins-and-the-amendment-window.md) (§2, I8).
+
+### 1.4 Hitches: Apple's bands, and what each instrument can see
+
+| Fact | Where verified |
+|---|---|
+| Hitch time ratio, ms per second of animation: under 5 good; 5–10 noticeable, investigate; 10 or more, act now. The "good / warning / critical" labels are the session's recap | WWDC20 "Eliminate animation hitches with XCTest" (10077), developer.apple.com/videos/play/wwdc2020/10077; tech talk 10855 |
+| A **second Apple scale** exists for the Organizer's hitch rate: ≤ 10 good, ≤ 25 warning, ≤ 50 critical | developer.apple.com/documentation/xcode/understanding-hitches-in-your-app |
+| `XCTOSSignpostMetric.scrollingAndDecelerationMetric` (iOS 15+) reports hitch time ratio for **UIKit-instrumented** scroll intervals; custom intervals need `os_signpost(.animationBegin…)` | developer.apple.com/documentation/xctest/xctossignpostmetric/scrollinganddecelerationmetric; WWDC20 10077 |
+| `XCTHitchMetric` exists from **iOS 26.0** | developer.apple.com/documentation/xctest/xcthitchmetric |
+| `XCTMemoryMetric` reports the **difference** in physical memory before and after the measured block; `XCTApplicationLaunchMetric` ends at the first frame (or at main-thread responsiveness with `waitUntilResponsive`) | developer.apple.com/documentation/xctest/xctmemorymetric; .../xctapplicationlaunchmetric/init(waituntilresponsive:) |
+| CMP 1.12.1 renders through Skia on Metal, driven by **its own `CADisplayLink`**. With `parallelRendering = true` — **the default since 1.11.0** — composition, layout and recording run on the main thread and GPU encoding on a serial queue `RenderingDispatchQueue`; frames are presented by setting an IOSurface as `contents` of a `CMPMetalLayer : CALayer` inside a `CATransaction`, on the main thread. With `false` it is a plain `CAMetalLayer` | JetBrains/compose-multiplatform-core@a1a7f3533363aa93849541cf451af2363fc2070a!/compose/ui/ui/src/iosMain/kotlin/androidx/compose/ui/window/SurfaceMetalRedrawer.ios.kt, `.../window/MetalView.ios.kt`, `.../uikit/ComposeContainerConfiguration.ios.kt` (tag v1.12.1); CMP CHANGELOG 1.11.0, "Migration Notes / iOS" |
+| A developer report (Aug 2026, unanswered): Animation Hitches records late frames of an `MTKView`, `XCTHitchMetric` records nothing for it | developer.apple.com/forums/thread/842848 |
+
+**Consequence 1 — the brief's thresholds are WWDC20's scale**, which is the right one for an
+animation interval; "Apple's 'good' band" in the write-up cites WWDC20 10077 and not the
+Organizer page, whose numbers are twice as lenient.
+
+**Consequence 2 — the XCTest metrics cannot be the instrument here.** The scroll metrics see UIKit
+scroll views, and C's `LazyColumn` is not one; `XCTHitchMetric` needs iOS 26, which the XS cannot
+run; `XCTMemoryMetric` is a delta, and RQ4 needs a peak. The brief's choice of `xctrace` plus an
+in-app logger is the one that can work on both devices and all three variants.
+
+**Consequence 3 — the brief's named risk is smaller than it looked, and still unproven.** On
+CMP ≥ 1.11, C's frames reach the screen as ordinary Core Animation commits, so Animation Hitches
+*should* account for them as it does for A and B (**hypothesis H1**, checked by the injected stall
+in [B-06](../backlog/B-06-rq0-the-gate.md)). `parallelRendering` stays at its default; it is
+recorded as a pin, because a change of default between CMP versions changes what C is.
+
+### 1.5 A free Apple ID: what it allows
+
+| Fact | Where verified |
+|---|---|
+| A Personal Team may have **up to 3 apps installed per device**, profiles expire **7 days** after issue, up to **10 App IDs** per 7 days, up to 3 devices | developer.apple.com/support/compare-memberships, "Enable a personal team in Xcode"; Apple DTS in developer.apple.com/forums/thread/745359 calls these limits "not well documented" |
+| The UI-test runner is a separately signed app with its own bundle id (`…UITests.xctrunner`) and App ID; **whether it occupies one of the three install slots is not documented** anywhere found. The device log filtered by `MIFreeProfileValidatedAppTracker` lists the bundle ids counted against the limit | github.com/callstack/agent-device/issues/145; velog.io/@adbr (Xcode error "The maximum number of apps for free development profiles has been reached") |
+| Builds installed by Xcode carry `get-task-allow` regardless of configuration; Allocations and Leaks fail without it, Time Profiler usually works. No list per instrument is published; nothing found for Animation Hitches or App Launch, and nothing specific to a Personal Team | developer.apple.com/forums/thread/745789; .../thread/681687 |
+| `XCUICoordinate.press(forDuration:thenDragTo:withVelocity:thenHoldForDuration:)` exists, now in the `XCUIAutomation` framework; velocity in pixels per second; no iOS availability gate in the Xcode 27 header | developer.apple.com/documentation/xcuiautomation/xcuicoordinate; `XCUICoordinate.h:46` in Xcode-beta 27.0 |
+
+**Consequence — the protocol as written may not fit on a device.** Three variants installed
+together plus a runner is four apps against a cap of three, if the runner counts. The brief rotates
+A→B→C inside a session and forbids reinstalling mid-session; its own mitigation ("one UI-test
+target driving all variants by bundle ID") reduces the runners to one but still needs four
+installs. [B-04](../backlog/B-04-free-provisioning-probe.md) answers it on the device before any
+code (§2, I5).
+
+### 1.6 120 Hz: the key C cannot run without
+
+| Fact | Where verified |
+|---|---|
+| Without `CADisableMinimumFrameDurationOnPhone = YES` in Info.plist, Core Animation on a ProMotion iPhone "won't access higher frame rates (above 60Hz)" for `CADisplayLink` callbacks and `CAAnimation`; the system handles frame pacing of UIKit, SwiftUI and `CAAnimation` animations itself | developer.apple.com/documentation/bundleresources/information-property-list/cadisableminimumframedurationonphone; developer.apple.com/documentation/quartzcore/optimizing-iphone-and-ipad-apps-to-support-promotion-displays |
+| A developer report: `scrollViewDidScroll` at 120 Hz while the app's own `CADisplayLink` ran at 70–80 Hz, until the key was added | developer.apple.com/forums/thread/792011 |
+| **CMP refuses to start without the key**: `enforceStrictPlistSanityCheck` defaults to `true`, and a missing or false key is an `error(...)` naming "inadequate performance on iPhones with high refresh rate". CMP's display link asks for `screen.maximumFramesPerSecond` | compose-multiplatform-core@a1a7f35!/compose/ui/ui/src/iosMain/kotlin/androidx/compose/ui/uikit/PlistSanityCheck.ios.kt, `.../window/MetalView.ios.kt` |
+| The KMP wizard's iOS app ships the key, `true`, in both its shared-UI and native-UI templates | Kotlin/kmp-wizard@d7c757a51afd9b0968da0d3c11f9cf05696894c8!/iosApp/iosApp/Info.plist, Kotlin/kmp-wizard@8fa355754f55454e0e2e72a6c0b4e29052ed5b7d!/iosApp/iosApp/Info.plist |
+
+**Consequence 1 — the key is C's idiomatic default**, not a tuning: the template ships it and the
+framework will not run without it.
+
+**Consequence 2 — A and B need it too, or the study's own frame logger lies on the 120 Hz
+device.** The logger is a `CADisplayLink`; without the key it is held near 60 Hz while SwiftUI's
+scrolling runs at 120, and it would report A's and B's frames at half the rate C's are reported
+at. The decision (D3) is the key in all three variants, listed as a flag, with its cost stated: on
+A and B it changes the logger's cadence and the detail screen's custom animations, not the system's
+scrolling — which [B-16](../backlog/B-16-dry-run-and-the-ruler.md) checks with the logger on and
+off.
+
+### 1.7 Liquid Glass, and why a first-screen pixel diff cannot pass A against C
+
+| Fact | Where verified |
+|---|---|
+| Built with the iOS 26+ SDK, standard SwiftUI components adopt Liquid Glass automatically — `NavigationStack` bars, toolbars, search in toolbars; lists get larger rows and padding and rounder section corners | developer.apple.com/documentation/technologyoverviews/adopting-liquid-glass |
+| The opt-out `UIDesignRequiresCompatibility` is temporary, and "the system ignores this key when you build for iOS 27 or later" | developer.apple.com/documentation/bundleresources/information-property-list/uidesignrequirescompatibility |
+| Compose Multiplatform does not draw Liquid Glass: JetBrains says it comes from the native `TabView`, `NavigationStack` and toolbar APIs | kotlinlang.org/docs/multiplatform/ios-liquid-glass.html |
+
+**Consequence 1 — with the pinned Xcode 27 SDK, A and B have Liquid Glass on the newer device and
+the old design on the XS (iOS 18), and C has Material on both.** There is no switch: the opt-out is
+ignored for iOS 27 builds, and building with an older Xcode would break the brief's toolchain rule.
+The glass is part of what "native" costs on a current iPhone, and it is reported as such — not
+removed, and not counted as a defect of C.
+
+**Consequence 2 — the brief's parity rule needs a number and a region.** A first-screen pixel diff
+between a SwiftUI screen with glass chrome and a Compose screen with Material chrome fails at any
+small tolerance, for a reason no build effort removes — and kill criterion 3 counts build days.
+Parity is checked on geometry by number (item count, row height, thumbnail and type size) and by
+pixels over the list content; how the chrome is treated is an amendment
+([B-11](../backlog/B-11-parity-check.md), §2, I12).
+
+### 1.8 The Swift bridge for B and C
+
+| Fact | Where verified |
+|---|---|
+| **Plain Objective-C export**: generics only on classes, not interfaces, so `StateFlow<T>` reaches Swift as a non-generic protocol needing casts and a collector; `suspend` becomes a completion handler | kotlinlang.org/docs/native-objc-interop.html, "Generics", "Suspending functions" |
+| The KMP wizard's native-UI template applies **no SKIE and no Swift export**, links `isStatic = true`, Kotlin 2.4.20, CMP 1.12.1 | Kotlin/kmp-wizard@8fa355754f55454e0e2e72a6c0b4e29052ed5b7d!/sharedLogic/build.gradle.kts, `.../gradle/libs.versions.toml` |
+| **SKIE 0.10.15** (2026-09-25) adds Kotlin 2.4.20; its compatibility page still says up to 2.4.10; Kotlin 2.4.21 is not mentioned. `StateFlow` → `SkieSwiftStateFlow`, an `AsyncSequence` with its type argument | github.com/touchlab/SKIE/releases; skie.touchlab.co/changelog/0.10.15; skie.touchlab.co/features/flows |
+| **Swift export is Alpha**, "breaking changes are expected"; flows become `AsyncSequence`; direct integration only; nothing published on coexistence with a CMP framework | kotlinlang.org/docs/native-swift-export.html; kotlinlang.org/docs/whatsnew2420.html |
+
+**Consequence.** The recommendation for [B-02](../backlog/B-02-swift-bridge.md) is the plain
+Objective-C export with a thin hand-written Swift adapter to `@Observable`: it is what the
+template generates, it adds no compiler plugin whose support has to track the Kotlin pin (SKIE
+does not yet claim the latest stable Kotlin, 2.4.21), and the A→B delta then measures what most KMP
+apps actually ship. Swift export is excluded on its own label. The choice is the owner's.
+
+### 1.9 The fairness flags are already the defaults, and the size breakdown needs a link map
+
+| Fact | Where verified |
+|---|---|
+| KGP's default is a dynamic framework (`isStatic = false`); the wizard sets `isStatic = true` | JetBrains/kotlin@v2.4.20!/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/targets/native/NativeBinaries.kt:326; kmp-wizard `sharedLogic/build.gradle.kts` |
+| A static Kotlin framework is an archive; its code, and Skiko's native code with it, is linked into the app's main executable — there is no Kotlin `.framework` in the `.app` | JetBrains/kotlin@v2.4.20!/kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/Linker.kt:27-34 |
+| Kotlin/Native's dead-code elimination runs in release builds by default (no flag); for a static framework the final `-dead_strip` happens in the app's link | JetBrains/kotlin@v2.4.20!/kotlin-native/backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/driver/phases/TopLevelPhases.kt:514 |
+| `DEAD_CODE_STRIPPING` is set to `YES` by the iOS SDK's default properties, for every configuration | Xcode-beta 27.0, `iPhoneOS.sdk/SDKSettings.plist` (`DefaultProperties`) |
+| `LD_GENERATE_MAP_FILE` writes a map of every symbol and its origin | developer.apple.com/documentation/xcode/build-settings-reference, "Write Link Map File" |
+
+**Consequence 1 — the brief's fairness flags cost nothing to honour**: release K/N, static, dead-code
+stripping and Swift `-O` with whole-module optimisation in Release are the template's and the SDK's
+defaults. They are still listed, with their sources, so a reader sees that no variant was tuned.
+
+**Consequence 2 — the brief's per-component breakdown ("app binary, Kotlin framework, Skiko")
+cannot be read off file sizes.** It is taken from the final link map, summed by object origin
+([B-12](../backlog/B-12-rq1-size.md), D6).
+
+### 1.10 Kotlin/Native memory, as `phys_footprint` will see it
+
+| Fact | Where verified |
+|---|---|
+| Default GC in Kotlin 2.4: concurrent mark & sweep (`cms`), non-generational, parallel mark, on its own thread, triggered by heuristics or a timer | kotlinlang.org/docs/native-memory-manager.html, "Garbage collector"; kotlinlang.org/docs/native-binary-options.html |
+| K/N uses its own paged allocator over `mmap`, tagged `246` (`mmapTag`), visible in VM Tracker | same pages, "Memory consumption" |
+| Defaults the study keeps: `objcDisposeOnMain=true`, `appStateTracking=disabled`, `latin1Strings=false`, `smallBinary=false`, `enableSafepointSignposts=false` | kotlinlang.org/docs/native-binary-options.html |
+
+**Consequence.** B's and C's heap is dirty anonymous memory, so it counts in `phys_footprint`, and
+Allocations shows it as anonymous VM regions under tag 246 rather than as Kotlin objects — which is
+what makes the VM Tracker cross-check meaningful for B and C and useless for attributing objects.
+Because the collector runs on a timer and on pressure, a peak sampled every 250 ms depends on when
+the GC ran; RQ4's peak is read from the same 250 ms series in all three variants, and the GC
+timing is a reason for its spread, not a variable to tune.
+
+---
+
+## 2. Where the frozen brief cannot be applied as written
+
+The brief cannot be edited, and these cannot be left to the first number. Each is settled as an
+amendment in BRIEF.md by [B-01](../backlog/B-01-pins-and-the-amendment-window.md), or recorded as
+"left as written" with the reason. **None of them asks for a threshold to move.**
+
+| # | Where | The problem | What has to be decided |
+|---|---|---|---|
+| I1 | Kill criterion 4 | "After 20 runs" — but S2–S4 have 10 runs per variant, 9 counted. For RQ3, RQ4 and the hitch half of RQ5, "after 20 runs" never happens | the run count at which kill criterion 4 is applied to each scenario |
+| I2 | Runs and statistics | "A bootstrap 95 % CI for each A–B and A–C difference … the CI must not cross the threshold" fits RQ2 and RQ5, whose thresholds are differences. RQ3's are absolute values of C, RQ3's "no hitch ≥ 100 ms in any run" is a maximum, RQ4's are a ratio to A and a growth within C, and RQ1 has no sample at all | the interval each RQ is decided with: CI of C's median (RQ3), CI of the ratio (RQ4), a count (max hitch), none (RQ1, deterministic) |
+| I3 | RQ4, RQ5 | No device is named. RQ2 says "older device", RQ3 "both" | the device(s) for RQ4 and RQ5 |
+| I4 | RQ0 vs kill criterion 2 | RQ0 is green only if both instruments see the stall; kill criterion 2 fires only if neither does. If only the in-app logger sees it for C, RQ0 is grey and RQ3 is still owed — but its thresholds are in Animation Hitches' unit, and the logger as specified reports frame-time percentiles, not ms/s | a hitch time ratio computed from the logger's frame intervals, defined before any number ([B-14](../backlog/B-14-trace-export-and-readers.md)), and which instrument RQ3 uses in that case |
+| I5 | Risks, free provisioning | The cap of 3 is confirmed (§1.5). Three variants installed together plus a runner is four apps, if the runner counts; rotation inside a session with no mid-session reinstall needs all of them at once | the protocol if [B-04](../backlog/B-04-free-provisioning-probe.md) shows the runner counts: S1 driven without the runner (`devicectl` launch under `xctrace`), or rotation across sessions instead of within one, each with what it costs |
+| I6 | Kill criterion 5 | "The UI-test runner's CPU or memory overhead" — the runner's own figures are another process and never appear in the app's footprint or CPU; contamination is the shift in the **app's** figures with the runner attached | which of the two is compared with the 10 % line |
+| I7 | RQ4 | "Growth over 50 push/pop cycles < 5 MB after warm-up" — S4 is 50 cycles in all, and where warm-up ends is not said | the cycle at which the baseline is read (for instance after cycle 5) and whether growth is last-minus-baseline or a slope |
+| I8 | S1 | "Cold start" is Apple's warm launch (§1.3) | keep the protocol; name it in the write-up |
+| I9 | RQ1 | "i.e. JetBrains' ~9 MB claim reproduces" — JetBrains does not say what its 9 MB measures (§1.1), so a green on `zip -9` neither reproduces nor refutes it | the write-up's wording; the thresholds stand |
+| I10 | RQ3 | "Apple's 'good' band" — two Apple scales exist (§1.4); the brief's numbers are WWDC20's | the citation; the thresholds stand |
+| I11 | Context | Three source details are wrong (§1.1) | nothing to amend; the write-up cites the sources directly |
+| I12 | Fairness, parity | "Screenshot diff of the first screen within a small tolerance" has no number, and A against C cannot pass a whole-screen diff on the iOS 27 SDK (§1.7) | the tolerance, the region, and the treatment of the system chrome, before the first diff |
+| I13 | Prerequisites | "Latest stable Xcode": the Mac has only a beta (§1.2). Latest stable Kotlin is 2.4.21 (2026-10-08) and CMP 1.12.1 (2026-09-22); SKIE does not yet claim 2.4.21 | pins in BRIEF.md, by build number and commit |
+
+---
+
+## 3. Decisions
+
+### D1. A public repository in English, laid out as a measurement study
+
+Owner's answer to the brief's open decision, 2026-10-10: `ios-ui-stack-bench`, public; documents,
+code, commits and pull requests in English. The brief is frozen byte for byte in
+[source-brief.md](source-brief.md) and `make check` holds it; the rest follows the layout of a
+measurement study (BRIEF.md, a file-per-item backlog, raw logs as the deliverable).
+
+### D2. One instrumentation package for all three variants
+
+Signposts, the frame logger, the footprint sampler and the stall switch are one Swift package
+linked by A, B and C ([B-05](../backlog/B-05-hello-world-variants.md)). Rejected: three
+implementations "the same" — an instrument that differs between variants is an undeclared variable.
+The price: in C the instruments live in the hosting view controller and see Compose only through
+signposts the Kotlin side emits through the same API.
+
+### D3. `CADisableMinimumFrameDurationOnPhone = YES` in all three variants *(a flag beyond A's default)*
+
+Brief: idiomatic defaults, every non-default flag listed. Decision: the key in A, B and C. Why: C
+cannot start without it (§1.6), so it is C's default; without it in A and B the study's frame logger
+runs at 60 Hz on a 120 Hz screen and reports their frames on a different basis from C's. The price:
+A and B carry one key their template does not, which may change the cadence of their custom
+animations; it is listed in `docs/flags.md` and its effect on A is measured with the logger on and
+off in [B-16](../backlog/B-16-dry-run-and-the-ruler.md). Confirmed or overturned by the owner in
+B-01.
+
+### D4. Liquid Glass stays where the platform puts it *(proposal, settled in B-01 and B-11)*
+
+The idiomatic default of A and B on the iOS 27 SDK includes Liquid Glass on the newer device and
+there is no supported opt-out (§1.7). It is not removed and not imitated in C; parity is defined on
+geometry and on the list content, and the asymmetry is a stated qualification of every RQ3 result on
+the newer device. Rejected: building with Xcode 26 to use the opt-out — it breaks the brief's
+toolchain rule and pins the study to a design Apple has already removed the switch for.
+
+### D5. Recommendation for the bridge: plain Objective-C export with a Swift adapter
+
+The owner decides in [B-02](../backlog/B-02-swift-bridge.md); the reasons are §1.8.
+
+### D6. The size breakdown comes from the link map
+
+`LD_GENERATE_MAP_FILE = YES` on the app target, the map summed by object origin — app, Kotlin
+(stdlib, coroutines, serialization, the shared module), Skiko and Compose, Swift runtime. Rejected:
+file sizes inside the `.app`, which hold no Kotlin or Skiko file once linking is static (§1.9).
+
+### D7. Install the released Xcode 27.0 (27A266a) before anything runs on a device
+
+§1.2. The beta stays installed only if disk allows; nothing is built for a measurement with it.
+
+---
+
+## 4. Risks and open questions
+
+**Risk 1. The install cap makes the interleaved protocol impossible.** If the runner occupies a
+slot, three variants and a runner do not fit, and a session cannot rotate A→B→C without
+reinstalling. Mitigation: [B-04](../backlog/B-04-free-provisioning-probe.md) measures the cap with
+empty apps before any study code, logs the refusal text and the counted bundle ids
+(`MIFreeProfileValidatedAppTracker`), and proposes the protocol change as an amendment while the
+window is open. Bundle ids are fixed in B-04 and never change, because App IDs are also capped
+(10 per 7 days).
+
+**Risk 2. Animation Hitches does not see C's frames the way it sees A's.** C presents through a
+`CATransaction` since CMP 1.11 (§1.4), so the hypothesis is that it does. Mitigation: the injected
+50 ms stall in all three variants, and a 0 ms stall through the same path that must *not* register
+([B-06](../backlog/B-06-rq0-the-gate.md)); the logger-derived hitch ratio defined beforehand (I4).
+
+**Risk 3. The instruments are part of the subject.** A `CADisplayLink` logger can raise the
+display's rate by asking for it; a 250 ms sampler and signposts cost something; in C a second
+display link runs beside CMP's. Mitigation: A with the instruments on and off, against the ruler,
+in [B-16](../backlog/B-16-dry-run-and-the-ruler.md); the logger's `preferredFrameRateRange` is
+recorded in every log header.
+
+**Risk 4. The same fling moves different amounts of content.** `UIScrollView` and `LazyColumn`
+apply different deceleration, so one velocity renders different numbers of rows. Hitch time ratio is
+per second and survives it; the work done does not. Mitigation: distance travelled and first/last
+visible index recorded per fling ([B-13](../backlog/B-13-ui-test-scenarios.md)) and printed beside
+RQ3.
+
+**Risk 5. Profiles expire after 7 days.** A session straddling an expiry reinstalls mid-session.
+Mitigation: the brief's own — reinstall everything at the start of every session — plus the
+profile's expiry printed in the session header, and a session refused to start within a day of it.
+
+**Risk 6. The Mac runs out of disk.** 47 GiB free must hold the released Xcode, the Kotlin/Native
+toolchain, three apps' builds and the `.trace` bundles. Mitigation: a bundle is deleted only after
+its CSVs are exported and its `sha256` written into `logs/`; the session command checks free space
+before it starts.
+
+**Risk 7. Thermal drift.** The brief's rotation, `thermalState` logging and discard rule stand;
+[B-16](../backlog/B-16-dry-run-and-the-ruler.md) shows A's time-ordered series so that the drift the
+rotation is meant to cancel is seen, not assumed.
+
+**Open question 1 — which ProMotion iPhone, on which iOS.** Its iOS major version decides whether
+`XCTHitchMetric` is available as a third cross-check on that device (it is not on the XS) and how
+far it is from the XS's iOS 18. Pinned in [B-01](../backlog/B-01-pins-and-the-amendment-window.md).
+
+---
+
+## 5. What happens next
+
+The gate first. The brief's open decisions ([B-02](../backlog/B-02-swift-bridge.md),
+[B-03](../backlog/B-03-filter-scenario-verdict.md)) and the probe of what free provisioning allows
+([B-04](../backlog/B-04-free-provisioning-probe.md)) come before the hello-world variants
+([B-05](../backlog/B-05-hello-world-variants.md)), because each can change the protocol, and the
+protocol can only change while the amendment window is open. [B-01](../backlog/B-01-pins-and-the-amendment-window.md)
+then settles §2, and [B-06](../backlog/B-06-rq0-the-gate.md) — RQ0 — decides whether there is a
+study at all.

@@ -1,0 +1,11 @@
+.DS_Store
+.idea/
+__pycache__/
+*.xcuserstate
+xcuserdata/
+DerivedData/
+build/
+.gradle/
+.kotlin/
+# Raw .trace bundles are large; their hashes and exports live in logs/ (brief: "Raw .trace hashes")
+*.trace/
