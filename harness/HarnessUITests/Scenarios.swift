@@ -24,6 +24,16 @@ final class Scenarios: XCTestCase {
         continueAfterFailure = false
     }
 
+    /// Every scenario ends with the arm terminated, so nothing after the run can append to its log:
+    /// a C run left alive once logged two push/pop cycles a quarter of an hour after its test had
+    /// passed, and the reader rightly called the run invalid (B-14).
+    override func tearDown() {
+        if let bundle = environment["BENCH_BUNDLE"], !bundle.isEmpty {
+            XCUIApplication(bundleIdentifier: bundle).terminate()
+        }
+        super.tearDown()
+    }
+
     // MARK: - scenarios
 
     /// S1: terminate, wait 10 s, launch, until the list is populated. One launch per invocation;

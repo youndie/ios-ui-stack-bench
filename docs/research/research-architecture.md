@@ -261,6 +261,19 @@ written with ("the shared module is not reshaped to suit it"). It is recorded as
 the owner; the alternatives are B3 "not measured" until Kotlin 2.5.0 is stable and SKIE supports
 it, or a different Kotlin for B3 alone, which would make B3's module different bytes.
 
+### 1.12 What Instruments records on the simulator (B-14)
+
+| Fact | Where verified |
+|---|---|
+| `xctrace record --template 'Animation Hitches'` on the iOS 27 simulator ends with "Hitches is not supported on this platform" and records no hitches | Xcode 27.0 (27A266a), iPhone 17 Pro simulator, 2026-10-11 (B-14) |
+| `xctrace record --template 'App Launch' --launch -- <bundle id>` on the same simulator reaches its time limit, prints "ending recording", and does not exit; it had to be interrupted | same |
+
+**Consequence.** Nothing about the Instruments half of the study can be developed or checked on the
+simulator: not the recording, not the export schemas, not the readers. That half moves to
+[B-24](../backlog/B-24-xctrace-record-and-readers.md), after RQ0 ([B-06](../backlog/B-06-rq0-the-gate.md))
+has produced real device traces. The in-app half — the logger, the footprint sampler, the markers
+and their reader — works on the simulator and is built there (B-14).
+
 ---
 
 ## 2. Where the frozen brief cannot be applied as written

@@ -30,7 +30,9 @@ device: B-05, B-07–B-10, B-13–B-15, B-20–B-22. The device items — [B-04]
 devices, [B-12](docs/backlog/B-12-rq1-size.md), [B-16](docs/backlog/B-16-dry-run-and-the-ruler.md)–[B-19](docs/backlog/B-19-write-up.md)
 — and [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md)'s close of the window wait for the
 owner's go. B-12 needs no device but writes the first file under `logs/`, which closes the window.
-[B-23](docs/backlog/B-23-kotlin-2-5-round.md) waits for Kotlin 2.5.0 to be stable and for the write-up. Nothing here becomes a library, a JetBrains ticket or
+[B-23](docs/backlog/B-23-kotlin-2-5-round.md) waits for Kotlin 2.5.0 to be stable and for the write-up.
+[B-24](docs/backlog/B-24-xctrace-record-and-readers.md) — the Instruments recording and its readers — waits for
+B-06's device traces: Instruments records no hitches on a simulator. Nothing here becomes a library, a JetBrains ticket or
 an upstream fix: all three are non-goals of the brief, and an item proposing one does not belong in
 this file.
 
@@ -94,15 +96,15 @@ this file.
 | [B-06](docs/backlog/B-06-rq0-the-gate.md) `[ ]` | RQ0 — the gate: every metric captured on a device, the injected stall seen in every arm | P0 | M | B-01, B-05 |
 | [B-11](docs/backlog/B-11-parity-check.md) `[ ]` | Visual parity before any measurement: item count, row height, first-screen diff | P1 | M | B-08, B-09, B-10, B-20, B-21 |
 | [B-12](docs/backlog/B-12-rq1-size.md) `[ ]` | RQ1 — size: what KMP and CMP add to an arm64 app, uncompressed and zip -9, by component | P1 | S | B-11 |
-| [B-14](docs/backlog/B-14-trace-export-and-readers.md) `[ ]` | xctrace record and export, and the readers that turn traces and in-app logs into CSVs | P1 | M | B-13 |
 | [B-15](docs/backlog/B-15-analysis-and-intervals.md) `[ ]` | The analysis: median and IQR per variant, bootstrap 95 % CIs, the verdict word per RQ | P1 | M | B-14 |
-| [B-16](docs/backlog/B-16-dry-run-and-the-ruler.md) `[ ]` | Dry run on one device: the ruler, the runner's and the instruments' own cost, thermal drift | P1 | M | B-15 |
+| [B-16](docs/backlog/B-16-dry-run-and-the-ruler.md) `[ ]` | Dry run on one device: the ruler, the runner's and the instruments' own cost, thermal drift | P1 | M | B-15, B-24 |
 | [B-17](docs/backlog/B-17-runs-on-the-older-device.md) `[ ]` | P3 — the full matrix on the older device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-18](docs/backlog/B-18-runs-on-the-newer-device.md) `[ ]` | P3 — the full matrix on the newer device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-19](docs/backlog/B-19-write-up.md) `[ ]` | P4 — the write-up: one verdict per RQ, regenerated from the CSVs, negative results included | P1 | M | B-12, B-17, B-18 |
+| [B-24](docs/backlog/B-24-xctrace-record-and-readers.md) `[ ]` | Record with xctrace beside every scenario, export its tables, and read them - on a device | P1 | M | B-06 |
 | [B-23](docs/backlog/B-23-kotlin-2-5-round.md) `[ ]` | A later round on Kotlin 2.5.0: arm B3 without D8, once Kotlin 2.5.0 is stable | P3 | M | - |
 
-## Closed (11)
+## Closed (12)
 
 **P0 — the gate**
 
@@ -123,5 +125,6 @@ this file.
 **P2 — harness**
 
 - [B-13](docs/backlog/B-13-ui-test-scenarios.md) `[x]` - The UI-test scenarios S1–S4, one target driving every arm by bundle id
+- [B-14](docs/backlog/B-14-trace-export-and-readers.md) `[x]` - xctrace record and export, and the readers that turn traces and in-app logs into CSVs
 
 <!-- END INDEX -->
