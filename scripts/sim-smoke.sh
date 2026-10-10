@@ -11,7 +11,7 @@ set -eu
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 DERIVED=${DERIVED_DATA:-$ROOT/build/DerivedData}
 SIM=${SIM:-booted}
-SECONDS_RUN=${SECONDS_RUN:-5}
+SECONDS_RUN=${SECONDS_RUN:-3}
 arms=${*:-"a-native b1-objc b2-skie b3-swift-export c-kmp-cmp"}
 
 for arm in $arms; do
@@ -26,6 +26,12 @@ for arm in $arms; do
     else
         xcrun simctl launch "$SIM" "$id" >/dev/null
     fi
+    # Wait for the list to be populated (the first launch after an install can take seconds on a
+    # simulator), then let the app run SECONDS_RUN more; give up after TIMEOUT.
+    waited=0
+    until grep -qs '"listPopulated"' "$data"/Documents/bench/*.ndjson || [ "$waited" -ge "${TIMEOUT:-30}" ]; do
+        sleep 1; waited=$((waited + 1))
+    done
     sleep "$SECONDS_RUN"
     xcrun simctl terminate "$SIM" "$id"
     python3 - "$arm" "$data"/Documents/bench/*.ndjson <<'PY'
