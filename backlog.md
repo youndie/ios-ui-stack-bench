@@ -79,13 +79,12 @@ this file.
 
 <!-- BEGIN INDEX -->
 
-## Open (20)
+## Open (19)
 
 | Task | | Priority | Size | Blocked by |
 |---|---|---|---|---|
 | [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md) `[ ]` | Pin the stand, settle the brief's incoherences as amendments, and close the window | P0 | S | B-04 |
 | [B-04](docs/backlog/B-04-free-provisioning-probe.md) `[ ]` | What free provisioning allows on the devices: apps per device, the test runner, Instruments on Release | P0 | S | - |
-| [B-05](docs/backlog/B-05-hello-world-variants.md) `[ ]` | Hello-world arms A, B1, B2, B3 and C with the instrumentation the study will measure through | P0 | M | B-02 |
 | [B-06](docs/backlog/B-06-rq0-the-gate.md) `[ ]` | RQ0 — the gate: every metric captured on a device, the injected stall seen in every arm | P0 | M | B-01, B-05 |
 | [B-07](docs/backlog/B-07-fixture-and-shared-module.md) `[ ]` | The fixture and the shared Kotlin module: 2,000 items, 50 thumbnails, parse, filter, state | P1 | M | B-05 |
 | [B-08](docs/backlog/B-08-variant-a.md) `[ ]` | Variant A — Native: the full spec | P1 | M | B-07 |
@@ -104,11 +103,12 @@ this file.
 | [B-21](docs/backlog/B-21-variant-b3-swift-export.md) `[ ]` | Variant B3 — KMP + SwiftUI over Swift export: the full spec, or the reason it cannot be built | P1 | M | B-07 |
 | [B-22](docs/backlog/B-22-ci-builds-every-arm.md) `[ ]` | CI builds every arm on macOS, so a green pull request means the apps still build | infra | S | B-05 |
 
-## Closed (2)
+## Closed (3)
 
 **P0 — the gate**
 
 - [B-02](docs/backlog/B-02-swift-bridge.md) `[x]` - Choose the Swift bridge for B and C: Objective-C export with an adapter, SKIE, or Swift export
 - [B-03](docs/backlog/B-03-filter-scenario-verdict.md) `[x]` - Decide whether S3 (filter) gets its own green and red, or stays descriptive
+- [B-05](docs/backlog/B-05-hello-world-variants.md) `[x]` - Hello-world arms A, B1, B2, B3 and C with the instrumentation the study will measure through
 
 <!-- END INDEX -->
