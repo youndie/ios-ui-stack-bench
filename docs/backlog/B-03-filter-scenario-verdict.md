@@ -1,7 +1,7 @@
 ---
 id: B-03
 title: "Decide whether S3 (filter) gets its own green and red, or stays descriptive"
-status: question
+status: done
 priority: P1
 size: XS
 stage: stage-0-gate
@@ -24,3 +24,10 @@ the window is open: a threshold written after the first filter run is the move t
   longest hitch during typing, or the p95 of keystroke-to-frame latency from signposts), green, red
   and the device are in BRIEF.md before the window closes.
 - Anchors: `harness/` (target), `docs/research/source-brief.md`.
+
+---
+
+## Decision — 2026-10-10, the owner
+
+**Descriptive.** S3 is run and reported with median and IQR per arm and per device, with no verdict
+word and no threshold. Recorded as amendment A1.2 in [BRIEF.md](../../BRIEF.md).

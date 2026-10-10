@@ -1,7 +1,7 @@
 ---
 id: B-02
 title: "Choose the Swift bridge for B and C: Objective-C export with an adapter, SKIE, or Swift export"
-status: question
+status: done
 priority: P0
 size: XS
 stage: stage-0-gate
@@ -32,3 +32,20 @@ byte-identical to A's. Swift export is Alpha by its own documentation.
 - AC: the choice is one that compiles against the pinned Kotlin version — checked by building the
   hello-world B of B-05, not assumed from a compatibility table.
 - Anchors: `shared/` (target), `apps/b-kmp-swiftui/` (target).
+
+---
+
+## Decision — 2026-10-10, the owner
+
+**All three.** No option is rejected: each bridge becomes its own B arm over the same compiled
+Kotlin module and the same SwiftUI views —
+**B1** Objective-C export with a hand-written Swift adapter ([B-09](B-09-variant-b.md)),
+**B2** SKIE ([B-20](B-20-variant-b2-skie.md)),
+**B3** Swift export ([B-21](B-21-variant-b3-swift-export.md)).
+C is built with the Objective-C export, so B1→C keeps the brief's "cost of Compose UI" isolated.
+
+Recorded as amendment A1.1 in [BRIEF.md](../../BRIEF.md): RQ1's B − A and RQ5 are evaluated per
+arm against the thresholds as written, with **no combined and no best-of verdict**; the session plan
+for five apps under a cap of three, and the Kotlin pin SKIE allows, are B-01's
+([research §2](../research/research-architecture.md), I5 and I14). The recommendation above is kept
+as the reason B1 is the arm C is paired with.

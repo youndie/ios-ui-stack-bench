@@ -30,5 +30,5 @@ make fix        # regenerate the backlog index
 
 ### Research (2)
 
-- [x] [research-architecture](research/research-architecture.md) — prior work as its sources report it, the stand, Apple's launch and hitch definitions, free provisioning, 120 Hz and Liquid Glass, the Swift bridge, linkage and size, Kotlin/Native memory; the brief's incoherences I1–I13; decisions D1–D7; risks
+- [x] [research-architecture](research/research-architecture.md) — prior work as its sources report it, the stand, Apple's launch and hitch definitions, free provisioning, 120 Hz and Liquid Glass, the Swift bridge, linkage and size, Kotlin/Native memory; the brief's incoherences I1–I14; decisions D1–D7; risks
 - [x] [source-brief](research/source-brief.md) — the pre-registration as received on 2026-10-10, frozen and hashed by `make check`

@@ -29,8 +29,8 @@ green threshold is said to reproduce has to be compared with what JetBrains actu
 - Positive control: B-06's 1 MB incompressible resource, added and removed, moves the proxy by
   about 1 MB.
 
-- AC: uncompressed and `zip -9` bytes per variant, B − A and C − A, the verdict word against the
-  thresholds as written, and the breakdown from the link maps — all regenerated from
+- AC: uncompressed and `zip -9` bytes per arm, B1 − A, B2 − A, B3 − A and C − A, a verdict word for
+  each against the thresholds as written — three B verdicts, no combined one (amendment A1.1) — and the breakdown from the link maps — all regenerated from
   `logs/b-12/` by a script, never typed.
 - AC: the two clean builds of each variant are byte-identical apart from the code signature, or
   the difference is recorded and its size stated.

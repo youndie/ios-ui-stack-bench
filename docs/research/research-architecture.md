@@ -114,7 +114,7 @@ Organizer page, whose numbers are twice as lenient.
 **Consequence 2 — the XCTest metrics cannot be the instrument here.** The scroll metrics see UIKit
 scroll views, and C's `LazyColumn` is not one; `XCTHitchMetric` needs iOS 26, which the XS cannot
 run; `XCTMemoryMetric` is a delta, and RQ4 needs a peak. The brief's choice of `xctrace` plus an
-in-app logger is the one that can work on both devices and all three variants.
+in-app logger is the one that can work on both devices and in every arm.
 
 **Consequence 3 — the brief's named risk is smaller than it looked, and still unproven.** On
 CMP ≥ 1.11, C's frames reach the screen as ordinary Core Animation commits, so Animation Hitches
@@ -138,6 +138,15 @@ target driving all variants by bundle ID") reduces the runners to one but still 
 installs. [B-04](../backlog/B-04-free-provisioning-probe.md) answers it on the device before any
 code (§2, I5).
 
+**Amended 2026-10-10, the same day: the cap now binds whatever the runner does.** The owner split B
+into three arms, one per Swift bridge (BRIEF.md A1.1, D5 below), so the study has five apps — A,
+B1, B2, B3, C — against three slots. No session can hold every arm, and the brief's rotation
+A→B→C inside one session becomes a set of sessions that share an anchor arm: A is installed in
+every session, each other arm is compared with A inside its own session, and two non-anchor arms
+are compared only through A, or by sharing a session. B1 and C share one, because B1→C is the
+brief's "cost of Compose UI" (D5). Which sessions exist depends on whether the runner takes a slot:
+two free slots beside A, or one.
+
 ### 1.6 120 Hz: the key C cannot run without
 
 | Fact | Where verified |
@@ -153,7 +162,7 @@ framework will not run without it.
 **Consequence 2 — A and B need it too, or the study's own frame logger lies on the 120 Hz
 device.** The logger is a `CADisplayLink`; without the key it is held near 60 Hz while SwiftUI's
 scrolling runs at 120, and it would report A's and B's frames at half the rate C's are reported
-at. The decision (D3) is the key in all three variants, listed as a flag, with its cost stated: on
+at. The decision (D3) is the key in every arm, listed as a flag, with its cost stated: on
 A and B it changes the logger's cadence and the detail screen's custom animations, not the system's
 scrolling — which [B-16](../backlog/B-16-dry-run-and-the-ruler.md) checks with the logger on and
 off.
@@ -188,11 +197,16 @@ pixels over the list content; how the chrome is treated is an amendment
 | **SKIE 0.10.15** (2026-09-25) adds Kotlin 2.4.20; its compatibility page still says up to 2.4.10; Kotlin 2.4.21 is not mentioned. `StateFlow` → `SkieSwiftStateFlow`, an `AsyncSequence` with its type argument | github.com/touchlab/SKIE/releases; skie.touchlab.co/changelog/0.10.15; skie.touchlab.co/features/flows |
 | **Swift export is Alpha**, "breaking changes are expected"; flows become `AsyncSequence`; direct integration only; nothing published on coexistence with a CMP framework | kotlinlang.org/docs/native-swift-export.html; kotlinlang.org/docs/whatsnew2420.html |
 
-**Consequence.** The recommendation for [B-02](../backlog/B-02-swift-bridge.md) is the plain
+**Consequence.** The recommendation for [B-02](../backlog/B-02-swift-bridge.md) was the plain
 Objective-C export with a thin hand-written Swift adapter to `@Observable`: it is what the
 template generates, it adds no compiler plugin whose support has to track the Kotlin pin (SKIE
 does not yet claim the latest stable Kotlin, 2.4.21), and the A→B delta then measures what most KMP
 apps actually ship. Swift export is excluded on its own label. The choice is the owner's.
+
+**Superseded 2026-10-10 by the owner's decision: all three are measured**, each as its own B arm
+(BRIEF.md A1.1, D5). The paragraph above is kept because it is still why B1, the Objective-C export,
+is the arm C is paired with, and why SKIE constrains the Kotlin pin (§2, I14). Swift export's
+"Alpha" now matters as a risk, not as an exclusion (Risk 8).
 
 ### 1.9 The fairness flags are already the defaults, and the size breakdown needs a link map
 
@@ -224,7 +238,7 @@ cannot be read off file sizes.** It is taken from the final link map, summed by 
 Allocations shows it as anonymous VM regions under tag 246 rather than as Kotlin objects — which is
 what makes the VM Tracker cross-check meaningful for B and C and useless for attributing objects.
 Because the collector runs on a timer and on pressure, a peak sampled every 250 ms depends on when
-the GC ran; RQ4's peak is read from the same 250 ms series in all three variants, and the GC
+the GC ran; RQ4's peak is read from the same 250 ms series in every arm, and the GC
 timing is a reason for its spread, not a variable to tune.
 
 ---
@@ -241,7 +255,7 @@ amendment in BRIEF.md by [B-01](../backlog/B-01-pins-and-the-amendment-window.md
 | I2 | Runs and statistics | "A bootstrap 95 % CI for each A–B and A–C difference … the CI must not cross the threshold" fits RQ2 and RQ5, whose thresholds are differences. RQ3's are absolute values of C, RQ3's "no hitch ≥ 100 ms in any run" is a maximum, RQ4's are a ratio to A and a growth within C, and RQ1 has no sample at all | the interval each RQ is decided with: CI of C's median (RQ3), CI of the ratio (RQ4), a count (max hitch), none (RQ1, deterministic) |
 | I3 | RQ4, RQ5 | No device is named. RQ2 says "older device", RQ3 "both" | the device(s) for RQ4 and RQ5 |
 | I4 | RQ0 vs kill criterion 2 | RQ0 is green only if both instruments see the stall; kill criterion 2 fires only if neither does. If only the in-app logger sees it for C, RQ0 is grey and RQ3 is still owed — but its thresholds are in Animation Hitches' unit, and the logger as specified reports frame-time percentiles, not ms/s | a hitch time ratio computed from the logger's frame intervals, defined before any number ([B-14](../backlog/B-14-trace-export-and-readers.md)), and which instrument RQ3 uses in that case |
-| I5 | Risks, free provisioning | The cap of 3 is confirmed (§1.5). Three variants installed together plus a runner is four apps, if the runner counts; rotation inside a session with no mid-session reinstall needs all of them at once | the protocol if [B-04](../backlog/B-04-free-provisioning-probe.md) shows the runner counts: S1 driven without the runner (`devicectl` launch under `xctrace`), or rotation across sessions instead of within one, each with what it costs |
+| I5 | Risks, free provisioning | The cap of 3 is confirmed (§1.5). With five arms since A1.1, no session holds every arm, and the brief's rotation inside a session with no mid-session reinstall cannot cover them | the session plan, once [B-04](../backlog/B-04-free-provisioning-probe.md) has said whether the runner takes a slot: which arms share a session (A in all of them; B1 with C), how the order rotates inside and across sessions, and how a comparison between two arms in different sessions is read — through A only, with A's figures from both sessions side by side |
 | I6 | Kill criterion 5 | "The UI-test runner's CPU or memory overhead" — the runner's own figures are another process and never appear in the app's footprint or CPU; contamination is the shift in the **app's** figures with the runner attached | which of the two is compared with the 10 % line |
 | I7 | RQ4 | "Growth over 50 push/pop cycles < 5 MB after warm-up" — S4 is 50 cycles in all, and where warm-up ends is not said | the cycle at which the baseline is read (for instance after cycle 5) and whether growth is last-minus-baseline or a slope |
 | I8 | S1 | "Cold start" is Apple's warm launch (§1.3) | keep the protocol; name it in the write-up |
@@ -250,6 +264,7 @@ amendment in BRIEF.md by [B-01](../backlog/B-01-pins-and-the-amendment-window.md
 | I11 | Context | Three source details are wrong (§1.1) | nothing to amend; the write-up cites the sources directly |
 | I12 | Fairness, parity | "Screenshot diff of the first screen within a small tolerance" has no number, and A against C cannot pass a whole-screen diff on the iOS 27 SDK (§1.7) | the tolerance, the region, and the treatment of the system chrome, before the first diff |
 | I13 | Prerequisites | "Latest stable Xcode": the Mac has only a beta (§1.2). Latest stable Kotlin is 2.4.21 (2026-10-08) and CMP 1.12.1 (2026-09-22); SKIE does not yet claim 2.4.21 | pins in BRIEF.md, by build number and commit |
+| I14 | Prerequisites, A1.1 | B2 needs SKIE, and SKIE 0.10.15 claims Kotlin 2.4.20, not the latest stable 2.4.21 (§1.8). The shared module must be one Kotlin build for every Kotlin arm | the Kotlin pin: the newest version all three bridges compile against — checked by building the hello-world arms, not read off a compatibility page. If that is 2.4.20, it is a deviation from "latest stable" stated as such |
 
 ---
 
@@ -262,17 +277,17 @@ code, commits and pull requests in English. The brief is frozen byte for byte in
 [source-brief.md](source-brief.md) and `make check` holds it; the rest follows the layout of a
 measurement study (BRIEF.md, a file-per-item backlog, raw logs as the deliverable).
 
-### D2. One instrumentation package for all three variants
+### D2. One instrumentation package for every arm
 
 Signposts, the frame logger, the footprint sampler and the stall switch are one Swift package
-linked by A, B and C ([B-05](../backlog/B-05-hello-world-variants.md)). Rejected: three
+linked by every arm — A, B1, B2, B3 and C ([B-05](../backlog/B-05-hello-world-variants.md)). Rejected: three
 implementations "the same" — an instrument that differs between variants is an undeclared variable.
 The price: in C the instruments live in the hosting view controller and see Compose only through
 signposts the Kotlin side emits through the same API.
 
-### D3. `CADisableMinimumFrameDurationOnPhone = YES` in all three variants *(a flag beyond A's default)*
+### D3. `CADisableMinimumFrameDurationOnPhone = YES` in every arm *(a flag beyond A's default)*
 
-Brief: idiomatic defaults, every non-default flag listed. Decision: the key in A, B and C. Why: C
+Brief: idiomatic defaults, every non-default flag listed. Decision: the key in every arm. Why: C
 cannot start without it (§1.6), so it is C's default; without it in A and B the study's frame logger
 runs at 60 Hz on a 120 Hz screen and reports their frames on a different basis from C's. The price:
 A and B carry one key their template does not, which may change the cadence of their custom
@@ -288,9 +303,29 @@ geometry and on the list content, and the asymmetry is a stated qualification of
 the newer device. Rejected: building with Xcode 26 to use the opt-out — it breaks the brief's
 toolchain rule and pins the study to a design Apple has already removed the switch for.
 
-### D5. Recommendation for the bridge: plain Objective-C export with a Swift adapter
+### D5. B is three arms, one per Swift bridge *(owner, 2026-10-10; deviation from the brief)*
 
-The owner decides in [B-02](../backlog/B-02-swift-bridge.md); the reasons are §1.8.
+Brief: one bridge, chosen once and kept identical in B and C, because the A→B delta measures the
+binding tool as much as Kotlin/Native. Decision ([B-02](../backlog/B-02-swift-bridge.md), BRIEF.md
+A1.1): measure all three — **B1** Objective-C export with a hand-written Swift adapter, **B2** SKIE,
+**B3** Swift export — each its own app ([B-09](../backlog/B-09-variant-b.md),
+[B-20](../backlog/B-20-variant-b2-skie.md), [B-21](../backlog/B-21-variant-b3-swift-export.md)).
+The brief's own risk becomes the subject: the spread between B1, B2 and B3 is what the binding tool
+costs.
+
+- **One Kotlin module, three bindings.** The shared module's compiled library (`.klib`) is the same
+  bytes in every Kotlin arm; what differs is the framework each bridge produces from it and the thin
+  Swift adapter that turns its state into the `@Observable` model the identical SwiftUI views read.
+  The klib digest is checked equal across arms, the framework digests are recorded per arm
+  ([B-07](../backlog/B-07-fixture-and-shared-module.md)).
+- **C is paired with B1.** C hosts Compose and barely crosses the bridge; it is built with the
+  Objective-C export, the template's default, so B1→C is the brief's "cost of Compose UI" with
+  nothing else changing.
+- **RQ5 is answered per bridge, never as the best of three.** Picking the bridge that came out
+  greenest would turn three tries into one verdict, so the write-up prints three RQ5 verdicts against
+  the same thresholds, and RQ1's B − A likewise.
+- The price: five apps against a cap of three (§1.5, I5), three more builds to keep at parity, a
+  Kotlin pin bounded by SKIE (I14), and an Alpha toolchain in one arm (Risk 8).
 
 ### D6. The size breakdown comes from the link map
 
@@ -306,9 +341,12 @@ file sizes inside the `.app`, which hold no Kotlin or Skiko file once linking is
 
 ## 4. Risks and open questions
 
-**Risk 1. The install cap makes the interleaved protocol impossible.** If the runner occupies a
-slot, three variants and a runner do not fit, and a session cannot rotate A→B→C without
-reinstalling. Mitigation: [B-04](../backlog/B-04-free-provisioning-probe.md) measures the cap with
+**Risk 1. The install cap makes the interleaved protocol impossible.** Five arms since A1.1 do not
+fit three slots in any case, and if the runner occupies a slot only two arms fit beside it. A
+comparison between arms measured in different sessions mixes the arms with the sessions.
+Mitigation: A is the anchor installed in every session, every other arm is read against A from its
+own session, and a cross-session comparison is printed with A's figures from both sessions beside
+it, so a session effect shows up as a moving A rather than as an arm effect. Before that, [B-04](../backlog/B-04-free-provisioning-probe.md) measures the cap with
 empty apps before any study code, logs the refusal text and the counted bundle ids
 (`MIFreeProfileValidatedAppTracker`), and proposes the protocol change as an amendment while the
 window is open. Bundle ids are fixed in B-04 and never change, because App IDs are also capped
@@ -316,7 +354,7 @@ window is open. Bundle ids are fixed in B-04 and never change, because App IDs a
 
 **Risk 2. Animation Hitches does not see C's frames the way it sees A's.** C presents through a
 `CATransaction` since CMP 1.11 (§1.4), so the hypothesis is that it does. Mitigation: the injected
-50 ms stall in all three variants, and a 0 ms stall through the same path that must *not* register
+50 ms stall in every arm, and a 0 ms stall through the same path that must *not* register
 ([B-06](../backlog/B-06-rq0-the-gate.md)); the logger-derived hitch ratio defined beforehand (I4).
 
 **Risk 3. The instruments are part of the subject.** A `CADisplayLink` logger can raise the
@@ -343,6 +381,13 @@ before it starts.
 **Risk 7. Thermal drift.** The brief's rotation, `thermalState` logging and discard rule stand;
 [B-16](../backlog/B-16-dry-run-and-the-ruler.md) shows A's time-ordered series so that the drift the
 rotation is meant to cancel is seen, not assumed.
+
+**Risk 8. Swift export is Alpha, and B3 may not build the spec.** Its documentation expects breaking
+changes and limits what it exports (§1.8); a `StateFlow` reaching Swift as something the adapter
+cannot observe, or a build failure on the pinned Kotlin, would leave B3 empty. Mitigation: B3's
+hello-world is part of the gate ([B-05](../backlog/B-05-hello-world-variants.md)), so a toolchain
+that cannot carry the spec is known before P1; if it fails, B3 is reported "not measured" with the
+failure verbatim — a blocker, which is a weaker claim than a measured result — and B1, B2 and C go on.
 
 **Open question 1 — which ProMotion iPhone, on which iOS.** Its iOS major version decides whether
 `XCTHitchMetric` is available as a third cross-check on that device (it is not on the XS) and how

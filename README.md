@@ -1,8 +1,8 @@
 # ios-ui-stack-bench
 
-One iOS app built three times — native SwiftUI, Kotlin Multiplatform with SwiftUI views, and Kotlin
-Multiplatform with Compose Multiplatform — and measured on physical iPhones for size, startup,
-scroll smoothness and memory. The methodology and the raw data sit next to every number.
+One iOS app built five times — native SwiftUI, Kotlin Multiplatform with SwiftUI views over three
+different Swift bridges, and Kotlin Multiplatform with Compose Multiplatform — and measured on
+physical iPhones for size, startup, scroll smoothness and memory. The methodology and the raw data sit next to every number.
 
 **Status: pre-registration.** No app exists yet and nothing has been measured. The questions, their
 green and red thresholds and the kill criteria were fixed before any code, and `make check` holds
@@ -11,11 +11,11 @@ them byte for byte; nothing in this repository is a result until the results doc
 | Variant | Logic | UI |
 |---|---|---|
 | A — Native | Swift | SwiftUI |
-| B — KMP + SwiftUI | shared Kotlin module | the same SwiftUI views as A |
+| B1 / B2 / B3 — KMP + SwiftUI | shared Kotlin module, bridged by the Objective-C export, SKIE, or Swift export | the same SwiftUI views as A |
 | C — KMP + CMP | the same shared Kotlin module as B | Compose Multiplatform |
 
-A→B isolates the Kotlin/Native runtime and the Swift bridge; B→C isolates the Compose renderer and
-runtime.
+A→B isolates the Kotlin/Native runtime and the Swift bridge — three bridges, one arm each; B1→C
+isolates the Compose renderer and runtime.
 
 ## Where to read
 

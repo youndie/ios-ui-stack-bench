@@ -5,7 +5,7 @@ status: open
 priority: P1
 size: M
 stage: stage-1-build
-blocked_by: [B-08, B-09, B-10]
+blocked_by: [B-08, B-09, B-10, B-20, B-21]
 ---
 
 # B-11 — Visual parity
@@ -27,12 +27,12 @@ days of kill criterion 3 on chrome rather than content.
   through [B-01](B-01-pins-and-the-amendment-window.md) as an amendment. Geometry — item count,
   row height in points, thumbnail size, font size — is checked by number from the view hierarchy
   or the signposted layout, not only by eye.
-- A vs B must be pixel-identical up to the tolerance (same views); A vs C is where the tolerance
-  matters.
+- A against each of B1, B2 and B3 must be pixel-identical up to the tolerance (same views, only
+  the adapter differs); A against C is where the tolerance matters.
 - Not covered: "native feel" — a non-goal of the brief.
 
 - AC: the tolerance and region are in BRIEF.md before the first diff is computed.
-- AC: for each device: the three first-screen screenshots, the diff images and the measured
+- AC: for each device: the five first-screen screenshots, the diff images and the measured
   mismatch, under `logs/b-11/`; item count and row height per variant, by number.
 - AC: build days spent on parity are counted from this item's start and recorded; on day 5 without
   parity the scope cut of kill criterion 3 is applied, not extended.

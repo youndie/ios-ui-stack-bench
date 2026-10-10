@@ -25,7 +25,7 @@ build number or commit behind it, because a tag moves. Rows still open name the 
 | Kotlin | **open** — latest stable on 2026-10-10 is 2.4.21 (2026-10-08) | Maven Central `kotlin-gradle-plugin` metadata; JetBrains/kotlin releases. B-01 |
 | Compose Multiplatform | **open** — latest stable on 2026-10-10 is 1.12.1 (2026-09-22); `1.13.0-alpha02` is a pre-release that Maven's `<release>` tag points at | Maven Central `org.jetbrains.compose.gradle.plugin` metadata; JetBrains/compose-multiplatform releases. B-01 |
 | CMP `parallelRendering` | the framework default (`true` since 1.11.0), recorded because its default changed between versions | research §1.4 |
-| Swift bridge for B and C | **open** — the owner's decision | [B-02](docs/backlog/B-02-swift-bridge.md) |
+| Swift bridges | **all three, one B arm each** (A1.1): B1 Objective-C export + Swift adapter, B2 SKIE, B3 Swift export; C uses the Objective-C export. Versions **open** — SKIE's and the Kotlin pin bound each other (research §2, I14) | owner, 2026-10-10, [B-02](docs/backlog/B-02-swift-bridge.md); versions in B-01 |
 | Older device | **open** — candidate iPhone XS (`iPhone11,2`, A12, 4 GB, 60 Hz), iOS 18 at most | `xcrun devicectl list devices`; research §1.2. B-01 |
 | Newer device | **open** — a 120 Hz ProMotion iPhone; the owner confirmed one will be available (2026-10-10) | B-01 |
 | Bundle ids | **open** — fixed once and never changed (App IDs are capped at 10 per 7 days) | [B-04](docs/backlog/B-04-free-provisioning-probe.md) |
@@ -51,10 +51,37 @@ what changes, the evidence that forced it, and whether it can move a verdict —
 move one towards green, what is published beside it. These are held by being appended and by review
 of `git log -p BRIEF.md`; the script does not freeze them.
 
-**None yet.** [research §2](docs/research/research-architecture.md) lists thirteen places where the
-frozen text cannot be applied as written (I1–I13); [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md)
+[Research §2](docs/research/research-architecture.md) lists fourteen places where the frozen text
+cannot be applied as written (I1–I14); [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md)
 settles each here, or records it as left as written, before the window closes. None of them asks for
-a threshold to move.
+a threshold to move. The two below are the owner's answers to the brief's open decisions.
+
+### A1.1 — B becomes three arms, one per Swift bridge (2026-10-10, owner, before the first measurement)
+
+The pre-registration has one B — "Shared Kotlin module … same SwiftUI views as A" — with the bridge
+an open decision, and its risk table says to "decide once and keep it identical in B and C". The
+owner's decision on [B-02](docs/backlog/B-02-swift-bridge.md): **measure all three bridges.** B is
+now B1 (Objective-C export with a hand-written Swift adapter), B2 (SKIE) and B3 (Swift export), each
+its own app over the same compiled Kotlin module and the same SwiftUI views; C is built with the
+Objective-C export, so B1→C is the brief's "cost of Compose UI" unchanged.
+
+What it does to the verdicts: **no threshold moves.** RQ1's "B − A" and every RQ5 condition are
+evaluated once per B arm against the thresholds as written, and published as three verdicts. **There
+is no combined RQ5 verdict and no "best bridge" verdict** — three tries at one green would push RQ5
+towards green by selection, which is the move an amendment may not make. RQ2, RQ3 and RQ4 concern C
+and are unaffected.
+
+What it does to the protocol: five apps against a free account's cap of three (research §1.5, I5),
+so the brief's rotation inside a session becomes a set of sessions with A in every one of them; the
+session plan is an amendment of B-01's, once B-04 has measured the cap. It also bounds the Kotlin pin
+by SKIE's support (I14), and puts an Alpha toolchain in B3 (research Risk 8): a B3 that cannot carry
+the spec is reported "not measured", with the failure.
+
+### A1.2 — S3 (filter) stays descriptive (2026-10-10, owner, before the first measurement)
+
+The brief's open decision "whether S3 (filter) gets its own red/green or stays descriptive"
+([B-03](docs/backlog/B-03-filter-scenario-verdict.md)): **descriptive.** S3 is run and reported with
+median and IQR per arm and per device, and no verdict word; nothing is added to the thresholds.
 
 ## Amendment set 2 — after the window
 

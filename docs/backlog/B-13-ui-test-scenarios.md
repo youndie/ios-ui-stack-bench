@@ -1,6 +1,6 @@
 ---
 id: B-13
-title: "The UI-test scenarios S1–S4, one target driving all three variants by bundle id"
+title: "The UI-test scenarios S1–S4, one target driving every arm by bundle id"
 status: open
 priority: P1
 size: M
@@ -32,8 +32,9 @@ Two things the brief does not say and the numbers depend on:
   Scenario phase markers are signposts emitted by the app, not timestamps taken by the runner,
   because the runner's clock is in another process.
 
-- AC: each scenario runs unattended on both devices against each variant and leaves phase markers
-  in the app's log.
+- AC: each scenario runs unattended on both devices against each of the five arms and leaves phase
+  markers in the app's log; a session installs and drives only the arms the session plan of
+  [B-01](B-01-pins-and-the-amendment-window.md) gives it, with A in every session.
 - AC: S2 logs distance travelled and first/last visible index per fling; S4 logs the
   `phys_footprint` sample at the end of each cycle.
 - AC: a scenario run whose phase markers are incomplete is marked invalid by the reader, not

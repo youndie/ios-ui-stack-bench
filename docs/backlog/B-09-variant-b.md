@@ -1,6 +1,6 @@
 ---
 id: B-09
-title: "Variant B — KMP + SwiftUI: the full spec"
+title: "Variant B1 — KMP + SwiftUI over the Objective-C export: the full spec"
 status: open
 priority: P1
 size: M
@@ -8,9 +8,12 @@ stage: stage-1-build
 blocked_by: [B-07]
 ---
 
-# B-09 — Variant B — KMP + SwiftUI, the full spec
+# B-09 — Variant B1 — KMP + SwiftUI over the Objective-C export, the full spec
 
-The shared app spec of the brief in variant B: the same SwiftUI views as A over the shared module, through the bridge of [B-02](B-02-swift-bridge.md). The list screen — rows with a title,
+The shared app spec of the brief in arm B1: the same SwiftUI views as A over the shared module,
+through the plain Objective-C export and a hand-written Swift adapter that turns the module's
+`StateFlow` into the `@Observable` model the views read ([B-02](B-02-swift-bridge.md)). This is the
+arm C is paired with: the same bridge, so B1→C is the cost of Compose UI alone. The list screen — rows with a title,
 two text lines, a numeric badge and a 48 pt thumbnail, a search field that filters on every
 keystroke — and the detail screen pushed from a row, with a large image, about ten text blocks and
 one looping 2 s animation. The instrumentation of [B-05](B-05-hello-world-variants.md), unchanged.
@@ -27,4 +30,4 @@ one looping 2 s animation. The instrumentation of [B-05](B-05-hello-world-varian
 - AC: 2,000 rows reachable by scrolling, filtering by the shared test vector of
   [B-07](B-07-fixture-and-shared-module.md) gives the expected ids, the detail animation loops.
 - AC: the signposts "first frame" and "list populated" fire once per launch, in that order.
-- Anchors: `apps/b-kmp-swiftui/` (target).
+- Anchors: `apps/b1-objc/` (target).

@@ -33,6 +33,7 @@ and the UI-test runner beside them.
   records or fails, and the failure is logged verbatim. The `get-task-allow` entitlement of the
   installed build is printed (`codesign -d --entitlements`), because it is what some instruments need.
 - AC: the profile's expiry date as installed, and the App ID count the account has left.
-- AC: if the cap is below four, a proposed protocol change goes into B-01 as an amendment candidate,
-  with the options and what each costs the interleaving.
+- AC: the cap is three by Apple's page, and the study has five apps since amendment A1.1, so a
+  session plan is needed whatever the runner does; this item hands B-01 the measured number of free
+  slots beside the runner, and the options it allows, with what each costs the interleaving.
 - Anchors: `logs/b-04/`, `harness/` (target).

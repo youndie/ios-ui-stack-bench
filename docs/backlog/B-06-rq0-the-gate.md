@@ -1,6 +1,6 @@
 ---
 id: B-06
-title: "RQ0 — the gate: every metric captured on a device, the injected stall seen in all three"
+title: "RQ0 — the gate: every metric captured on a device, the injected stall seen in every arm"
 status: open
 priority: P0
 size: M
@@ -14,7 +14,8 @@ RQ0 as pre-registered: all three variants install as Release builds via free pro
 `xctrace` records App Launch, Animation Hitches and memory footprint for each; an injected 50 ms
 main-thread stall shows up as a hitch in all three, in both the Instruments trace and the in-app
 frame logger. It owns kill criteria 1 (no device path) and 2 (blind instrument). Output: `GATE.md`
-with the verdict per metric.
+with the verdict per metric. Since amendment A1.1 "all three" reads as every arm — A, B1, B2, B3
+and C — because an arm the gate never saw has no instrument anybody showed working.
 
 The risk the brief names is real and specific: C presents its frames from a Metal layer of its own,
 and whether Instruments' hitch accounting sees those frames the way it sees Core Animation commits
@@ -24,7 +25,7 @@ positive control that answers it.
 - **The decision and its reason.** Each metric gets a positive control, not only smoothness: a
   measurement that cannot see a known effect produces exactly the evidence of one that saw nothing
   to measure.
-  - smoothness — the 50 ms stall, in all three variants, on both devices (the brief's own control);
+  - smoothness — the 50 ms stall, in every arm, on both devices (the brief's own control);
     plus a stall of 0 ms through the same code path, which must **not** register;
   - startup — a known delay (200 ms) inserted before "list populated" must come out as +200 ms in
     both the App Launch trace and the in-app delta, within the run-to-run spread;

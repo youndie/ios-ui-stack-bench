@@ -23,6 +23,8 @@ results included; output under `docs/research/`.
   chrome was handled in parity, and that the two devices run different iOS versions, so a
   difference between devices is not a difference between chips
   ([research](../research/research-architecture.md) §1.3, §1.6, §1.7, §1.2).
+- RQ1's B − A and RQ5 are printed once per bridge arm, B1, B2 and B3, each with its own verdict
+  word; there is no combined and no best-of verdict (amendment A1.1). S3 is descriptive (A1.2).
 - The prior work of the brief's Context is compared with the results **as its sources report it**
   ([research §1.1](../research/research-architecture.md)), not as the brief summarises it.
 - Before it is final, the brief's author reviews the verdict table against the frozen thresholds.
