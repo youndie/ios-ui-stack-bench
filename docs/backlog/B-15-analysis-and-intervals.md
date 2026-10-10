@@ -1,7 +1,7 @@
 ---
 id: B-15
 title: "The analysis: median and IQR per variant, bootstrap 95 % CIs, the verdict word per RQ"
-status: open
+status: wip
 priority: P1
 size: M
 stage: stage-2-harness
