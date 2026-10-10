@@ -8,6 +8,7 @@ OUT=${TMPDIR:-/tmp}/filter-vectors-$$
 xcrun swiftc -O -o "$OUT" \
     "$ROOT/apps/a-native/iosApp/SwiftCatalog.swift" \
     "$ROOT/apps/common/ListUI/ListModel.swift" \
+    "$ROOT/scripts/filter-vectors/BenchStub.swift" \
     "$ROOT/scripts/filter-vectors/main.swift"
 "$OUT" "$ROOT"
 rm -f "$OUT"
