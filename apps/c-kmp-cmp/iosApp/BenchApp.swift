@@ -31,4 +31,8 @@ final class BenchProbe: Probe {
     func mark(event: String) {
         Bench.shared.mark(named: event)
     }
+
+    func scroll(phase: String, first: Int32, firstOffsetPx: Int32, last: Int32) {
+        Bench.shared.scroll(phase, first: Int(first), firstOffsetPx: Double(firstOffsetPx), last: last >= 0 ? Int(last) : nil)
+    }
 }

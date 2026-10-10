@@ -15,9 +15,16 @@ import os
 ///   object started, the earliest Swift code of the app), `firstFrame` (the first display-link
 ///   tick), `listPopulated` (the first display-link tick after the first row appeared — a row
 ///   "appears" before the frame that shows it is drawn, so the marker waits for that frame, and the
-///   two markers are quantised to frames the same way in every arm), and named scenario phases;
+///   two markers are quantised to frames the same way in every arm), and named scenario phases:
+///   `scenario:<name>` at launch when the harness passes `-benchScenario <name>`, `query` on every
+///   change of the search query, `detailAppeared` / `detailDisappeared` around the detail screen;
 /// - `frame` — every `CADisplayLink` callback: `t` its timestamp, `tt` its target timestamp;
 /// - `footprint` — `phys_footprint` from `task_vm_info`, every 250 ms, from a utility queue;
+/// - `scroll` — each transition of the list between scrolling and resting: `phase` `begin` or
+///   `end`, the content offset in points where the UI knows it exactly (`offset`, SwiftUI), or the
+///   first visible item and its offset in pixels (`first`, `firstOffsetPx`, Compose), and the last
+///   visible item where the UI knows it (`last`). Only the transitions are logged — nothing runs per
+///   frame — so the probe costs every arm two callbacks per fling;
 /// - `stall` — each injected main-thread stall and its length;
 /// - `thermal` — every change of `ProcessInfo.thermalState`.
 ///
@@ -50,6 +57,7 @@ final class Bench {
         openLog()
         writeHeader()
         mark(.launch)
+        if let scenario = Self.argument("benchScenario") { phase("scenario:\(scenario)") }
         startFrameLogger()
         startSampler()
         startStallInjector()
@@ -86,6 +94,19 @@ final class Bench {
         let now = CACurrentMediaTime()
         signposter.emitEvent("phase", "\(name, privacy: .public)")
         write(["k": "mark", "t": now, "name": name])
+    }
+
+    /// The list started (`begin`) or stopped (`end`) scrolling. Fields the UI cannot know exactly are
+    /// left out rather than estimated; the reader derives them from the row height.
+    func scroll(_ phase: String, offset: Double? = nil, first: Int? = nil, firstOffsetPx: Double? = nil, last: Int? = nil) {
+        let now = CACurrentMediaTime()
+        if phase == "begin" { signposter.emitEvent("scrollBegin") } else { signposter.emitEvent("scrollEnd") }
+        var line: [String: Any] = ["k": "scroll", "t": now, "phase": phase]
+        if let offset { line["offset"] = offset }
+        if let first { line["first"] = first }
+        if let firstOffsetPx { line["firstOffsetPx"] = firstOffsetPx }
+        if let last { line["last"] = last }
+        write(line)
     }
 
     // MARK: - log

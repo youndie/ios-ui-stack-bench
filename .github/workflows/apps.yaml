@@ -58,6 +58,14 @@ jobs:
       - name: Build every arm
         run: scripts/build-arms.sh
 
+      # The UI tests that drive the scenarios (B-13): compiled, not run - running them needs the
+      # arms installed and is the harness's business on a simulator or a device.
+      - name: Build the harness
+        run: |
+          xcodebuild build-for-testing -project harness/Harness.xcodeproj -scheme HarnessUITests \
+            -destination 'generic/platform=iOS Simulator' -derivedDataPath build/DerivedData/harness \
+            CODE_SIGNING_ALLOWED=NO > build/DerivedData/harness.log 2>&1 || { tail -30 build/DerivedData/harness.log; exit 1; }
+
       - name: Build logs
         if: failure()
         uses: actions/upload-artifact@v4

@@ -18,6 +18,14 @@ struct RootView: View {
                 }
             }
             .listStyle(.plain)
+            .onScrollPhaseChange { old, new, context in
+                // Logged on the transitions only (B-13): the S2 reader needs how far each fling went.
+                if old == .idle, new != .idle {
+                    Bench.shared.scroll("begin", offset: context.geometry.contentOffset.y)
+                } else if new == .idle, old != .idle {
+                    Bench.shared.scroll("end", offset: context.geometry.contentOffset.y)
+                }
+            }
             .searchable(text: $model.query)
             .navigationTitle("Items")
             .navigationDestination(for: RowItem.self) { DetailView(item: $0) }
@@ -77,6 +85,8 @@ struct DetailView: View {
         }
         .navigationTitle(item.title)
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear { Bench.shared.phase("detailAppeared") }
+        .onDisappear { Bench.shared.phase("detailDisappeared") }
     }
 }
 

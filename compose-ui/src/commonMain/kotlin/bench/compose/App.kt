@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -31,6 +32,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,6 +40,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,6 +55,7 @@ import bench.compose.resources.Res
 import bench.compose.resources.allDrawableResources
 import bench.shared.Catalog
 import bench.shared.Item
+import kotlinx.coroutines.flow.drop
 import org.jetbrains.compose.resources.painterResource
 
 /**
@@ -73,7 +77,7 @@ fun App(catalog: Catalog, probe: Probe) {
                         ListScreen(items, catalog::filter, onOpen = { selected = it; navController.navigate("detail") }, probe)
                     }
                     composable("detail") {
-                        selected?.let { DetailScreen(it, onBack = { navController.popBackStack() }) }
+                        selected?.let { DetailScreen(it, onBack = { navController.popBackStack() }, probe) }
                     }
                 }
             }
@@ -88,12 +92,24 @@ private fun ListScreen(items: List<Item>, onQuery: (String) -> Unit, onOpen: (It
         Text("Items", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
         OutlinedTextField(
             value = query,
-            onValueChange = { query = it; onQuery(it) },
+            onValueChange = { query = it; probe.mark("query"); onQuery(it) },
             placeholder = { Text("Search") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
         )
-        LazyColumn(Modifier.fillMaxSize()) {
+        val listState = rememberLazyListState()
+        // Logged on the transitions only (B-13): the S2 reader needs how far each fling went.
+        LaunchedEffect(listState) {
+            snapshotFlow { listState.isScrollInProgress }.drop(1).collect { scrolling ->
+                probe.scroll(
+                    if (scrolling) "begin" else "end",
+                    listState.firstVisibleItemIndex,
+                    listState.firstVisibleItemScrollOffset,
+                    listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1,
+                )
+            }
+        }
+        LazyColumn(Modifier.fillMaxSize(), state = listState) {
             items(items, key = { it.id }) { item ->
                 // The first row composed is the first row on its way to the screen, as SwiftUI's
                 // onAppear of the first row is in the other arms; the frame that shows it is marked.
@@ -132,7 +148,11 @@ private fun ItemRow(item: Item, modifier: Modifier = Modifier) {
 
 /** The detail screen: a large image, the title, a square turning once every 2 s, the text blocks. */
 @Composable
-private fun DetailScreen(item: Item, onBack: () -> Unit) {
+private fun DetailScreen(item: Item, onBack: () -> Unit, probe: Probe) {
+    DisposableEffect(item.id) {
+        probe.mark("detailAppeared")
+        onDispose { probe.mark("detailDisappeared") }
+    }
     val angle by rememberInfiniteTransition().animateFloat(
         initialValue = 0f,
         targetValue = 360f,

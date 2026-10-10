@@ -79,7 +79,7 @@ this file.
 
 <!-- BEGIN INDEX -->
 
-## Open (12)
+## Open (11)
 
 | Task | | Priority | Size | Blocked by |
 |---|---|---|---|---|
@@ -88,7 +88,6 @@ this file.
 | [B-06](docs/backlog/B-06-rq0-the-gate.md) `[ ]` | RQ0 — the gate: every metric captured on a device, the injected stall seen in every arm | P0 | M | B-01, B-05 |
 | [B-11](docs/backlog/B-11-parity-check.md) `[ ]` | Visual parity before any measurement: item count, row height, first-screen diff | P1 | M | B-08, B-09, B-10, B-20, B-21 |
 | [B-12](docs/backlog/B-12-rq1-size.md) `[ ]` | RQ1 — size: what KMP and CMP add to an arm64 app, uncompressed and zip -9, by component | P1 | S | B-11 |
-| [B-13](docs/backlog/B-13-ui-test-scenarios.md) `[~]` | The UI-test scenarios S1–S4, one target driving every arm by bundle id | P1 | M | B-10, B-20, B-21 |
 | [B-14](docs/backlog/B-14-trace-export-and-readers.md) `[ ]` | xctrace record and export, and the readers that turn traces and in-app logs into CSVs | P1 | M | B-13 |
 | [B-15](docs/backlog/B-15-analysis-and-intervals.md) `[ ]` | The analysis: median and IQR per variant, bootstrap 95 % CIs, the verdict word per RQ | P1 | M | B-14 |
 | [B-16](docs/backlog/B-16-dry-run-and-the-ruler.md) `[ ]` | Dry run on one device: the ruler, the runner's and the instruments' own cost, thermal drift | P1 | M | B-15 |
@@ -96,7 +95,7 @@ this file.
 | [B-18](docs/backlog/B-18-runs-on-the-newer-device.md) `[ ]` | P3 — the full matrix on the newer device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-19](docs/backlog/B-19-write-up.md) `[ ]` | P4 — the write-up: one verdict per RQ, regenerated from the CSVs, negative results included | P1 | M | B-12, B-17, B-18 |
 
-## Closed (10)
+## Closed (11)
 
 **P0 — the gate**
 
@@ -113,5 +112,9 @@ this file.
 - [B-20](docs/backlog/B-20-variant-b2-skie.md) `[x]` - Variant B2 — KMP + SwiftUI over SKIE: the full spec
 - [B-21](docs/backlog/B-21-variant-b3-swift-export.md) `[x]` - Variant B3 — KMP + SwiftUI over Swift export: the full spec, or the reason it cannot be built
 - [B-22](docs/backlog/B-22-ci-builds-every-arm.md) `[x]` - CI builds every arm on macOS, so a green pull request means the apps still build
+
+**P2 — harness**
+
+- [B-13](docs/backlog/B-13-ui-test-scenarios.md) `[x]` - The UI-test scenarios S1–S4, one target driving every arm by bundle id
 
 <!-- END INDEX -->

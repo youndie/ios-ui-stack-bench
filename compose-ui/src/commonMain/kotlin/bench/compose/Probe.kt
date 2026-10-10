@@ -7,4 +7,10 @@ package bench.compose
  */
 interface Probe {
     fun mark(event: String)
+
+    /**
+     * The list started (`begin`) or stopped (`end`) scrolling, with the first and last visible item
+     * and the first one's scroll offset in pixels — what a `LazyListState` knows exactly.
+     */
+    fun scroll(phase: String, first: Int, firstOffsetPx: Int, last: Int)
 }
