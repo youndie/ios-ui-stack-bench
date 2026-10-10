@@ -1,7 +1,7 @@
 ---
 id: B-14
 title: "xctrace record and export, and the readers that turn traces and in-app logs into CSVs"
-status: open
+status: wip
 priority: P1
 size: M
 stage: stage-2-harness
