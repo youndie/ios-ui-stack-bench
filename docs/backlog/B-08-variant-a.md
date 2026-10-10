@@ -1,7 +1,7 @@
 ---
 id: B-08
 title: "Variant A — Native: the full spec"
-status: open
+status: wip
 priority: P1
 size: M
 stage: stage-1-build
