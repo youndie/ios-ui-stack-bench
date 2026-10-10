@@ -1,0 +1,62 @@
+# The build of every arm, so that a green pull request means the apps still build (B-22).
+#
+# It runs scripts/build-arms.sh - the same script a contributor runs - and the shared module's tests.
+# The script refuses any Xcode but the pinned build (BRIEF.md, pins), so the first step looks for
+# that build among the runner's Xcodes and fails, saying so, when the image does not carry it:
+# a red job on a missing toolchain is the honest state, a green one on another toolchain is not.
+# CI never measures anything; it only builds, unsigned, for the simulator.
+name: apps
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    # GitHub's image with Xcode 27 (a preview label on 2026-10-10, actions/runner-images#14404).
+    runs-on: xcode-27
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select the pinned Xcode
+        run: |
+          pinned=$(sed -n 's/^PINNED_XCODE_BUILD=//p' scripts/build-arms.sh)
+          for app in /Applications/Xcode*.app; do
+            build=$(/usr/libexec/PlistBuddy -c 'Print :ProductBuildVersion' "$app/Contents/version.plist" 2>/dev/null || true)
+            echo "$app: $build"
+            if [ "$build" = "$pinned" ]; then
+              sudo xcode-select -s "$app/Contents/Developer"
+              xcodebuild -version
+              exit 0
+            fi
+          done
+          echo "::error::no Xcode with build $pinned on this runner image"
+          exit 1
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      # The Kotlin/Native toolchain and its dependencies, about a gigabyte, keyed on the versions.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: konan-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
+
+      - name: Shared module tests
+        run: ./gradlew --console=plain :shared:allTests
+
+      - name: Build every arm
+        run: scripts/build-arms.sh
+
+      - name: Build logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: build/DerivedData/*.log

@@ -1,7 +1,7 @@
 ---
 id: B-22
 title: "CI builds every arm on macOS, so a green pull request means the apps still build"
-status: open
+status: done
 priority: infra
 size: S
 stage: stage-1-build
@@ -30,3 +30,24 @@ module or an Xcode project would come back green. "Green" has to include the bui
 - AC: the job is required by the merge rule of [CLAUDE.md](../../CLAUDE.md) — "green on the head
   commit" means both jobs.
 - Anchors: `.github/workflows/`, `scripts/` (build script, target).
+
+---
+
+## Findings — 2026-10-10
+
+**Done.** `.github/workflows/apps.yaml`, job `build`, on GitHub's `xcode-27` image (a preview label,
+actions/runner-images#14404): it selects the Xcode whose build is the pinned `27A266a` — the image
+carries it as `/Applications/Xcode_27.0.0.app` — runs the shared module's tests on the simulator and
+`scripts/build-arms.sh`, and uploads the per-arm build logs when it fails.
+
+- AC (red when an arm breaks): a throwaway branch `tmp/b-22-red-control` added a type error to B2's
+  `BenchApp.swift`; run 38071924512 failed at "Build every arm" with `b2-skie: FAILED` and the
+  compiler's error, while the other four arms built. The branch is deleted.
+- AC (the log names the toolchain and each arm): the first green run, 38070613051, prints the Xcode
+  build, the simulator SDK, Gradle's `:shared:iosSimulatorArm64Test` and one line per arm.
+- AC (required by the merge rule): [CLAUDE.md](../../CLAUDE.md) now names both checks, `check` and
+  `build`, as what "green on the head commit" means.
+
+The Kotlin/Native toolchain is cached on the version catalog's hash, so a Kotlin bump downloads it
+once. The image is a preview; if GitHub drops the label or the pinned Xcode from it, the job turns red
+at its first step with `no Xcode with build 27A266a`, which is the intended behaviour.
