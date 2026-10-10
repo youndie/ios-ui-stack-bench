@@ -79,7 +79,7 @@ this file.
 
 <!-- BEGIN INDEX -->
 
-## Open (14)
+## Open (13)
 
 | Task | | Priority | Size | Blocked by |
 |---|---|---|---|---|
@@ -95,10 +95,9 @@ this file.
 | [B-17](docs/backlog/B-17-runs-on-the-older-device.md) `[ ]` | P3 — the full matrix on the older device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-18](docs/backlog/B-18-runs-on-the-newer-device.md) `[ ]` | P3 — the full matrix on the newer device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-19](docs/backlog/B-19-write-up.md) `[ ]` | P4 — the write-up: one verdict per RQ, regenerated from the CSVs, negative results included | P1 | M | B-12, B-17, B-18 |
-| [B-20](docs/backlog/B-20-variant-b2-skie.md) `[ ]` | Variant B2 — KMP + SwiftUI over SKIE: the full spec | P1 | M | B-07 |
 | [B-21](docs/backlog/B-21-variant-b3-swift-export.md) `[ ]` | Variant B3 — KMP + SwiftUI over Swift export: the full spec, or the reason it cannot be built | P1 | M | B-07 |
 
-## Closed (8)
+## Closed (9)
 
 **P0 — the gate**
 
@@ -112,6 +111,7 @@ this file.
 - [B-08](docs/backlog/B-08-variant-a.md) `[x]` - Variant A — Native: the full spec
 - [B-09](docs/backlog/B-09-variant-b.md) `[x]` - Variant B1 — KMP + SwiftUI over the Objective-C export: the full spec
 - [B-10](docs/backlog/B-10-variant-c.md) `[x]` - Variant C — KMP + CMP: the full spec
+- [B-20](docs/backlog/B-20-variant-b2-skie.md) `[x]` - Variant B2 — KMP + SwiftUI over SKIE: the full spec
 - [B-22](docs/backlog/B-22-ci-builds-every-arm.md) `[x]` - CI builds every arm on macOS, so a green pull request means the apps still build
 
 <!-- END INDEX -->
