@@ -29,7 +29,8 @@ device: B-05, B-07–B-10, B-13–B-15, B-20–B-22. The device items — [B-04]
 [B-06](docs/backlog/B-06-rq0-the-gate.md), [B-11](docs/backlog/B-11-parity-check.md)'s check on the
 devices, [B-12](docs/backlog/B-12-rq1-size.md), [B-16](docs/backlog/B-16-dry-run-and-the-ruler.md)–[B-19](docs/backlog/B-19-write-up.md)
 — and [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md)'s close of the window wait for the
-owner's go. B-12 needs no device but writes the first file under `logs/`, which closes the window. Nothing here becomes a library, a JetBrains ticket or
+owner's go. B-12 needs no device but writes the first file under `logs/`, which closes the window.
+[B-23](docs/backlog/B-23-kotlin-2-5-round.md) waits for Kotlin 2.5.0 to be stable and for the write-up. Nothing here becomes a library, a JetBrains ticket or
 an upstream fix: all three are non-goals of the brief, and an item proposing one does not belong in
 this file.
 
@@ -42,6 +43,7 @@ this file.
 | `stage-2-harness` | P2 — harness | Scenarios S1–S4, recording and readers, the analysis, the dry run with the ruler. Kill criterion 5; kill criterion 4's denominator. |
 | `stage-3-runs` | P3 — runs | RQ1 from the builds; the full matrix on both devices. Kill criterion 4. |
 | `stage-4-write-up` | P4 — write-up | One verdict per RQ, regenerated from the CSVs. |
+| `stage-5-later` | After the study | Rounds the owner asked for that the main study does not answer. |
 
 ## Which item owns each kill criterion
 
@@ -70,6 +72,10 @@ this file.
   make the session plan an amendment of [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md).
 - **2026-10-10 — build first, measure later** (amendment A1.3); **the loop merges its own pull
   requests** on a green head commit (owner) — see [CLAUDE.md](CLAUDE.md), "Pull requests".
+- **2026-10-10 — D8 kept; a later round on Kotlin 2.5.0** (owner). The shared module keeps
+  kotlinx-serialization internal for this study. B3 is to be tried again on Kotlin 2.5.0 without the
+  workaround, as a round of its own, because SKIE does not support 2.5.0
+  ([B-23](docs/backlog/B-23-kotlin-2-5-round.md)).
 - **2026-10-10 — S3 stays descriptive** ([B-03](docs/backlog/B-03-filter-scenario-verdict.md),
   amendment A1.2).
 
@@ -79,7 +85,7 @@ this file.
 
 <!-- BEGIN INDEX -->
 
-## Open (11)
+## Open (12)
 
 | Task | | Priority | Size | Blocked by |
 |---|---|---|---|---|
@@ -94,6 +100,7 @@ this file.
 | [B-17](docs/backlog/B-17-runs-on-the-older-device.md) `[ ]` | P3 — the full matrix on the older device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-18](docs/backlog/B-18-runs-on-the-newer-device.md) `[ ]` | P3 — the full matrix on the newer device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-19](docs/backlog/B-19-write-up.md) `[ ]` | P4 — the write-up: one verdict per RQ, regenerated from the CSVs, negative results included | P1 | M | B-12, B-17, B-18 |
+| [B-23](docs/backlog/B-23-kotlin-2-5-round.md) `[ ]` | A later round on Kotlin 2.5.0: arm B3 without D8, once Kotlin 2.5.0 is stable | P3 | M | - |
 
 ## Closed (11)
 

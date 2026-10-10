@@ -357,7 +357,7 @@ file sizes inside the `.app`, which hold no Kotlin or Skiko file once linking is
 
 §1.2. The beta stays installed only if disk allows; nothing is built for a measurement with it.
 
-### D8. kotlinx-serialization stays inside the shared module *(B-05; the owner may overturn it)*
+### D8. kotlinx-serialization stays inside the shared module *(B-05; kept by the owner on 2026-10-10)*
 
 Brief: B and C's logic is "shared Kotlin module, kotlinx-serialization, `StateFlow`" — still true.
 Decision: the fixture is decoded into an `internal` `@Serializable` class and mapped to a public,
@@ -368,6 +368,10 @@ price: every Kotlin arm pays one extra object per item at load (the DTO, then th
 in all four, and arm A maps its `Codable` struct to the views' row type too. Rejected: B3 "not
 measured" until Kotlin 2.5.0 (it would hold B3 hostage to two releases, Kotlin's and SKIE's); a
 newer Kotlin for B3 alone (its module would no longer be the others').
+
+**The owner kept D8 on 2026-10-10**, and asked for B3 to be tried again on Kotlin 2.5.0 without it.
+That is a later round of its own, not a pin change: SKIE refuses every Kotlin after 2.4.20, so B2
+cannot be built there ([B-23](../backlog/B-23-kotlin-2-5-round.md)).
 
 ---
 
