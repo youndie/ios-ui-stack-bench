@@ -101,7 +101,7 @@ this file.
 | [B-19](docs/backlog/B-19-write-up.md) `[ ]` | P4 — the write-up: one verdict per RQ, regenerated from the CSVs, negative results included | P1 | M | B-12, B-17, B-18 |
 | [B-20](docs/backlog/B-20-variant-b2-skie.md) `[ ]` | Variant B2 — KMP + SwiftUI over SKIE: the full spec | P1 | M | B-07 |
 | [B-21](docs/backlog/B-21-variant-b3-swift-export.md) `[ ]` | Variant B3 — KMP + SwiftUI over Swift export: the full spec, or the reason it cannot be built | P1 | M | B-07 |
-| [B-22](docs/backlog/B-22-ci-builds-every-arm.md) `[ ]` | CI builds every arm on macOS, so a green pull request means the apps still build | infra | S | B-05 |
+| [B-22](docs/backlog/B-22-ci-builds-every-arm.md) `[~]` | CI builds every arm on macOS, so a green pull request means the apps still build | infra | S | B-05 |
 
 ## Closed (3)
 

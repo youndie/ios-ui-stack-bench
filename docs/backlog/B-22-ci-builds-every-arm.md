@@ -1,7 +1,7 @@
 ---
 id: B-22
 title: "CI builds every arm on macOS, so a green pull request means the apps still build"
-status: open
+status: wip
 priority: infra
 size: S
 stage: stage-1-build
