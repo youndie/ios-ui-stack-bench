@@ -35,3 +35,14 @@ green threshold is said to reproduce has to be compared with what JetBrains actu
 - AC: the two clean builds of each variant are byte-identical apart from the code signature, or
   the difference is recorded and its size stated.
 - Anchors: `logs/b-12/`, `analysis/` (target).
+
+---
+
+## Noted before this item started — 2026-10-10 (B-10)
+
+`scripts/build-arms.sh` printed a different digest for B3's merged static library
+(`bridge-swift-export/build/MergedLibraries/.../libShared.a`) on two builds. Between those builds
+B3's Kotlin and Swift sources did not change; only the Xcode projects did, through the generator. The
+other arms' Kotlin binaries kept their digests. Either Swift export's output is not reproducible, or
+it depends on something the projects changed. This is exactly what this item's "built twice from a
+clean tree" acceptance is there to find, and it is recorded here so that item starts from it.

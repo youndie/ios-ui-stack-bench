@@ -11,7 +11,9 @@ produces. Pure standard library: the PNG writer is twenty lines of zlib.
 
 Outputs:
     apps/common/Fixture/items.json            the fixture every arm bundles (~1 MB)
-    apps/common/Fixture/thumbnails/*.png      50 images, 400 x 400 px, every arm bundles
+    apps/common/Thumbnails/drawable/*.png     50 images, 400 x 400 px, every arm bundles - the SwiftUI
+                                              arms as bundle files, arm C as Compose resources (the
+                                              `drawable/` level is what Compose's resources expect)
     fixtures/filter-vectors.json              query -> expected ids, held against both filters
 
 The filter the vector encodes is the one both implementations claim: a case-insensitive substring
@@ -29,6 +31,7 @@ import zlib
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FIXTURE_DIR = os.path.join(ROOT, "apps", "common", "Fixture")
+THUMBNAIL_DIR = os.path.join(ROOT, "apps", "common", "Thumbnails", "drawable")
 VECTORS = os.path.join(ROOT, "fixtures", "filter-vectors.json")
 SEED = 20261010
 ITEMS = 2000
@@ -121,7 +124,7 @@ def outputs():
     data = items(rng)
     files = {os.path.join(FIXTURE_DIR, "items.json"): items_json(data)}
     for n in range(THUMBNAILS):
-        files[os.path.join(FIXTURE_DIR, "thumbnails", f"thumb-{n:02d}.png")] = thumbnail(rng)
+        files[os.path.join(THUMBNAIL_DIR, f"thumb-{n:02d}.png")] = thumbnail(rng)
     files[VECTORS] = vectors(data)
     return files
 

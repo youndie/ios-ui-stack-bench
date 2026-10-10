@@ -22,6 +22,18 @@ kotlin {
             implementation(libs.compose.foundation)
             implementation(libs.compose.ui)
             implementation(libs.compose.material3)
+            implementation(libs.compose.components.resources)
+            implementation(libs.navigation.compose)
         }
     }
+}
+
+// The thumbnails every arm bundles, read from where the generator writes them (fixtures/generate.py)
+// rather than copied: one set of bytes for five apps.
+compose.resources {
+    packageOfResClass = "bench.compose.resources"
+    customDirectory(
+        sourceSetName = "commonMain",
+        directoryProvider = provider { rootProject.layout.projectDirectory.dir("apps/common/Thumbnails") },
+    )
 }

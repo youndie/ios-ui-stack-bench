@@ -16,6 +16,8 @@ for anything a template does not set. The one place the arms' Xcode projects dif
 | Shared Swift sources (`apps/common/Instrumentation`, `ListUI`, `Fixture`) as synchronized folders | same | all (C without `ListUI`) | one source of the instrumentation and of the SwiftUI views, compiled into each app's own module (research D2) |
 | Kotlin **2.4.20**, not the latest stable 2.4.21 | `gradle/libs.versions.toml` | B1, B2, B3, C | SKIE 0.10.15 refuses 2.4.21 at configuration; the pin is B-01's (research §1.11, I14) |
 | `Item` is not `@Serializable`; the fixture is decoded into an internal DTO | `shared/src/commonMain/kotlin/bench/shared/` | B1, B2, B3, C (one module) | Swift export on Kotlin 2.4.x cannot compile kotlinx-serialization's API (KT-87791); the module stays the same bytes in every arm (research §1.11, D8) |
+| `navigation-compose` 2.9.2 (string routes, default transitions) | `compose-ui/build.gradle.kts` | C | the brief's "navigation inside CMP"; the wizard's shared-UI template has a single screen and no navigation, so this is the stack's idiomatic library added, at its newest stable release (B-10) |
+| The thumbnails as Compose resources, from `apps/common/Thumbnails` (`customDirectory`) | same | C | Compose's own way to bundle an image; the SwiftUI arms bundle the same 50 files as plain bundle files, and each app carries them once (B-10) |
 | One `const val BRIDGE` per bridge module | `bridge-*/src/commonMain/kotlin/bench/bridge/Bridge.kt` | B1, B2, B3 | a framework module with no source of its own is never linked (`NO-SOURCE`) |
 
 Nothing else differs from the templates: `-O`, whole-module optimisation, dead-code stripping, the

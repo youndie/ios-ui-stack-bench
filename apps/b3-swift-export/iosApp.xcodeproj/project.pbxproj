@@ -49,6 +49,11 @@
 			path = ../common/Fixture;
 			sourceTree = "<group>";
 		};
+		315A8B3A2BADA324D6D0190D /* Thumbnails */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ../common/Thumbnails;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +75,7 @@
 				274B4CA86A1F349D75DA088B /* Instrumentation */,
 				4A3EC0A8340C8127700DEC4F /* ListUI */,
 				B61047EDF94EFAD40AAD4F8B /* Fixture */,
+				315A8B3A2BADA324D6D0190D /* Thumbnails */,
 				EDC14FB015F83F8514CA64C4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -103,6 +109,7 @@
 				274B4CA86A1F349D75DA088B /* Instrumentation */,
 				4A3EC0A8340C8127700DEC4F /* ListUI */,
 				B61047EDF94EFAD40AAD4F8B /* Fixture */,
+				315A8B3A2BADA324D6D0190D /* Thumbnails */,
 			);
 			name = iosApp;
 			packageProductDependencies = (

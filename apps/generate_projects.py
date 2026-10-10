@@ -21,10 +21,11 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 
 # arm directory -> (product name, Gradle task or None, shared source folders under apps/common)
 ARMS = {
-    "a-native": ("BenchA", None, ["Instrumentation", "ListUI", "Fixture"]),
-    "b1-objc": ("BenchB1", ":bridge-objc:embedAndSignAppleFrameworkForXcode", ["Instrumentation", "ListUI", "Fixture"]),
-    "b2-skie": ("BenchB2", ":bridge-skie:embedAndSignAppleFrameworkForXcode", ["Instrumentation", "ListUI", "Fixture"]),
-    "b3-swift-export": ("BenchB3", ":bridge-swift-export:embedSwiftExportForXcode", ["Instrumentation", "ListUI", "Fixture"]),
+    "a-native": ("BenchA", None, ["Instrumentation", "ListUI", "Fixture", "Thumbnails"]),
+    "b1-objc": ("BenchB1", ":bridge-objc:embedAndSignAppleFrameworkForXcode", ["Instrumentation", "ListUI", "Fixture", "Thumbnails"]),
+    "b2-skie": ("BenchB2", ":bridge-skie:embedAndSignAppleFrameworkForXcode", ["Instrumentation", "ListUI", "Fixture", "Thumbnails"]),
+    "b3-swift-export": ("BenchB3", ":bridge-swift-export:embedSwiftExportForXcode", ["Instrumentation", "ListUI", "Fixture", "Thumbnails"]),
+    # C draws the thumbnails as Compose resources, which its framework build bundles itself.
     "c-kmp-cmp": ("BenchC", ":compose-ui:embedAndSignAppleFrameworkForXcode", ["Instrumentation", "Fixture"]),
 }
 
