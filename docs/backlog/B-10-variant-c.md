@@ -1,7 +1,7 @@
 ---
 id: B-10
 title: "Variant C — KMP + CMP: the full spec"
-status: open
+status: wip
 priority: P1
 size: M
 stage: stage-1-build
