@@ -37,7 +37,12 @@ make check
 ```
 
 The documentation checks ([docs-bootstrap](https://github.com/youndie/docs-bootstrap)) and the
-freeze of the pre-registration. CI runs exactly the same target.
+freeze of the pre-registration. CI runs exactly the same target, and builds every arm on macOS with
+the pinned Xcode:
+
+```bash
+scripts/build-arms.sh
+```
 
 ## License
 

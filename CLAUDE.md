@@ -89,7 +89,7 @@ exports are.
 
 One backlog item per pull request (the `backlog-item` loop). **The loop merges its own pull
 requests** — stated by the owner on 2026-10-10 — once every check is green **on the head commit of
-the branch** (compare `gh pr view --json headRefOid` with the run's `headSha`; pass the full sha to
+the branch** — `check` (the documents) and `build` (every arm, `.github/workflows/apps.yaml`) (compare `gh pr view --json headRefOid` with the run's `headSha`; pass the full sha to
 `--match-head-commit`). What does not change: red is never merged and no check is weakened to make it
 green; `make check` is green locally before a pull request is opened, and the pull request carries
 the log of the local build or simulator run its acceptance rests on; an item is `done` only when its

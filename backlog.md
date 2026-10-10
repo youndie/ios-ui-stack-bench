@@ -79,7 +79,7 @@ this file.
 
 <!-- BEGIN INDEX -->
 
-## Open (19)
+## Open (18)
 
 | Task | | Priority | Size | Blocked by |
 |---|---|---|---|---|
@@ -101,14 +101,17 @@ this file.
 | [B-19](docs/backlog/B-19-write-up.md) `[ ]` | P4 — the write-up: one verdict per RQ, regenerated from the CSVs, negative results included | P1 | M | B-12, B-17, B-18 |
 | [B-20](docs/backlog/B-20-variant-b2-skie.md) `[ ]` | Variant B2 — KMP + SwiftUI over SKIE: the full spec | P1 | M | B-07 |
 | [B-21](docs/backlog/B-21-variant-b3-swift-export.md) `[ ]` | Variant B3 — KMP + SwiftUI over Swift export: the full spec, or the reason it cannot be built | P1 | M | B-07 |
-| [B-22](docs/backlog/B-22-ci-builds-every-arm.md) `[~]` | CI builds every arm on macOS, so a green pull request means the apps still build | infra | S | B-05 |
 
-## Closed (3)
+## Closed (4)
 
 **P0 — the gate**
 
 - [B-02](docs/backlog/B-02-swift-bridge.md) `[x]` - Choose the Swift bridge for B and C: Objective-C export with an adapter, SKIE, or Swift export
 - [B-03](docs/backlog/B-03-filter-scenario-verdict.md) `[x]` - Decide whether S3 (filter) gets its own green and red, or stays descriptive
 - [B-05](docs/backlog/B-05-hello-world-variants.md) `[x]` - Hello-world arms A, B1, B2, B3 and C with the instrumentation the study will measure through
+
+**P1 — build**
+
+- [B-22](docs/backlog/B-22-ci-builds-every-arm.md) `[x]` - CI builds every arm on macOS, so a green pull request means the apps still build
 
 <!-- END INDEX -->
