@@ -1,7 +1,7 @@
 ---
 id: B-05
 title: "Hello-world arms A, B1, B2, B3 and C with the instrumentation the study will measure through"
-status: open
+status: wip
 priority: P0
 size: M
 stage: stage-0-gate

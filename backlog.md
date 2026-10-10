@@ -85,7 +85,7 @@ this file.
 |---|---|---|---|---|
 | [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md) `[ ]` | Pin the stand, settle the brief's incoherences as amendments, and close the window | P0 | S | B-04 |
 | [B-04](docs/backlog/B-04-free-provisioning-probe.md) `[ ]` | What free provisioning allows on the devices: apps per device, the test runner, Instruments on Release | P0 | S | - |
-| [B-05](docs/backlog/B-05-hello-world-variants.md) `[ ]` | Hello-world arms A, B1, B2, B3 and C with the instrumentation the study will measure through | P0 | M | B-02 |
+| [B-05](docs/backlog/B-05-hello-world-variants.md) `[~]` | Hello-world arms A, B1, B2, B3 and C with the instrumentation the study will measure through | P0 | M | B-02 |
 | [B-06](docs/backlog/B-06-rq0-the-gate.md) `[ ]` | RQ0 — the gate: every metric captured on a device, the injected stall seen in every arm | P0 | M | B-01, B-05 |
 | [B-07](docs/backlog/B-07-fixture-and-shared-module.md) `[ ]` | The fixture and the shared Kotlin module: 2,000 items, 50 thumbnails, parse, filter, state | P1 | M | B-05 |
 | [B-08](docs/backlog/B-08-variant-a.md) `[ ]` | Variant A — Native: the full spec | P1 | M | B-07 |
