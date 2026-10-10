@@ -1,7 +1,7 @@
 ---
 id: B-21
 title: "Variant B3 — KMP + SwiftUI over Swift export: the full spec, or the reason it cannot be built"
-status: open
+status: wip
 priority: P1
 size: M
 stage: stage-1-build
