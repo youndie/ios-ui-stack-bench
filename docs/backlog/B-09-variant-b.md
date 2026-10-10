@@ -25,8 +25,8 @@ one looping 2 s animation. The instrumentation of [B-05](B-05-hello-world-varian
 - Not covered: parity across variants — that is [B-11](B-11-parity-check.md), which may send work
   back here.
 
-- AC: Release build with the pinned toolchain and the brief's fairness flags; installs on both
-  devices via free provisioning.
+- AC: Release build with the pinned toolchain and the brief's fairness flags; runs on the simulator; installs on
+  both devices via free provisioning once the device work starts (amendment A1.3).
 - AC: 2,000 rows reachable by scrolling, filtering by the shared test vector of
   [B-07](B-07-fixture-and-shared-module.md) gives the expected ids, the detail animation loops.
 - AC: the signposts "first frame" and "list populated" fire once per launch, in that order.

@@ -24,6 +24,8 @@ and the UI-test runner beside them.
   may create per week, and a variant renamed mid-study spends them.
 - Not covered: the study's instruments. Whether each metric can be captured is RQ0, [B-06](B-06-rq0-the-gate.md).
 
+- The probe's output goes to `stand/b-04/`, not `logs/`: it measures the stand, not an arm, and a
+  file under `logs/` would close the amendment window before B-01 can use this item's answer.
 - AC: on each device, the number of Personal-Team apps that install and launch together, found by
   installing empty apps until the device or Xcode refuses, with the refusal's exact text in the log.
 - AC: the same with an XCUITest target installed — does its runner count against the cap, and can
@@ -36,4 +38,4 @@ and the UI-test runner beside them.
 - AC: the cap is three by Apple's page, and the study has five apps since amendment A1.1, so a
   session plan is needed whatever the runner does; this item hands B-01 the measured number of free
   slots beside the runner, and the options it allows, with what each costs the interleaving.
-- Anchors: `logs/b-04/`, `harness/` (target).
+- Anchors: `stand/b-04/` (target), `harness/` (target).

@@ -21,7 +21,7 @@ build number or commit behind it, because a tag moves. Rows still open name the 
 
 | Row | Pin | Where it came from |
 |---|---|---|
-| Xcode | **open** — the released Xcode 27.0 is build `27A266a` (2026-09-14). The Mac holds only Xcode 27.0 beta 4 (`27A5228h`), which pins nothing | developer.apple.com/news/releases, 2026-10-10; `xcodebuild -version`. [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md) |
+| Xcode | **27.0, build `27A266a`** (released 2026-09-14), selected with `xcode-select`; iOS SDK `iphoneos27.0`. The beta (`27A5228h`) stays installed and builds nothing for this study | `xcodebuild -version` and `xcode-select -p` on the driving Mac, 2026-10-10; developer.apple.com/news/releases |
 | Kotlin | **open** — latest stable on 2026-10-10 is 2.4.21 (2026-10-08) | Maven Central `kotlin-gradle-plugin` metadata; JetBrains/kotlin releases. B-01 |
 | Compose Multiplatform | **open** — latest stable on 2026-10-10 is 1.12.1 (2026-09-22); `1.13.0-alpha02` is a pre-release that Maven's `<release>` tag points at | Maven Central `org.jetbrains.compose.gradle.plugin` metadata; JetBrains/compose-multiplatform releases. B-01 |
 | CMP `parallelRendering` | the framework default (`true` since 1.11.0), recorded because its default changed between versions | research §1.4 |
@@ -82,6 +82,20 @@ the spec is reported "not measured", with the failure.
 The brief's open decision "whether S3 (filter) gets its own red/green or stays descriptive"
 ([B-03](docs/backlog/B-03-filter-scenario-verdict.md)): **descriptive.** S3 is run and reported with
 median and IQR per arm and per device, and no verdict word; nothing is added to the thresholds.
+
+### A1.3 — build first, measure later (2026-10-10, owner, before the first measurement)
+
+The pre-registration's phases put the gate first: "no variant is built in full until RQ0 is green on
+a real device". The owner's decision: **develop first, run later** — the five arms, the harness and
+the readers are built and checked on the simulator, and the device work (what free provisioning
+allows, RQ0, parity on the device, every measurement) starts when the owner says so.
+
+What it does to the verdicts: **nothing; no threshold moves, and RQ0 still gates every number** —
+no arm is measured before RQ0 is green on a device. The simulator stays what the brief says it is:
+"used only for development and … never reported". What it costs: if kill criterion 1 or 2 fires,
+the build effort spent before it is lost, and the stop is written up with that effort counted; and
+the protocol decisions B-04 informs (the session plan, I5) are made after the arms exist rather
+than before — they change how the arms are installed and driven, not how they are built.
 
 ## Amendment set 2 — after the window
 

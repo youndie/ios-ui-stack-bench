@@ -19,8 +19,17 @@ publish the answer whatever it turns out to be, negative results included. The p
 This backlog is finished when [B-19](docs/backlog/B-19-write-up.md) closes — including when the
 study is killed, because a stop is written up with the same care as a result.
 
-**The gate comes first.** No variant is built in full until RQ0 is green on a real device
-([B-06](docs/backlog/B-06-rq0-the-gate.md)). Nothing here becomes a library, a JetBrains ticket or
+**Build first, measure later** (amendment A1.3, owner, 2026-10-10). The brief put the gate first;
+the owner moved the device work after development. The arms, the harness, the readers and the
+analysis are built and checked on the simulator now; RQ0 ([B-06](docs/backlog/B-06-rq0-the-gate.md))
+still gates every number, and no arm is measured before it is green on a device.
+
+**What the loop takes, and what waits for the owner.** The loop works the items that need no
+device: B-05, B-07–B-10, B-13–B-15, B-20–B-22. The device items — [B-04](docs/backlog/B-04-free-provisioning-probe.md),
+[B-06](docs/backlog/B-06-rq0-the-gate.md), [B-11](docs/backlog/B-11-parity-check.md)'s check on the
+devices, [B-12](docs/backlog/B-12-rq1-size.md), [B-16](docs/backlog/B-16-dry-run-and-the-ruler.md)–[B-19](docs/backlog/B-19-write-up.md)
+— and [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md)'s close of the window wait for the
+owner's go. B-12 needs no device but writes the first file under `logs/`, which closes the window. Nothing here becomes a library, a JetBrains ticket or
 an upstream fix: all three are non-goals of the brief, and an item proposing one does not belong in
 this file.
 
@@ -59,6 +68,8 @@ this file.
   ([B-21](docs/backlog/B-21-variant-b3-swift-export.md)); C uses the Objective-C export and is paired
   with B1. RQ1's B − A and RQ5 get one verdict per arm and no best-of. Five apps under a cap of three
   make the session plan an amendment of [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md).
+- **2026-10-10 — build first, measure later** (amendment A1.3); **the loop merges its own pull
+  requests** on a green head commit (owner) — see [CLAUDE.md](CLAUDE.md), "Pull requests".
 - **2026-10-10 — S3 stays descriptive** ([B-03](docs/backlog/B-03-filter-scenario-verdict.md),
   amendment A1.2).
 
@@ -68,15 +79,15 @@ this file.
 
 <!-- BEGIN INDEX -->
 
-## Open (19)
+## Open (20)
 
 | Task | | Priority | Size | Blocked by |
 |---|---|---|---|---|
 | [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md) `[ ]` | Pin the stand, settle the brief's incoherences as amendments, and close the window | P0 | S | B-04 |
 | [B-04](docs/backlog/B-04-free-provisioning-probe.md) `[ ]` | What free provisioning allows on the devices: apps per device, the test runner, Instruments on Release | P0 | S | - |
-| [B-05](docs/backlog/B-05-hello-world-variants.md) `[ ]` | Hello-world arms A, B1, B2, B3 and C with the instrumentation the study will measure through | P0 | M | B-02, B-04 |
+| [B-05](docs/backlog/B-05-hello-world-variants.md) `[ ]` | Hello-world arms A, B1, B2, B3 and C with the instrumentation the study will measure through | P0 | M | B-02 |
 | [B-06](docs/backlog/B-06-rq0-the-gate.md) `[ ]` | RQ0 — the gate: every metric captured on a device, the injected stall seen in every arm | P0 | M | B-01, B-05 |
-| [B-07](docs/backlog/B-07-fixture-and-shared-module.md) `[ ]` | The fixture and the shared Kotlin module: 2,000 items, 50 thumbnails, parse, filter, state | P1 | M | B-06 |
+| [B-07](docs/backlog/B-07-fixture-and-shared-module.md) `[ ]` | The fixture and the shared Kotlin module: 2,000 items, 50 thumbnails, parse, filter, state | P1 | M | B-05 |
 | [B-08](docs/backlog/B-08-variant-a.md) `[ ]` | Variant A — Native: the full spec | P1 | M | B-07 |
 | [B-09](docs/backlog/B-09-variant-b.md) `[ ]` | Variant B1 — KMP + SwiftUI over the Objective-C export: the full spec | P1 | M | B-07 |
 | [B-10](docs/backlog/B-10-variant-c.md) `[ ]` | Variant C — KMP + CMP: the full spec | P1 | M | B-07 |
@@ -91,6 +102,7 @@ this file.
 | [B-19](docs/backlog/B-19-write-up.md) `[ ]` | P4 — the write-up: one verdict per RQ, regenerated from the CSVs, negative results included | P1 | M | B-12, B-17, B-18 |
 | [B-20](docs/backlog/B-20-variant-b2-skie.md) `[ ]` | Variant B2 — KMP + SwiftUI over SKIE: the full spec | P1 | M | B-07 |
 | [B-21](docs/backlog/B-21-variant-b3-swift-export.md) `[ ]` | Variant B3 — KMP + SwiftUI over Swift export: the full spec, or the reason it cannot be built | P1 | M | B-07 |
+| [B-22](docs/backlog/B-22-ci-builds-every-arm.md) `[ ]` | CI builds every arm on macOS, so a green pull request means the apps still build | infra | S | B-05 |
 
 ## Closed (2)
 
