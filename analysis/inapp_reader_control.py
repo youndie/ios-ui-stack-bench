@@ -131,6 +131,17 @@ def _():
     return bad["valid"] == 0 and good["valid"] == 1
 
 
+@case("S4 growth: the sample after the 50th exit minus the sample after the 5th")
+def _():
+    marks = [(name, 110 + i * 2 + off) for i in range(50) for name, off in (("detailAppeared", 0), ("detailDisappeared", 1))]
+    lines = log(scenario="S4", pairs=0, extra_marks=marks)
+    lines = [l for l in lines if l["k"] != "footprint"]
+    lines += [{"k": "footprint", "t": 110 + i * 0.25, "bytes": 1_000_000 + i * 1000} for i in range(500)]
+    s = reader.summarise(lines, "S4")
+    # 5th exit at 119.0 -> sample index 36 (119.0); 50th exit at 209.0 -> index 396 (209.0)
+    return s["footprint_after_cycle5_bytes"] == 1_036_000 and s["growth_cycles_5_to_50_bytes"] == 360_000
+
+
 @case("peak footprint is the largest sample")
 def _():
     return reader.summarise(log(), "S2")["peak_footprint_bytes"] == 10_000_049

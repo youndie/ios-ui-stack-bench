@@ -28,6 +28,11 @@ secondary to Instruments' Animation Hitches, which is the brief's instrument:
     longest hitch    the largest single hitch time inside those windows
 It measures when the main thread got to run a frame callback, not when a frame reached the display;
 a stall that blocks the main thread shows in both, a render-server hitch only in Instruments.
+
+**RQ4's growth over S4** - the brief's "growth over 50 push/pop cycles after warm-up" leaves the
+warm-up's end open (research §2, I7). Proposed for B-01, and implemented here until it decides:
+    after cycle n   the first footprint sample at or after the n-th `detailDisappeared`
+    growth          after cycle 50 minus after cycle 5, in bytes
 """
 import argparse
 import csv
@@ -121,6 +126,7 @@ def summarise(lines, scenario):
     footprint = [l["bytes"] for l in lines if l["k"] == "footprint"]
     over = [r for r in in_window if r["interval_ms"] > 1.5 * r["expected_ms"] > 0]
     start = header.get("processStart")
+    growth = growth_s4(lines) if scenario == "S4" else ("", "", "")
     return {
         "bundle": header.get("bundle", ""),
         "machine": header.get("machine", ""),
@@ -141,7 +147,25 @@ def summarise(lines, scenario):
         "frame_p50_ms": percentile([r["interval_ms"] for r in in_window], 50) if in_window else "",
         "frame_p95_ms": percentile([r["interval_ms"] for r in in_window], 95) if in_window else "",
         "frame_p99_ms": percentile([r["interval_ms"] for r in in_window], 99) if in_window else "",
+        "footprint_after_cycle5_bytes": growth[0],
+        "footprint_after_cycle50_bytes": growth[1],
+        "growth_cycles_5_to_50_bytes": growth[2],
     }
+
+
+def growth_s4(lines):
+    gone = sorted(l["t"] for l in lines if l["k"] == "mark" and l["name"] == "detailDisappeared")
+    samples = sorted((l["t"], l["bytes"]) for l in lines if l["k"] == "footprint")
+
+    def after(t):
+        return next((b for ts, b in samples if ts >= t), None)
+
+    if len(gone) < 50:
+        return ("", "", "")
+    five, fifty = after(gone[4]), after(gone[49])
+    if five is None or fifty is None:
+        return ("", "", "")
+    return (five, fifty, fifty - five)
 
 
 def write_csv(path, rows, fields):

@@ -24,7 +24,7 @@ measurement, a harness, a document with its verdicts, and the raw logs behind ev
    - **B is three arms since amendment A1.1** — B1 Objective-C export, B2 SKIE, B3 Swift export —
      each with its own verdict and never a best-of; C is paired with B1. Five apps do not fit a
      free account's three slots, so sessions share A as their anchor.
-   - §2 lists fourteen places where the frozen brief cannot be applied as written; they are settled
+   - §2 lists fifteen places where the frozen brief cannot be applied as written; they are settled
      in BRIEF.md before anything is measured.
 2. [docs/research/source-brief.md](docs/research/source-brief.md) — the pre-registration, frozen.
    [BRIEF.md](BRIEF.md) — its record, the pins, the amendments; the operative text wherever it
