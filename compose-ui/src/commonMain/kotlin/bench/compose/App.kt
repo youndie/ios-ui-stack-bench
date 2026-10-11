@@ -101,8 +101,11 @@ fun App(catalog: Catalog, probe: Probe, autoScrolls: Int = 0) {
 private fun ListScreen(items: List<Item>, onQuery: (String) -> Unit, onOpen: (Item) -> Unit, probe: Probe, autoScrolls: Int) {
     var query by rememberSaveable { mutableStateOf("") }
     Column(Modifier.fillMaxSize()) {
-        // iOS's large title size, so the list starts where the SwiftUI arms' list starts (B-29).
-        Text("Items", style = TextStyle(fontSize = 34.sp, fontWeight = FontWeight.Bold), modifier = Modifier.padding(horizontal = 16.dp))
+        // iOS's large title size, so the list starts where the SwiftUI arms' list starts (B-29). On the
+        // iPhone XS (iOS 18, the study's device since A1.7) SwiftUI puts the search field under the
+        // title and the first row 146 points below the status bar; 46 dp above the title bring C's first
+        // row there, with Material's 56 dp field kept (B-11).
+        Text("Items", style = TextStyle(fontSize = 34.sp, fontWeight = FontWeight.Bold), modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 46.dp))
         OutlinedTextField(
             value = query,
             onValueChange = { query = it; probe.mark("query"); onQuery(it) },
@@ -163,7 +166,10 @@ private fun ListScreen(items: List<Item>, onQuery: (String) -> Unit, onOpen: (It
 @Composable
 private fun ItemRow(item: Item, modifier: Modifier = Modifier) {
     Row(
-        modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 15.dp, bottom = 14.dp),
+        // SwiftUI's List row on the iPhone XS (iOS 18): 76.67 points, 11 above and below its content.
+        // C's text block is 2.33 points shorter at the same type sizes (Skia's line heights), so the
+        // padding takes the difference (B-11; 15/14 dp matched the iOS 27 simulator in B-29).
+        modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 11.67.dp, bottom = 11.67.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {

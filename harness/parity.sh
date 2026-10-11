@@ -33,8 +33,9 @@ for arm in ${*:-a-native b1-objc b2-skie b3-swift-export c-kmp-cmp}; do
     result="$out/$arm.xcresult"; rm -rf "$result"
     TEST_RUNNER_BENCH_BUNDLE="io.github.youndie.iosbench.$b" xcodebuild test-without-building \
         $TESTS -destination "$DESTINATION" \
-        -derivedDataPath "$DERIVED" -resultBundlePath "$result" -only-testing:HarnessUITests/Parity/testFirstScreen 2>&1 \
-        | sed -n 's/.*PARITY //p' > "$out/$arm.txt"
+        -derivedDataPath "$DERIVED" -resultBundlePath "$result" -only-testing:HarnessUITests/Parity/testFirstScreen \
+        > "$out/$arm.log" 2>&1 || true
+    sed -n 's/.*PARITY //p' "$out/$arm.log" > "$out/$arm.txt"
     rm -rf "$out/$arm.attachments"
     xcrun xcresulttool export attachments --path "$result" --output-path "$out/$arm.attachments" >/dev/null
     png=$(find "$out/$arm.attachments" -name '*.png' | head -1)
