@@ -1,0 +1,16 @@
+# B-04: the runner built and run with Xcode 26.6 (17F113); the arms built with Xcode 27.0 (27A266a). iPhone XS: A, B1 and the runner
+# 2026-10-11T12:12:32Z
+$ DESTINATION=id=00008020-000A6CC42692002E REBUILD=1 harness/run.sh a-native S1
+harness build failed - /Users/youndie/Documents/GitHub/ios-ui-stack-bench/build/DerivedData/harness-device.build.log
+xcodebuild: error: Unable to find a destination matching the provided destination specifier:
+		{ platform:iOS, arch:arm64e, id:00008020-000A6CC42692002E, name:iPhone (3), error:iOS 26.5 is not installed. Please download and install the platform from Xcode > Settings > Components. }
+		{ platform:iOS, arch:arm64e, id:00008150-001E114236B9401C, name:<iPhone 17 Pro, name redacted>, error:iOS 26.5 is not installed. Please download and install the platform from Xcode > Settings > Components. }
+		{ platform:iOS, id:dvtdevice-DVTiPhonePlaceholder-iphoneos:placeholder, name:Any iOS Device, error:iOS 26.5 is not installed. Please download and install the platform from Xcode > Settings > Components. }
+exit 0
+
+# 12:25:00 after the iOS 26.5 platform was installed for Xcode 26.6
+$ DESTINATION=id=00008020-000A6CC42692002E REBUILD=1 harness/run.sh a-native S1
+2026-10-11 14:25:16.283 xcodebuild[14005:4491629] [MT] IDELaunchReport: fffb95f9dadd9440:fffb95f9dadd95c0:Installing HarnessUITests on iPhone (3) Finished with error: Root install style is not supported on this device
+2026-10-11 14:25:16.284 xcodebuild[14005:4491629] [MT] IDELaunchReport: fffb95f9dadd9440:fffb95f9dadd9440: Finished with error: Root install style is not supported on this device
+Testing failed:
+** TEST EXECUTE FAILED **

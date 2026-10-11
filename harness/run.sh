@@ -31,7 +31,16 @@ if [ ! -d "$DERIVED/Build/Products" ] || [ -n "${REBUILD:-}" ]; then
         -destination "$DESTINATION" -derivedDataPath "$DERIVED" $SIGNING >"$DERIVED.build.log" 2>&1 \
         || { echo "harness build failed - $DERIVED.build.log" >&2; tail -20 "$DERIVED.build.log" >&2; exit 1; }
 fi
+# On a device the tests run from a copy of the .xctestrun without its DSTROOTPath. With that key,
+# xcodebuild installs the runner in the "root" style, which only an internal iOS build accepts ("Root
+# install style is not supported on this device", B-04); without it, the runner installs as an app.
+TESTS="-project $ROOT/harness/Harness.xcodeproj -scheme HarnessUITests"
+case $DESTINATION in id=*)
+    cp "$(ls -t "$DERIVED"/Build/Products/HarnessUITests_*.xctestrun | head -1)" "$DERIVED/Build/Products/device.xctestrun"
+    plutil -remove TestConfigurations.0.TestTargets.0.DSTROOTPath "$DERIVED/Build/Products/device.xctestrun" >/dev/null 2>&1 || true
+    TESTS="-xctestrun $DERIVED/Build/Products/device.xctestrun" ;;
+esac
 TEST_RUNNER_BENCH_BUNDLE="io.github.youndie.iosbench.$bundle" TEST_RUNNER_BENCH_LAUNCH_ARGS="$*" \
-    xcodebuild test-without-building -project "$ROOT/harness/Harness.xcodeproj" -scheme HarnessUITests \
+    xcodebuild test-without-building $TESTS \
     -destination "$DESTINATION" -derivedDataPath "$DERIVED" -only-testing:"HarnessUITests/Scenarios/$test" 2>&1 \
     | grep -E "Test Case|error:|failed|passed|\*\* TEST" || true

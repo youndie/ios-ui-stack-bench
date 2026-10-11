@@ -78,3 +78,31 @@ device must allow installing app bundles and roots, and be running an internal O
 The runner itself installs and is signed and provisioned. No public report of the message was found.
 Without the runner there is no S2–S4 on a device, so this item stays `wip`, and the question goes to
 the owner.
+
+## Iteration 2 — 2026-10-11
+
+**The runner blocker is solved, and Xcode 27.0 was not its cause.** The owner installed Xcode 26.6
+(17F113) beside 27.0, with its iOS 26.5 platform, to build the runner. It failed with the same message
+([stand/b-04/2026-10-11-xs-runner-xcode26.log](../../stand/b-04/2026-10-11-xs-runner-xcode26.log)).
+The message comes from the system CoreDevice framework, which every Xcode on the Mac loads. The
+trigger is the `DSTROOTPath` key that build-for-testing writes into the `.xctestrun`: with it,
+XCTHarness picks the internal install style. Removing the injected diagnostics did not help;
+removing that one key did, on 26.6 and on the pinned 27.0 alike
+([stand/b-04/2026-10-11-xs-runner-dstroot.log](../../stand/b-04/2026-10-11-xs-runner-dstroot.log)).
+`harness/run.sh` and `harness/parity.sh` now run a device from a copy of the `.xctestrun` without
+it. Xcode 26.6 is not needed and is not part of the stand. Research §1.5 has the facts.
+
+**Answered:**
+- On the XS, with Xcode 27.0, S1–S4 of arm A pass through the harness. The app's four logs are
+  valid by `analysis/inapp_reader.py`, thermal state nominal, with every marker its reader needs. The
+  logs are probes: they are not under `logs/`, and no number from them is reported.
+- The phone has to allow UI automation (Settings → Developer). Until it does, the runner starts
+  and then fails with "Timed out while enabling automation mode".
+- Animation Hitches and Allocations record a Release build of A on the XS through
+  `xctrace record --launch`. The Hitches trace holds `hitches-summary` and the interval tables. The
+  Allocations trace exports none of its allocation data, so memory stays with the in-app
+  `phys_footprint` sampler. Reading a trace is B-24's.
+- `xctrace` sees a paired device as offline until its tunnel is open. One `devicectl` request
+  opens it. The session command has to do this before every recording.
+- The profiles expire seven days after issue: created 2026-10-11, valid to 2026-10-18. A session
+  started on a profile with less than a day left can lose its apps mid-session.

@@ -21,11 +21,18 @@ python3 "$ROOT/harness/generate_project.py" --check >/dev/null
 xcodebuild build-for-testing -project "$ROOT/harness/Harness.xcodeproj" -scheme HarnessUITests \
     -destination "$DESTINATION" -derivedDataPath "$DERIVED" $SIGNING >"$DERIVED.build.log" 2>&1 \
     || { echo "harness build failed - $DERIVED.build.log" >&2; exit 1; }
+# A device runs from a copy of the .xctestrun without DSTROOTPath, as in harness/run.sh (B-04).
+TESTS="-project $ROOT/harness/Harness.xcodeproj -scheme HarnessUITests"
+case $DESTINATION in id=*)
+    cp "$(ls -t "$DERIVED"/Build/Products/HarnessUITests_*.xctestrun | head -1)" "$DERIVED/Build/Products/device.xctestrun"
+    plutil -remove TestConfigurations.0.TestTargets.0.DSTROOTPath "$DERIVED/Build/Products/device.xctestrun" >/dev/null 2>&1 || true
+    TESTS="-xctestrun $DERIVED/Build/Products/device.xctestrun" ;;
+esac
 for arm in ${*:-a-native b1-objc b2-skie b3-swift-export c-kmp-cmp}; do
     case $arm in a-native) b=a ;; b1-objc) b=b1 ;; b2-skie) b=b2 ;; b3-swift-export) b=b3 ;; c-kmp-cmp) b=c ;; esac
     result="$out/$arm.xcresult"; rm -rf "$result"
     TEST_RUNNER_BENCH_BUNDLE="io.github.youndie.iosbench.$b" xcodebuild test-without-building \
-        -project "$ROOT/harness/Harness.xcodeproj" -scheme HarnessUITests -destination "$DESTINATION" \
+        $TESTS -destination "$DESTINATION" \
         -derivedDataPath "$DERIVED" -resultBundlePath "$result" -only-testing:HarnessUITests/Parity/testFirstScreen 2>&1 \
         | sed -n 's/.*PARITY //p' > "$out/$arm.txt"
     rm -rf "$out/$arm.attachments"

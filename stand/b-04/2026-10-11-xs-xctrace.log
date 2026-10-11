@@ -13,3 +13,38 @@ Run issues were detected (trace is still ready to be viewed):
 Recording completed. Saving output file...
 Output file saved as: a-launch.trace
 exit 0
+
+# 2026-10-11T12:46:01Z
+$ xctrace record --template 'Animation Hitches' --device 00008020-000A6CC42692002E --time-limit 15s --output a-animation-hitches.trace --launch -- io.github.youndie.iosbench.a
+Waiting for device to boot
+Timed out waiting for device to boot: iPhone (3) (18.7.3)
+exit 13
+
+# 2026-10-11T12:46:33Z
+$ xctrace record --template 'Allocations' --device 00008020-000A6CC42692002E --time-limit 15s --output a-allocations.trace --launch -- io.github.youndie.iosbench.a
+Waiting for device to boot
+Timed out waiting for device to boot: iPhone (3) (18.7.3)
+exit 13
+
+# the two above ran while the device had no tunnel (xctrace listed it under Devices Offline); one devicectl request opened it, then:
+
+# 2026-10-11T12:47:31Z
+$ xctrace record --template 'Animation Hitches' --device 00008020-000A6CC42692002E --time-limit 15s --output a-animation-hitches.trace --launch -- io.github.youndie.iosbench.a
+Starting recording with the Animation Hitches template. Launching process: io.github.youndie.iosbench.a. Time limit: 15.0 s
+Ctrl-C to stop the recording
+Reached specified time limit, ending recording...
+Recording completed. Saving output file...
+Output file saved as: a-animation-hitches.trace
+exit 0
+
+# 2026-10-11T12:49:13Z
+$ xctrace record --template 'Allocations' --device 00008020-000A6CC42692002E --time-limit 15s --output a-allocations.trace --launch -- io.github.youndie.iosbench.a
+Starting recording with the Allocations template. Launching process: io.github.youndie.iosbench.a. Time limit: 15.0 s
+Ctrl-C to stop the recording
+Reached specified time limit, ending recording...
+Timeline modification failed -- dylibs overlap by 0x138000:
+    0x10523c000-0x105374000 [0x138000] (0-1404338114422) /usr/lib/dyld
+    0x10523c000-0x105374000 [0x138000] (0-9223372036854775807) /usr/lib/dyld
+Recording completed. Saving output file...
+Output file saved as: a-allocations.trace
+exit 0
