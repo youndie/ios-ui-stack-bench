@@ -1,0 +1,9 @@
+arm,check,verdict,observed
+b1-objc,geometry,pass,"rows 9, row_height +0.00, row_top +0.00, list_bottom +0.00 pt, thumb 48.0x48.0"
+b1-objc,pixels,pass,0.000 % of the band differ
+b2-skie,geometry,pass,"rows 9, row_height +0.00, row_top +0.00, list_bottom +0.00 pt, thumb 48.0x48.0"
+b2-skie,pixels,pass,0.000 % of the band differ
+b3-swift-export,geometry,pass,"rows 9, row_height +0.00, row_top +0.00, list_bottom +0.00 pt, thumb 48.0x48.0"
+b3-swift-export,pixels,pass,0.000 % of the band differ
+c-kmp-cmp,geometry,pass,"rows 9, row_height +0.00, row_top +0.33, list_bottom +0.00 pt, thumb 48.0x48.0"
+c-kmp-cmp,pixels,published,8.742 % of the band differ

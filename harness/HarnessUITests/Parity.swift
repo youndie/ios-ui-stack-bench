@@ -42,6 +42,17 @@ final class Parity: XCTestCase {
         print("PARITY list_bottom=\(min(visible.map(\.frame.maxY).max() ?? -1, screen.maxY))")
         print("PARITY thumb=\(thumb?.exists == true ? "\(thumb!.frame.width)x\(thumb!.frame.height)" : "not exposed")")
         print("PARITY title_h=\(title.frame.height)")
+        // Diagnostics for matching a layout by hand, not read by any check: every text and image of the
+        // first row, the search field and the navigation title, each with its frame in points.
+        for e in (first?.staticTexts.allElementsBoundByIndex ?? []) + (first?.images.allElementsBoundByIndex ?? []) {
+            print("PARITY_TREE row \(e.elementType.rawValue) '\(e.label.prefix(24))' \(e.frame)")
+        }
+        for e in app.searchFields.allElementsBoundByIndex + app.textFields.allElementsBoundByIndex + app.textViews.allElementsBoundByIndex {
+            print("PARITY_TREE field \(e.elementType.rawValue) \(e.frame)")
+        }
+        for e in app.staticTexts.matching(identifier: "Items").allElementsBoundByIndex + app.navigationBars.allElementsBoundByIndex {
+            print("PARITY_TREE title \(e.elementType.rawValue) '\(e.label)' \(e.frame)")
+        }
         let screenshot = XCUIScreen.main.screenshot()
         print("PARITY scale=\(screenshot.image.scale)")
 

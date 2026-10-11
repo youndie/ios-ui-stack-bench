@@ -92,11 +92,10 @@ this file.
 
 <!-- BEGIN INDEX -->
 
-## Open (7)
+## Open (6)
 
 | Task | | Priority | Size | Blocked by |
 |---|---|---|---|---|
-| [B-11](docs/backlog/B-11-parity-check.md) `[ ]` | Visual parity before any measurement: item count, row height, first-screen diff | P1 | M | B-08, B-09, B-10, B-20, B-21 |
 | [B-12](docs/backlog/B-12-rq1-size.md) `[ ]` | RQ1 — size: what KMP and CMP add to an arm64 app, uncompressed and zip -9, by component | P1 | S | B-11 |
 | [B-16](docs/backlog/B-16-dry-run-and-the-ruler.md) `[ ]` | Dry run on one device: the ruler, the runner's and the instruments' own cost, thermal drift | P1 | M | B-15, B-24 |
 | [B-17](docs/backlog/B-17-runs-on-the-older-device.md) `[ ]` | P3 — the full matrix on the older device: S1–S4, every arm, rotated order | P1 | L | B-16 |
@@ -104,7 +103,7 @@ this file.
 | [B-19](docs/backlog/B-19-write-up.md) `[ ]` | P4 — the write-up: one verdict per RQ, regenerated from the CSVs, negative results included | P1 | M | B-12, B-17, B-18 |
 | [B-23](docs/backlog/B-23-kotlin-2-5-round.md) `[ ]` | A later round on Kotlin 2.5.0: arm B3 without D8, once Kotlin 2.5.0 is stable | P3 | M | - |
 
-## Closed (22)
+## Closed (23)
 
 **P0 — the gate**
 
@@ -122,6 +121,7 @@ this file.
 - [B-08](docs/backlog/B-08-variant-a.md) `[x]` - Variant A — Native: the full spec
 - [B-09](docs/backlog/B-09-variant-b.md) `[x]` - Variant B1 — KMP + SwiftUI over the Objective-C export: the full spec
 - [B-10](docs/backlog/B-10-variant-c.md) `[x]` - Variant C — KMP + CMP: the full spec
+- [B-11](docs/backlog/B-11-parity-check.md) `[x]` - Visual parity before any measurement: item count, row height, first-screen diff
 - [B-20](docs/backlog/B-20-variant-b2-skie.md) `[x]` - Variant B2 — KMP + SwiftUI over SKIE: the full spec
 - [B-21](docs/backlog/B-21-variant-b3-swift-export.md) `[x]` - Variant B3 — KMP + SwiftUI over Swift export: the full spec, or the reason it cannot be built
 - [B-22](docs/backlog/B-22-ci-builds-every-arm.md) `[x]` - CI builds every arm on macOS, so a green pull request means the apps still build

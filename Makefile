@@ -105,6 +105,7 @@ gate: docs-gate
 	$(PY) harness/session_control.py
 	$(PY) analysis/linkmap_control.py
 	$(PY) scripts/parity_diff_control.py
+	$(PY) analysis/parity_reader_control.py
 
 report: docs-report
 

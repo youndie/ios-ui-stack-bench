@@ -11,3 +11,6 @@ build/
 *.trace/
 apps/*/Configuration/Local.xcconfig
 harness/Configuration/Local.xcconfig
+
+# Test result bundles: compressed binaries; the screenshots and the test output are extracted beside them (B-11).
+logs/**/*.xcresult

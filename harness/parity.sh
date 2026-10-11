@@ -28,13 +28,32 @@ case $DESTINATION in id=*)
     plutil -remove TestConfigurations.0.TestTargets.0.DSTROOTPath "$DERIVED/Build/Products/device.xctestrun" >/dev/null 2>&1 || true
     TESTS="-xctestrun $DERIVED/Build/Products/device.xctestrun" ;;
 esac
+# On a device the arms take their turns: a free account holds the runner and two arms (B-04), so each
+# arm is installed from build/DerivedData-device just before its screen is taken, and the other arms
+# are removed. `header.txt` records the stand (logs/README.md).
+case $DESTINATION in id=*)
+    udid=${DESTINATION#id=}
+    { echo "commit $(git -C "$ROOT" rev-parse HEAD)"; xcodebuild -version | tr '\n' ' '; echo
+      j=$(mktemp); xcrun devicectl device info details --device "$udid" -j "$j" -q >/dev/null 2>&1
+      python3 -c 'import json,sys; r=json.load(open(sys.argv[1]))["result"]; h,d=r["hardwareProperties"],r["deviceProperties"]; print(h["marketingName"], h["productType"], "iOS", d["osVersionNumber"], d["osBuildUpdate"])' "$j"; rm -f "$j"
+      date -u +%Y-%m-%dT%H:%M:%SZ; } > "$out/header.txt" ;;
+esac
 for arm in ${*:-a-native b1-objc b2-skie b3-swift-export c-kmp-cmp}; do
     case $arm in a-native) b=a ;; b1-objc) b=b1 ;; b2-skie) b=b2 ;; b3-swift-export) b=b3 ;; c-kmp-cmp) b=c ;; esac
+    case $DESTINATION in id=*)
+        for other in a b1 b2 b3 c; do
+            [ "$other" = "$b" ] || xcrun devicectl device uninstall app --device "$udid" "io.github.youndie.iosbench.$other" >/dev/null 2>&1 || true
+        done
+        app=$(ls -d "$ROOT"/build/DerivedData-device/$arm/Build/Products/Release-iphoneos/*.app)
+        xcrun devicectl device install app --device "$udid" "$app" >/dev/null
+        echo "$arm $(shasum -a 256 "$app/$(plutil -extract CFBundleExecutable raw "$app/Info.plist")" | cut -d' ' -f1)" >> "$out/header.txt" ;;
+    esac
     result="$out/$arm.xcresult"; rm -rf "$result"
     TEST_RUNNER_BENCH_BUNDLE="io.github.youndie.iosbench.$b" xcodebuild test-without-building \
         $TESTS -destination "$DESTINATION" \
-        -derivedDataPath "$DERIVED" -resultBundlePath "$result" -only-testing:HarnessUITests/Parity/testFirstScreen 2>&1 \
-        | sed -n 's/.*PARITY //p' > "$out/$arm.txt"
+        -derivedDataPath "$DERIVED" -resultBundlePath "$result" -only-testing:HarnessUITests/Parity/testFirstScreen \
+        > "$out/$arm.log" 2>&1 || true
+    sed -n 's/.*PARITY //p' "$out/$arm.log" > "$out/$arm.txt"
     rm -rf "$out/$arm.attachments"
     xcrun xcresulttool export attachments --path "$result" --output-path "$out/$arm.attachments" >/dev/null
     png=$(find "$out/$arm.attachments" -name '*.png' | head -1)

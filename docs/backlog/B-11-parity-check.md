@@ -1,7 +1,7 @@
 ---
 id: B-11
 title: "Visual parity before any measurement: item count, row height, first-screen diff"
-status: open
+status: done
 priority: P1
 size: M
 stage: stage-1-build
@@ -37,3 +37,30 @@ days of kill criterion 3 on chrome rather than content.
 - AC: build days spent on parity are counted from this item's start and recorded; on day 5 without
   parity the scope cut of kill criterion 3 is applied, not extended.
 - Anchors: `logs/b-11/`, `apps/` (target).
+
+---
+
+## Done — 2026-10-11, day 1 of kill criterion 3's five
+
+**Parity holds on the iPhone XS** by A1.6 ([logs/b-11/](../../logs/b-11/README.md), `xs/parity.md`).
+B1, B2 and B3 are pixel-identical to A over the band, with the same geometry. C's geometry is within
+a point everywhere. Its pixel share is published, and by A1.6 it decides nothing. Kill criterion 3
+does not fire: parity came on the first day.
+
+What it took on the XS (iOS 18.7), beyond B-29's work on the iOS 27 simulator:
+- **Light appearance on the phone.** The SwiftUI arms follow the system's appearance. C's
+  `MaterialTheme`, the template's default, is light whatever the system says. With the phone in Dark,
+  A was dark and C light. This is the stand's setting, so neither stack's default is changed: the
+  phone stays in Light for the study.
+- **C's row and header refitted to iOS 18.** On iOS 18, SwiftUI's list row is 76.67 points with 11 above and
+  below its content, and the search field sits under the large title. B-29's values were the iOS 27
+  simulator's, where the field is at the bottom. C's row padding is now 11.67 dp, and its title is 46 dp
+  below the status bar (`docs/flags.md`). So C's geometry no longer matches A's on the iOS 27
+  simulator. The XS is the study's device (A1.7).
+- **`harness/parity.sh` on a device** installs each arm in turn and writes a `header.txt`. It keeps the
+  test's whole output, including `PARITY_TREE` diagnostics: the frames of the first row's texts and
+  images, the search field, and the title.
+- **`analysis/parity_reader.py`** applies A1.6, and its control is in `make check`.
+
+Deliberately left out: diff images. The B arms' diff is empty, and C's is not judged
+(`logs/b-11/README.md`).

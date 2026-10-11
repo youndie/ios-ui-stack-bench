@@ -1,0 +1,7 @@
+rows=9
+row_height=76.66667175292969
+row_top=190.6666717529297
+list_bottom=812.0
+thumb=48.0x48.0
+title_h=18.333328247070312
+scale=3.0

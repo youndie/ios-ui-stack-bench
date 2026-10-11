@@ -1,0 +1,140 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/youndie/Documents/GitHub/ios-ui-stack-bench/build/DerivedData/harness-device/Build/Products/device.xctestrun -destination id=00008020-000A6CC42692002E -derivedDataPath /Users/youndie/Documents/GitHub/ios-ui-stack-bench/build/DerivedData/harness-device -resultBundlePath logs/b-11/xs/a-native.xcresult "-only-testing:HarnessUITests/Parity/testFirstScreen"
+
+Writing result bundle at path:
+	/Users/youndie/Documents/GitHub/ios-ui-stack-bench/logs/b-11/xs/a-native.xcresult
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS, arch:arm64e, id:00008020-000A6CC42692002E, name:iPhone (3) }
+{ platform:iOS, arch:arm64v8, id:00008020-000A6CC42692002E, name:iPhone (3) }
+{ platform:iOS, arch:arm64, id:00008020-000A6CC42692002E, name:iPhone (3) }
+{ platform:iOS, arch:armv8, id:00008020-000A6CC42692002E, name:iPhone (3) }
+2026-10-11 22:22:22.282893+0200 HarnessUITests-Runner[4004:906039] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-11 22:22:22.675.
+Test Suite 'HarnessUITests.xctest' started at 2026-10-11 22:22:22.676.
+Test Suite 'Parity' started at 2026-10-11 22:22:22.676.
+Test Case '-[HarnessUITests.Parity testFirstScreen]' started.
+    t =     0.00s Start Test at 2026-10-11 22:22:22.677
+    t =     0.02s Set Up
+    t =     0.02s Open io.github.youndie.iosbench.a
+    t =     0.03s     Launch io.github.youndie.iosbench.a
+    t =     0.23s         Setting up automation session
+    t =     0.39s         Wait for io.github.youndie.iosbench.a to idle
+    t =     1.63s Waiting 30.0s for "Lunar island 1" StaticText to exist
+    t =     2.66s     Checking `Expect predicate `existsNoRetry == 1` for object "Lunar island 1" StaticText`
+    t =     2.66s         Checking existence of `"Lunar island 1" StaticText`
+    t =     4.82s Get all elements bound by index for: Descendants matching type Cell
+    t =     4.93s Find the Cell (Element at index 0)
+    t =     5.01s Find the Cell (Element at index 1)
+    t =     5.06s Find the Cell (Element at index 2)
+    t =     5.11s Find the Cell (Element at index 3)
+    t =     5.16s Find the Cell (Element at index 4)
+    t =     5.21s Find the Cell (Element at index 5)
+    t =     5.26s Find the Cell (Element at index 6)
+    t =     5.32s Find the Cell (Element at index 7)
+    t =     5.36s Find the Cell (Element at index 8)
+    t =     5.42s Find the Window (First Match)
+    t =     5.45s Find the Cell at {{0.0, 190.3}, {375.0, 76.7}}
+    t =     5.51s Find the Cell at {{0.0, 190.3}, {375.0, 76.7}}
+    t =     5.57s Find the Cell at {{0.0, 267.0}, {375.0, 76.7}}
+    t =     5.63s Find the Cell at {{0.0, 267.0}, {375.0, 76.7}}
+    t =     5.69s Find the Cell at {{0.0, 343.7}, {375.0, 76.7}}
+    t =     5.75s Find the Cell at {{0.0, 343.7}, {375.0, 76.7}}
+    t =     5.80s Find the Cell at {{0.0, 420.3}, {375.0, 76.7}}
+    t =     5.85s Find the Cell at {{0.0, 420.3}, {375.0, 76.7}}
+    t =     5.90s Find the Cell at {{0.0, 497.0}, {375.0, 76.7}}
+    t =     5.95s Find the Cell at {{0.0, 497.0}, {375.0, 76.7}}
+    t =     5.99s Find the Cell at {{0.0, 573.7}, {375.0, 76.7}}
+    t =     6.04s Find the Cell at {{0.0, 573.7}, {375.0, 76.7}}
+    t =     6.09s Find the Cell at {{0.0, 650.3}, {375.0, 76.7}}
+    t =     6.14s Find the Cell at {{0.0, 650.3}, {375.0, 76.7}}
+    t =     6.19s Find the Cell at {{0.0, 727.0}, {375.0, 76.7}}
+    t =     6.24s Find the Cell at {{0.0, 727.0}, {375.0, 76.7}}
+    t =     6.29s Find the Cell at {{0.0, 803.7}, {375.0, 76.7}}
+    t =     6.35s Find the Cell at {{0.0, 803.7}, {375.0, 76.7}}
+    t =     6.39s Checking existence of `"Lunar island 1" StaticText`
+PARITY rows=9
+    t =     6.45s Find the Cell at {{0.0, 190.3}, {375.0, 76.7}}
+PARITY row_height=76.66666666666666
+    t =     6.50s Find the Cell at {{0.0, 190.3}, {375.0, 76.7}}
+PARITY row_top=190.33333333333334
+    t =     6.56s Find the Cell at {{0.0, 190.3}, {375.0, 76.7}}
+    t =     6.61s Find the Cell at {{0.0, 267.0}, {375.0, 76.7}}
+    t =     6.66s Find the Cell at {{0.0, 343.7}, {375.0, 76.7}}
+    t =     6.71s Find the Cell at {{0.0, 420.3}, {375.0, 76.7}}
+    t =     6.76s Find the Cell at {{0.0, 497.0}, {375.0, 76.7}}
+    t =     6.82s Find the Cell at {{0.0, 573.7}, {375.0, 76.7}}
+    t =     6.88s Find the Cell at {{0.0, 650.3}, {375.0, 76.7}}
+    t =     6.98s Find the Cell at {{0.0, 727.0}, {375.0, 76.7}}
+    t =     7.04s Find the Cell at {{0.0, 803.7}, {375.0, 76.7}}
+PARITY list_bottom=812.0
+    t =     7.09s Checking existence of `Image (First Match)`
+    t =     7.10s Find the Image (First Match)
+    t =     7.14s Find the Image at {{16.0, 204.7}, {48.0, 48.0}}
+PARITY thumb=48.0x48.0
+    t =     7.16s Find the "Lunar island 1" StaticText
+PARITY title_h=19.333333333333314
+    t =     7.20s Get all elements bound by index for: Descendants matching type StaticText
+    t =     7.24s Get all elements bound by index for: Descendants matching type Image
+    t =     7.28s Find the StaticText (Element at index 0)
+    t =     7.45s Find the "Lunar island 1" StaticText
+    t =     7.66s Find the "Lunar island 1" StaticText
+PARITY_TREE row 48 'Lunar island 1' (76.0, 201.33333333333334, 103.66666666666666, 19.333333333333314)
+    t =     7.78s Find the StaticText (Element at index 1)
+    t =     7.84s Find the "Its in made when do." StaticText
+    t =     7.89s Find the "Its in made when do." StaticText
+PARITY_TREE row 48 'Its in made when do.' (76.0, 222.66666666666666, 133.33333333333334, 17.0)
+    t =     7.94s Find the StaticText (Element at index 2)
+    t =     7.99s Find the "Many she if when been one or out would." StaticText
+    t =     8.04s Find the "Many she if when been one or out would." StaticText
+PARITY_TREE row 48 'Many she if when been on' (76.0, 241.66666666666666, 213.0, 14.333333333333343)
+    t =     8.09s Find the StaticText (Element at index 3)
+    t =     8.14s Find the "3" StaticText
+    t =     8.20s Find the "3" StaticText
+PARITY_TREE row 48 '3' (326.0, 222.0, 7.333333333333314, 13.333333333333343)
+    t =     8.24s Find the Image (Element at index 0)
+    t =     8.29s Find the Image
+    t =     8.34s Find the Image
+PARITY_TREE row 43 '' (16.0, 204.66666666666666, 48.0, 48.0)
+    t =     8.38s Find the Image (Element at index 1)
+    t =     8.43s Find the "chevron.forward" Image
+    t =     8.48s Find the "chevron.forward" Image
+PARITY_TREE row 43 '' (351.6666666666667, 223.0, 6.6666669845581055, 11.333333969116211)
+    t =     8.53s Get all elements bound by index for: Descendants matching type SearchField
+    t =     8.57s Get all elements bound by index for: Descendants matching type TextField
+    t =     8.60s Get all elements bound by index for: Descendants matching type TextView
+    t =     8.65s Find the SearchField (Element at index 0)
+    t =     8.71s Find the "Search" SearchField
+PARITY_TREE field 45 (16.0, 141.0, 343.0, 34.33333333333334)
+    t =     8.76s Get all elements bound by index for: Elements matching predicate '"Items" IN identifiers'
+    t =     8.81s Get all elements bound by index for: Descendants matching type NavigationBar
+    t =     8.86s Find the "Items" StaticText
+    t =     8.93s Find the "Items" StaticText
+    t =     8.98s Find the "Items" StaticText
+PARITY_TREE title 48 'Items' (16.0, 92.66666666666667, 86.0, 39.66666666666667)
+    t =     9.04s Find the NavigationBar (Element at index 0)
+    t =     9.10s Find the "Items" NavigationBar
+    t =     9.14s Find the "Items" NavigationBar
+PARITY_TREE title 21 '' (0.0, 44.0, 375.0, 146.33333333333334)
+PARITY scale=3.0
+    t =     9.28s Added attachment named 'first-screen'
+    t =     9.29s Terminate io.github.youndie.iosbench.a:4006
+    t =    10.32s Tear Down
+Test Case '-[HarnessUITests.Parity testFirstScreen]' passed (10.374 seconds).
+Test Suite 'Parity' passed at 2026-10-11 22:22:33.051.
+	 Executed 1 test, with 0 failures (0 unexpected) in 10.374 (10.375) seconds
+Test Suite 'HarnessUITests.xctest' passed at 2026-10-11 22:22:33.051.
+	 Executed 1 test, with 0 failures (0 unexpected) in 10.374 (10.376) seconds
+Test Suite 'Selected tests' passed at 2026-10-11 22:22:33.051.
+	 Executed 1 test, with 0 failures (0 unexpected) in 10.374 (10.377) seconds
+2026-10-11 22:22:33.363 xcodebuild[21201:5227154] [MT] IDETestOperationsObserverDebug: 13.469 elapsed -- Testing started completed.
+2026-10-11 22:22:33.363 xcodebuild[21201:5227154] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-11 22:22:33.363 xcodebuild[21201:5227154] [MT] IDETestOperationsObserverDebug: 13.469 sec, +13.469 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/youndie/Documents/GitHub/ios-ui-stack-bench/logs/b-11/xs/a-native.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
