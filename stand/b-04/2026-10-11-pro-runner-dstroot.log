@@ -1,0 +1,12 @@
+# B-04: the harness on the iPhone 17 Pro (iPhone18,1, iOS 26.6.2), Xcode 27.0 (27A266a), from the .xctestrun without DSTROOTPath
+# A rebuilt signed for this device (scripts/build-arms.sh with DEVICE), installed with devicectl; the developer trusted on the phone
+$ DESTINATION=id=00008150-001E114236B9401C REBUILD=1 harness/run.sh a-native S1
+Test Case '-[HarnessUITests.Scenarios testS1ColdStart]' passed (13.615 seconds).
+** TEST EXECUTE SUCCEEDED **
+$ DESTINATION=id=00008150-001E114236B9401C harness/run.sh a-native S2
+Test Case '-[HarnessUITests.Scenarios testS2Fling]' passed (345.924 seconds).
+** TEST EXECUTE SUCCEEDED **
+
+# the two logs arm A wrote, pulled with devicectl, read by analysis/inapp_reader.py (validity, header and counts only; probes, not measurements)
+S1 1791723264-916.ndjson: machine iPhone18,1, iOS 26.6.2, maxFps 120, requestedFps 120; valid 1, thermal nominal, lines {'header': 1, 'mark': 4, 'footprint': 10, 'frame': 216}, markers {'launch': 1, 'scenario:S1': 1, 'firstFrame': 1, 'listPopulated': 1}
+S2 1791723281-920.ndjson: machine iPhone18,1, iOS 26.6.2, maxFps 120, requestedFps 120; valid 1, thermal nominal, lines {'header': 1, 'mark': 4, 'footprint': 1378, 'frame': 39857, 'scroll': 80}, markers {'launch': 1, 'scenario:S2': 1, 'firstFrame': 1, 'listPopulated': 1}

@@ -12,3 +12,4 @@ names, captured on the Mac that drove the device.
 | `2026-10-11-xs-xctrace.log` | App Launch, Animation Hitches and Allocations recordings of arm A on the XS, launched by `xctrace` itself; two first attempts time out while the device has no tunnel |
 | `2026-10-11-xs-runner-xcode26.log` | the runner built and run with Xcode 26.6 fails the same way: the cause is not Xcode 27.0 |
 | `2026-10-11-xs-runner-dstroot.log` | the cause, `DSTROOTPath` in the `.xctestrun`, and S1–S4 of arm A passing on the XS without it, with the reader's validity check of the four app logs |
+| `2026-10-11-pro-runner-dstroot.log` | S1 and S2 of arm A passing on the iPhone 17 Pro through the same fix; the app's frame logger at 120 Hz there |

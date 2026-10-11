@@ -1,7 +1,7 @@
 ---
 id: B-04
 title: "What free provisioning allows on the devices: apps per device, the test runner, Instruments on Release"
-status: wip
+status: done
 priority: P0
 size: S
 stage: stage-0-gate
@@ -106,3 +106,14 @@ it. Xcode 26.6 is not needed and is not part of the stand. Research §1.5 has th
   opens it. The session command has to do this before every recording.
 - The profiles expire seven days after issue: created 2026-10-11, valid to 2026-10-18. A session
   started on a profile with less than a day left can lose its apps mid-session.
+- On the iPhone 17 Pro, once the developer was trusted on the phone, S1 and S2 of arm A pass through
+  the same harness with Xcode 27.0. The app's header reads `maxFps 120`, `requestedFps 120`, and both
+  logs are valid
+  ([stand/b-04/2026-10-11-pro-runner-dstroot.log](../../stand/b-04/2026-10-11-pro-runner-dstroot.log)).
+  An arm built for one device carries a profile for that device only, so each arm is built per device
+  (`DEVICE=<udid> scripts/build-arms.sh`) before a session on it.
+
+**Handed on.** The measured cap is the runner and two arms. The owner chose the session plan from
+the options this item put to them: five pairs per device, with the phones on charge throughout. It is
+BRIEF.md's A1.5, and it completes I5. The App ID budget stands at six of ten for the week; nothing
+in this iteration spent one.

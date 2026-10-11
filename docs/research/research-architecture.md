@@ -149,7 +149,8 @@ two free slots beside A, or one.
 
 **Measured 2026-10-11 on both devices ([B-04](../backlog/B-04-free-provisioning-probe.md)): one
 slot.** The runner takes a slot, so a session holds the runner and two arms. That cannot hold A, B1
-and C together; which pairs make up the sessions goes back to the owner (B-04's question).
+and C together. The owner chose pairs, five sessions per device: {A, B1}, {A, B2}, {A, B3}, {A, C} and
+{B1, C}, with the phones on charge throughout ([BRIEF.md](../../BRIEF.md) A1.5).
 
 | Fact | Where verified |
 |---|---|
