@@ -26,8 +26,8 @@ build number or commit behind it, because a tag moves. Rows still open name the 
 | Compose Multiplatform | **1.12.1**, tag `v1.12.1` at `bdd8e879b2fc4960934a99959d82400c96b7c590` (compose-multiplatform) and `a1a7f3533363aa93849541cf451af2363fc2070a` (compose-multiplatform-core); material3 1.12.0-alpha03 as the wizard's template carries it; navigation-compose 2.9.2 | `git ls-remote`, 2026-10-11; `gradle/libs.versions.toml` |
 | CMP `parallelRendering` | the framework default (`true` since 1.11.0), recorded because its default changed between versions | research §1.4 |
 | Swift bridges | **all three, one B arm each** (A1.1): B1 Objective-C export + Swift adapter, B2 **SKIE 0.10.15** (tag at `7e7b8b597a4da8ba121a33775799ad51e517beb5`, no configuration), B3 Swift export of Kotlin 2.4.20 with D8; C uses the Objective-C export | owner, 2026-10-10 ([B-02](docs/backlog/B-02-swift-bridge.md)); `git ls-remote` touchlab/SKIE, 2026-10-11 |
-| Older device | **open** — candidate iPhone XS (`iPhone11,2`, A12, 4 GB, 60 Hz), iOS 18 at most | `xcrun devicectl list devices`; research §1.2. B-01 |
-| Newer device | **open** — a 120 Hz ProMotion iPhone; the owner confirmed one will be available (2026-10-10) | B-01 |
+| Older device | **iPhone XS**, `iPhone11,2`, iOS **18.7.3 (22H217)**, 60 Hz (`maxFps 60` in the app's header). The iOS build is part of the pin: no update for the study's length, and a device whose build changed is a new row, not the same device | `xcrun devicectl device info details`, 2026-10-11; [stand/b-04/](stand/b-04/README.md) ([B-04](docs/backlog/B-04-free-provisioning-probe.md)) |
+| Newer device | **iPhone 17 Pro**, `iPhone18,1`, iOS **26.6.2 (23G90)**, 120 Hz ProMotion (`maxFps 120`, `requestedFps 120` in the app's header). The same rule for its iOS build | the same, 2026-10-11; `stand/b-04/2026-10-11-pro-runner-dstroot.log` |
 | Bundle ids | `io.github.youndie.iosbench.{a,b1,b2,b3,c}`, and `.harness` for the UI-test runner — fixed, never changed (App IDs are capped at 10 per 7 days) | `apps/*/Configuration/Config.xcconfig`, `harness/generate_project.py` (B-05, B-13) |
 | Fixture and thumbnails | `apps/common/Fixture/items.json`: 2,000 items, 1,058,836 bytes, sha256 `7a9693d18f2901f4c6ab12e962721fa5477e09affd56002e4141ce6431f98a3e`. The 50 thumbnails (400 × 400 px): sha256 `0dd4f22b2b893a1916641320a4032bce77b5f7e38b496edb4223192b0e1e7cda` over their per-file digests in name order. The filter test vector `fixtures/filter-vectors.json`: sha256 `d8d2e8327a164c1ee95836ce9f6b3ffdb3c0af1578d7e3d8e3df2118f1e11b78` | `fixtures/generate.py`, seed 20261010; `make check` holds every byte (`--check`), [B-07](docs/backlog/B-07-fixture-and-shared-module.md) |
 | Non-default flags | [docs/flags.md](docs/flags.md) — `CADisableMinimumFrameDurationOnPhone` in A and B (D3, approved in A1.4), the bundle ids, Kotlin 2.4.20, D8, navigation-compose and Compose resources in C | B-05, B-10; owner, 2026-10-11 |
@@ -36,10 +36,10 @@ build number or commit behind it, because a tag moves. Rows still open name the 
 
 | Belief (from the brief) | Answered by | Answer |
 |---|---|---|
-| Free provisioning caps installed apps per device, "believed to be 3" | research §1.5 | **3**, Apple's membership comparison page. Whether the UI-test runner takes a slot: **unverified**, B-04 |
+| Free provisioning caps installed apps per device, "believed to be 3" | research §1.5 | **3**, Apple's membership comparison page, and measured on both devices; **the UI-test runner takes one**, so a session holds two arms (B-04, A1.5) |
 | Free provisioning profiles expire after 7 days | research §1.5 | **Yes**, same page; App IDs are also capped at 10 per 7 days |
 | Animation Hitches may not see CMP's Metal-layer frames as it sees SwiftUI's | research §1.4 | Narrowed, not answered: CMP ≥ 1.11 presents through a `CATransaction`, so it *should* (H1). The injected stall decides, [B-06](docs/backlog/B-06-rq0-the-gate.md) |
-| Free provisioning can run Release builds under Instruments | research §1.5 | **Unverified**: Xcode-installed builds carry `get-task-allow` in any configuration; nothing published for a Personal Team or for Animation Hitches and App Launch. B-04 |
+| Free provisioning can run Release builds under Instruments | research §1.5 | **Yes, on the XS**: a Release build signed by the Personal Team carries `get-task-allow = true`, and `xctrace record --launch` records App Launch, Animation Hitches and Allocations (B-04). Whether each instrument sees each arm is RQ0's, [B-06](docs/backlog/B-06-rq0-the-gate.md) |
 | "A consistent signal is a 2–4× memory premium for CMP" | research §1.1 | **Not what the sources show**: 1.9× on a non-footprint metric (Zhuravko), ~6× full-screen on a simulator (Commencis), no native baseline (Software Mansion). RQ4's thresholds are a prior, not a summary |
 | JetBrains' "~9 MB" is comparable to the `zip -9` proxy | research §1.1 | **Unknown**: the source does not say what it measured |
 | The fairness flags (release, static, dead-code stripping, `-O`, WMO) are a configuration to apply | research §1.9 | They are the template's and the SDK's **defaults**; listed with sources, no tuning needed |
@@ -145,6 +145,31 @@ cannot share one, as I5 assumed. The owner's choice, out of the options B-04 put
 
 **No threshold moves.** I5 is complete. One row is still open inside the window: I12's tolerance
 (B-11).
+
+### A1.6 — the parity tolerance (I12) and the device pins (2026-10-11, owner, before the first diff on a device)
+
+I12 asked for a number before the first diff. Set by the owner before any first-screen diff was
+computed on a device:
+
+- **The band.** It runs from the first row's top to the last visible row's bottom, full width, as
+  `harness/parity.sh` reports them. The navigation bar, the search field and the home indicator lie
+  outside it. A pixel differs when any channel differs by more than 32 of 255 (`scripts/parity_diff.py`,
+  `--delta 32`).
+- **A against B1, B2 and B3: at most 1 % of the band's pixels differ.** These arms draw A's SwiftUI
+  views, and only the adapter differs, so anything above noise is a real divergence.
+- **A against C: parity is geometry, by number.** The two must show the same count of visible rows.
+  The first row's height and top, the last visible row's bottom, and the thumbnail size must each
+  agree within 1 point. All of it is read from the accessibility tree (`harness/parity.sh`). C's share
+  of differing pixels is computed and published beside the geometry, but it decides nothing. Skia
+  and Core Text render glyph edges differently whatever the layout does, so any pixel number for that
+  pair would have been chosen blind. Spending kill criterion 3's five days on font rasterisation
+  would test nothing the study asks.
+- An amendment that can only push a verdict towards green publishes the original rule's reading
+  beside it (B-01). Parity is a precondition rather than a verdict, but the same applies: B-11's log and
+  the write-up print A against C's pixel share next to the geometry.
+
+The two device rows of the pins are filled from B-04 (above). **No threshold moves.** Every row of
+§2 is settled. The window closes with the first file under `logs/`, and BRIEF.md names that commit.
 
 ## Amendment set 2 — after the window
 

@@ -57,3 +57,16 @@ The pins are filled by version and commit, Kotlin at 2.4.20. **Still open in thi
 - the window's close at the first file under `logs/`.
 
 All of it waits for the devices. The status stays `open`.
+
+## Progress — 2026-10-11, after B-04
+
+- **I5 is settled** as amendment A1.5. B-04 measured the cap: the runner takes a slot. The owner chose
+  five pair sessions per device and charging throughout.
+- **I12's tolerance is settled** as amendment A1.6, before any first-screen diff on a device. A
+  against each B arm: at most 1 % of the band's pixels differ. A against C: geometry by number, within
+  1 point. C's pixel share is published and decides nothing.
+- **Both device rows are filled**: the iPhone XS on iOS 18.7.3 (22H217) and the iPhone 17 Pro on iOS
+  26.6.2 (23G90), each with its iOS build pinned.
+
+The window's close is all that remains. B-06 adds the first file under `logs/`, so the pull request
+that does it names its commit in BRIEF.md and moves this item to `done`.
