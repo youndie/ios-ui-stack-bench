@@ -274,6 +274,19 @@ simulator: not the recording, not the export schemas, not the readers. That half
 has produced real device traces. The in-app half — the logger, the footprint sampler, the markers
 and their reader — works on the simulator and is built there (B-14).
 
+### 1.13 How reproducible the arms' builds are (B-26)
+
+| Fact | Where verified |
+|---|---|
+| Two clean device archives (new derived data, Kotlin build directories deleted, Gradle cache off) of A, B1 and B3 give byte-identical main executables | `scripts/measure_size.py`, Xcode 27A266a, Kotlin 2.4.20, 2026-10-11 (B-26) |
+| Two clean archives of B2 and C give executables of identical size that differ in a few hundred bytes: the `LC_UUID`, and bytes inside `__TEXT,__objc_stubs`, `__TEXT,__stubs` and, for C, `__TEXT,__text`. C's Kotlin framework is byte-identical in both builds, so the difference arises in the app's final link | `cmp -l` of the two executables mapped onto `otool -l`'s sections, same day |
+| The `zip -9` proxy of those two builds differs by at most a few tens of bytes | `sizes.csv` of the same run |
+
+**Consequence.** RQ1 is decided on build 1 of each arm, and its thresholds are megabytes. A link
+that is not byte-reproducible, but is reproducible in size, cannot move a verdict. That holds as long
+as the two builds' proxies stay within bytes of each other, and the size tooling prints that gap on
+every run. The digest that B-10 saw move for B3 did not move between clean builds here.
+
 ---
 
 ## 2. Where the frozen brief cannot be applied as written

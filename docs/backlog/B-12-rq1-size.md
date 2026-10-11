@@ -46,3 +46,9 @@ B3's Kotlin and Swift sources did not change; only the Xcode projects did, throu
 other arms' Kotlin binaries kept their digests. Either Swift export's output is not reproducible, or
 it depends on something the projects changed. This is exactly what this item's "built twice from a
 clean tree" acceptance is there to find, and it is recorded here so that item starts from it.
+
+**Followed up by B-26, 2026-10-11:** on two clean builds B3's executable is byte-identical, so the move
+B-10 saw is not reproduced. B2's and C's executables differ between clean builds by a few hundred
+bytes inside the final link's stubs and text, at an identical size (research §1.13).
+`scripts/measure_size.py` is the tool this item runs; it writes into `logs/` only with
+`BENCH_WINDOW_CLOSED=1`, the owner's go.
