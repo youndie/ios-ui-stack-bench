@@ -28,7 +28,8 @@ import os
 ///   visible item where the UI knows it (`last`). Only the transitions are logged — nothing runs per
 ///   frame — so the probe costs every arm two callbacks per fling;
 /// - `stall` — each injected main-thread stall and its length;
-/// - `thermal` — every change of `ProcessInfo.thermalState`.
+/// - `thermal` — every change of `ProcessInfo.thermalState`;
+/// - `writeError` — writes to this file that failed since the last one that succeeded, and the error.
 ///
 /// Launch arguments: `-benchStallMs <n>` arms the stall injector (a stall of `n` ms on the main
 /// thread every `-benchStallEverySec <s>` seconds, 1 by default); `0` runs the same path and blocks
@@ -36,7 +37,11 @@ import os
 /// absent from every measured run: `-benchDelayListMs <n>` holds the main thread for n ms when the
 /// first row appears, just before the frame that marks `listPopulated`, so launch-to-list grows by n;
 /// `-benchAllocateMB <n>` allocates n MiB at launch and writes every page, so `phys_footprint` grows
-/// by about n MiB and stays there.
+/// by about n MiB and stays there. And one for Animation Hitches, which cannot record beside the
+/// UI-test runner on a device (A1.7): `-benchAutoScroll <n>` makes the list scroll itself n times
+/// (`autoScrolls`, read by the list screens), so `xctrace --launch` records scrolling with no runner.
+/// Each step is an `autoScroll` phase marker: SwiftUI's `onScrollPhaseChange` does not report a
+/// programmatic scroll, so the marker is what shows the steps in every arm alike.
 final class Bench {
     static let shared = Bench()
 
@@ -135,10 +140,30 @@ final class Bench {
     }
 
     private func write(_ object: [String: Any]) {
-        queue.async { [handle] in
-            guard let handle, let data = try? JSONSerialization.data(withJSONObject: object, options: [.sortedKeys]) else { return }
-            handle.write(data)
-            handle.write(Data([0x0A]))
+        queue.async { [weak self, handle] in
+            guard let self, let handle, let data = try? JSONSerialization.data(withJSONObject: object, options: [.sortedKeys]) else { return }
+            self.append(data + Data([0x0A]), to: handle)
+        }
+    }
+
+    // On `queue` only. `write(contentsOf:)` throws a Swift error where the older `write(_:)` raised an
+    // Objective-C exception, which ended the process: an S2 run under xctrace on the XS died that way
+    // in `flushFrames` (B-06). A failed write is counted, and the next write that succeeds reports
+    // it as a `writeError` line; the reader then marks the run invalid.
+    private var failedWrites = 0
+    private var lastWriteError = ""
+
+    private func append(_ data: Data, to handle: FileHandle) {
+        do {
+            if failedWrites > 0 {
+                let note: [String: Any] = ["k": "writeError", "t": CACurrentMediaTime(), "failed": failedWrites, "error": lastWriteError]
+                try handle.write(contentsOf: try JSONSerialization.data(withJSONObject: note, options: [.sortedKeys]) + Data([0x0A]))
+                failedWrites = 0
+            }
+            try handle.write(contentsOf: data)
+        } catch {
+            failedWrites += 1
+            lastWriteError = String(describing: error)
         }
     }
 
@@ -190,11 +215,11 @@ final class Bench {
         guard !frames.isEmpty else { return }
         let batch = frames
         frames.removeAll(keepingCapacity: true)
-        queue.async { [handle] in
-            guard let handle else { return }
+        queue.async { [weak self, handle] in
+            guard let self, let handle else { return }
             var text = ""
             for (t, tt) in batch { text += "{\"k\":\"frame\",\"t\":\(t),\"tt\":\(tt)}\n" }
-            handle.write(Data(text.utf8))
+            self.append(Data(text.utf8), to: handle)
         }
     }
 
@@ -253,6 +278,10 @@ final class Bench {
     // MARK: - system
 
     /// A launch argument `-<name> <value>`, as the argument domain of `UserDefaults` holds it: a string.
+    /// `-benchAutoScroll <n>`: how many times the list scrolls itself, 0 in every measured run. The
+    /// pattern is the same in every arm: 1 s after launch, every 1.5 s, to item 20 and back to item 0.
+    static let autoScrolls: Int = argument("benchAutoScroll").flatMap(Int.init) ?? 0
+
     private static func argument(_ name: String) -> String? {
         UserDefaults.standard.string(forKey: name)
     }

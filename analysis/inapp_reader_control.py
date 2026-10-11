@@ -69,6 +69,13 @@ def _():
     return close(s["longest_hitch_ms"], 50 - 1000 / 60, 0.05) and close(s["hitch_time_ratio_ms_per_s"], (50 - 1000 / 60) / 40, 0.01)
 
 
+@case("a writeError line makes the run invalid: the log lost lines it cannot show")
+def _():
+    lines = log() + [{"k": "writeError", "t": 120.0, "failed": 3, "error": "EIO"}]
+    s = reader.summarise(lines, "S2")
+    return s["valid"] == 0 and "3 log writes failed" in s["reason"]
+
+
 @case("a 20 ms frame at 60 Hz is jitter, not a hitch (under 1.5 frames)")
 def _():
     s = reader.summarise(log(stalls=[(101.5, 20)]), "S2")

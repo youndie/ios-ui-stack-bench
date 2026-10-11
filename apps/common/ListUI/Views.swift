@@ -9,26 +9,47 @@ struct RootView: View {
 
     var body: some View {
         NavigationStack {
-            List(model.items) { item in
-                NavigationLink(value: item) {
-                    RowView(item: item)
-                }
-                .onAppear {
-                    if item.id == model.items.first?.id { Bench.shared.rowAppeared() }
-                }
+            // The self-scrolling list exists only under `-benchAutoScroll` (A1.7); every measured run
+            // takes the plain branch.
+            if Bench.autoScrolls > 0 {
+                ScrollViewReader { proxy in list.task { await autoScroll(proxy) } }
+            } else {
+                list
             }
-            .listStyle(.plain)
-            .onScrollPhaseChange { old, new, context in
-                // Logged on the transitions only (B-13): the S2 reader needs how far each fling went.
-                if old == .idle, new != .idle {
-                    Bench.shared.scroll("begin", offset: context.geometry.contentOffset.y)
-                } else if new == .idle, old != .idle {
-                    Bench.shared.scroll("end", offset: context.geometry.contentOffset.y)
-                }
+        }
+    }
+
+    private var list: some View {
+        List(model.items) { item in
+            NavigationLink(value: item) {
+                RowView(item: item)
             }
-            .searchable(text: $model.query)
-            .navigationTitle("Items")
-            .navigationDestination(for: RowItem.self) { DetailView(item: $0) }
+            .onAppear {
+                if item.id == model.items.first?.id { Bench.shared.rowAppeared() }
+            }
+        }
+        .listStyle(.plain)
+        .onScrollPhaseChange { old, new, context in
+            // Logged on the transitions only (B-13): the S2 reader needs how far each fling went.
+            if old == .idle, new != .idle {
+                Bench.shared.scroll("begin", offset: context.geometry.contentOffset.y)
+            } else if new == .idle, old != .idle {
+                Bench.shared.scroll("end", offset: context.geometry.contentOffset.y)
+            }
+        }
+        .searchable(text: $model.query)
+        .navigationTitle("Items")
+        .navigationDestination(for: RowItem.self) { DetailView(item: $0) }
+    }
+
+    @MainActor private func autoScroll(_ proxy: ScrollViewProxy) async {
+        try? await Task.sleep(for: .seconds(1))
+        let ids = model.items.prefix(21).map(\.id)
+        guard ids.count == 21 else { return }
+        for i in 0..<Bench.autoScrolls {
+            Bench.shared.phase("autoScroll")
+            withAnimation { proxy.scrollTo(i % 2 == 0 ? ids[20] : ids[0], anchor: .top) }
+            try? await Task.sleep(for: .seconds(1.5))
         }
     }
 }

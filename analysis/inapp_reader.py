@@ -71,6 +71,9 @@ def validity(lines, scenario):
     headers = [l for l in lines if l["k"] == "header"]
     if len(headers) != 1:
         return f"{len(headers)} headers"
+    failed = [l for l in lines if l["k"] == "writeError"]
+    if failed:
+        return f"{sum(l['failed'] for l in failed)} log writes failed: {failed[0]['error']}"
     marks = sorted((l for l in lines if l["k"] == "mark"), key=lambda l: l["t"])
     names = [m["name"] for m in marks]
     fixed = [n for n in names if n in ("launch", "firstFrame", "listPopulated")]

@@ -20,7 +20,7 @@ struct BenchApp: App {
 
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.MainViewController(json: Fixture.json, probe: BenchProbe())
+        MainViewControllerKt.MainViewController(json: Fixture.json, probe: BenchProbe(), autoScrolls: Int32(Bench.autoScrolls))
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
