@@ -16,6 +16,8 @@ CASES = [
     ("a battery under 50 % on a device stops the session", session.decide({**ok, "battery": 0.42}, "device")[0] == "stop"),
     ("an unknown battery stops a device session", session.decide({**ok, "battery": ""}, "device")[0] == "stop"),
     ("a simulator's unknown battery (-1) does not stop", session.decide({**ok, "battery": -1}, "simulator")[0] == "count"),
+    ("a run with no app log at all is repeated, not read as an unknown battery",
+     session.decide({"valid": 0, "reason": "0 logs from one run"}, "device")[0] == "repeat"),
     ("an invalid run is repeated", session.decide({**ok, "valid": 0, "reason": "39 begin"}, "device")[0] == "repeat"),
     ("a run that reached 'fair' is repeated", session.decide({**ok, "thermal_worst": "fair"}, "device")[0] == "repeat"),
     ("rotation: run 0 A,B,C; run 1 B,C,A; run 2 C,A,B; run 3 A,B,C",
