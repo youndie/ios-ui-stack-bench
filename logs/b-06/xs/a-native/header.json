@@ -1,0 +1,15 @@
+{
+ "device": {
+  "model": "iPhone XS",
+  "hw_machine": "iPhone11,2",
+  "ios": "18.7.3",
+  "ios_build": "22H217"
+ },
+ "xcode": "Xcode 27.0 Build version 27A266a",
+ "xctrace": "xctrace version 27.0 (27A266a)",
+ "commit": "e3ab58f18767d3e356f74a8f5553155bfe0fd031",
+ "bundle": "io.github.youndie.iosbench.a",
+ "executable_sha256": "d6cd75a771f55f033ec58607c15eff74eb0fc60f6d24ea403bb2452df8f0eac6",
+ "started_utc": "2026-10-11T16:44:53Z",
+ "finished_utc": "2026-10-11T17:15:07Z"
+}

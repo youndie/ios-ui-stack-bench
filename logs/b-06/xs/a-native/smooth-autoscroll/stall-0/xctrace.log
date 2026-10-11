@@ -1,0 +1,7 @@
+$ xctrace record --template Animation Hitches --device 00008020-000A6CC42692002E --time-limit 40s --output /Users/youndie/Documents/GitHub/ios-ui-stack-bench/build/b06-traces/a-native_smooth-autoscroll_stall-0-1.trace --instrument Points of Interest --launch -- io.github.youndie.iosbench.a -benchAutoScroll 20 -benchStallMs 0
+Starting recording with the Animation Hitches template and Points of Interest Instrument. Launching process: io.github.youndie.iosbench.a. Time limit: 40.0 s
+Ctrl-C to stop the recording
+Reached specified time limit, ending recording...
+Recording completed. Saving output file...
+Output file saved as: a-native_smooth-autoscroll_stall-0-1.trace
+exit 0

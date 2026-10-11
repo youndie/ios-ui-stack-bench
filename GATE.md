@@ -19,6 +19,82 @@ The pass conditions are in `analysis/gate_reader.py`'s header, committed before 
 Nothing here compares arms: one control per metric per arm, and no figure below is a result about
 A, B or C.
 
+## Reading — 2026-10-11
+
+**RQ0 is not green under the rule fixed before the recording, by one row.** B1's in-app startup
+control came out above its 250 ms ceiling (the table below). The same launches pass when read
+through App Launch, the instrument startup is read from (BRIEF.md A1.7). Both instruments pass for
+every other arm. The delay is 200 ms, and every arm adds something on top of it, in both instruments:
+blocking the main thread at launch also pushes back work scheduled after it, and the ceiling sat 50 ms
+above the delay. The ceiling stays where it was set. The row is a failed cross-check of B1's in-app
+startup figure, and it is printed beside every startup number that figure contributes to.
+
+**Every other control passes in every arm**, C included:
+- **The 50 ms stall is seen by both instruments in every arm**, and the 0 ms stall by neither. That
+  includes C's Metal-layer frames, which the brief feared Animation Hitches might not see (its
+  Risks; research §1.4): on the XS it sees them. Kill criterion 2 does not fire.
+- **Every metric is captured for every arm** through free provisioning. Kill criterion 1 does not
+  fire.
+- **The memory and size controls** read about their known sizes in every arm and every instrument.
+
 <!-- BEGIN GATE TABLE (analysis/gate_reader.py) -->
-Not run yet.
+RQ0 on the iPhone XS: **NOT GREEN - b1-objc startup +200 ms (in-app log)**
+
+| Arm | Control | Instrument | Expected | Observed | Verdict | Log |
+|---|---|---|---|---|---|---|
+| a-native | stall 50 ms, self-scroll | Animation Hitches | >= 1 | 6 hitches of 40-120 ms at an injected stall; 6 >= 40 ms in the window | pass | `xs/a-native/smooth-autoscroll/stall-50` |
+| a-native | stall 50 ms, self-scroll | in-app logger | >= 90 % | 48/49 stalls on a hitch >= 25 ms (98%) | pass | `xs/a-native/smooth-autoscroll/stall-50` |
+| a-native | stall 50 ms, S2 | in-app logger | >= 90 % | 337/338 stalls on a hitch >= 25 ms (100%) | pass | `xs/a-native/smooth-s2/stall-50` |
+| a-native | stall 0 ms, self-scroll | Animation Hitches | 0 | 0 hitches >= 40 ms in the window | pass | `xs/a-native/smooth-autoscroll/stall-0` |
+| a-native | stall 0 ms, self-scroll | in-app logger | <= 5 % | 0/47 stalls on a hitch >= 25 ms (0%) | pass | `xs/a-native/smooth-autoscroll/stall-0` |
+| a-native | stall 0 ms, S2 | in-app logger | <= 5 % | 1/337 stalls on a hitch >= 25 ms (0%) | pass | `xs/a-native/smooth-s2/stall-0` |
+| a-native | startup +200 ms | App Launch + POI | 150-250 ms | +230 ms (median of 5 vs 5) | pass | `xs/a-native/startup` |
+| a-native | startup +200 ms | in-app log | 150-250 ms | +243 ms (median of 5 vs 5) | pass | `xs/a-native/startup` |
+| a-native | memory +50 MiB | Activity Monitor | 40-60 MiB | +50.1 MiB (median of 3 vs 3) | pass | `xs/a-native/memory` |
+| a-native | memory +50 MiB | in-app sampler | 40-60 MiB | +50.1 MiB (median of 3 vs 3) | pass | `xs/a-native/memory` |
+| a-native | size +1 MiB | zip proxy | 0.95-1.10 MiB | +1.000 MiB | pass | `xs/a-native/size` |
+| b1-objc | stall 50 ms, self-scroll | Animation Hitches | >= 1 | 4 hitches of 40-120 ms at an injected stall; 4 >= 40 ms in the window | pass | `xs/b1-objc/smooth-autoscroll/stall-50` |
+| b1-objc | stall 50 ms, self-scroll | in-app logger | >= 90 % | 56/56 stalls on a hitch >= 25 ms (100%) | pass | `xs/b1-objc/smooth-autoscroll/stall-50` |
+| b1-objc | stall 50 ms, S2 | in-app logger | >= 90 % | 338/339 stalls on a hitch >= 25 ms (100%) | pass | `xs/b1-objc/smooth-s2/stall-50` |
+| b1-objc | stall 0 ms, self-scroll | Animation Hitches | 0 | 0 hitches >= 40 ms in the window | pass | `xs/b1-objc/smooth-autoscroll/stall-0` |
+| b1-objc | stall 0 ms, self-scroll | in-app logger | <= 5 % | 0/47 stalls on a hitch >= 25 ms (0%) | pass | `xs/b1-objc/smooth-autoscroll/stall-0` |
+| b1-objc | stall 0 ms, S2 | in-app logger | <= 5 % | 0/338 stalls on a hitch >= 25 ms (0%) | pass | `xs/b1-objc/smooth-s2/stall-0` |
+| b1-objc | startup +200 ms | App Launch + POI | 150-250 ms | +240 ms (median of 5 vs 5) | pass | `xs/b1-objc/startup` |
+| b1-objc | startup +200 ms | in-app log | 150-250 ms | +252 ms (median of 5 vs 5) | fail | `xs/b1-objc/startup` |
+| b1-objc | memory +50 MiB | Activity Monitor | 40-60 MiB | +50.1 MiB (median of 3 vs 3) | pass | `xs/b1-objc/memory` |
+| b1-objc | memory +50 MiB | in-app sampler | 40-60 MiB | +50.1 MiB (median of 3 vs 3) | pass | `xs/b1-objc/memory` |
+| b1-objc | size +1 MiB | zip proxy | 0.95-1.10 MiB | +1.000 MiB | pass | `xs/b1-objc/size` |
+| b2-skie | stall 50 ms, self-scroll | Animation Hitches | >= 1 | 4 hitches of 40-120 ms at an injected stall; 6 >= 40 ms in the window | pass | `xs/b2-skie/smooth-autoscroll/stall-50` |
+| b2-skie | stall 50 ms, self-scroll | in-app logger | >= 90 % | 58/59 stalls on a hitch >= 25 ms (98%) | pass | `xs/b2-skie/smooth-autoscroll/stall-50` |
+| b2-skie | stall 50 ms, S2 | in-app logger | >= 90 % | 338/339 stalls on a hitch >= 25 ms (100%) | pass | `xs/b2-skie/smooth-s2/stall-50` |
+| b2-skie | stall 0 ms, self-scroll | Animation Hitches | 0 | 0 hitches >= 40 ms in the window | pass | `xs/b2-skie/smooth-autoscroll/stall-0` |
+| b2-skie | stall 0 ms, self-scroll | in-app logger | <= 5 % | 0/47 stalls on a hitch >= 25 ms (0%) | pass | `xs/b2-skie/smooth-autoscroll/stall-0` |
+| b2-skie | stall 0 ms, S2 | in-app logger | <= 5 % | 1/336 stalls on a hitch >= 25 ms (0%) | pass | `xs/b2-skie/smooth-s2/stall-0` |
+| b2-skie | startup +200 ms | App Launch + POI | 150-250 ms | +237 ms (median of 5 vs 5) | pass | `xs/b2-skie/startup` |
+| b2-skie | startup +200 ms | in-app log | 150-250 ms | +236 ms (median of 5 vs 5) | pass | `xs/b2-skie/startup` |
+| b2-skie | memory +50 MiB | Activity Monitor | 40-60 MiB | +50.0 MiB (median of 3 vs 3) | pass | `xs/b2-skie/memory` |
+| b2-skie | memory +50 MiB | in-app sampler | 40-60 MiB | +50.0 MiB (median of 3 vs 3) | pass | `xs/b2-skie/memory` |
+| b2-skie | size +1 MiB | zip proxy | 0.95-1.10 MiB | +1.000 MiB | pass | `xs/b2-skie/size` |
+| b3-swift-export | stall 50 ms, self-scroll | Animation Hitches | >= 1 | 3 hitches of 40-120 ms at an injected stall; 5 >= 40 ms in the window | pass | `xs/b3-swift-export/smooth-autoscroll/stall-50` |
+| b3-swift-export | stall 50 ms, self-scroll | in-app logger | >= 90 % | 64/65 stalls on a hitch >= 25 ms (98%) | pass | `xs/b3-swift-export/smooth-autoscroll/stall-50` |
+| b3-swift-export | stall 50 ms, S2 | in-app logger | >= 90 % | 337/338 stalls on a hitch >= 25 ms (100%) | pass | `xs/b3-swift-export/smooth-s2/stall-50` |
+| b3-swift-export | stall 0 ms, self-scroll | Animation Hitches | 0 | 0 hitches >= 40 ms in the window | pass | `xs/b3-swift-export/smooth-autoscroll/stall-0` |
+| b3-swift-export | stall 0 ms, self-scroll | in-app logger | <= 5 % | 0/50 stalls on a hitch >= 25 ms (0%) | pass | `xs/b3-swift-export/smooth-autoscroll/stall-0` |
+| b3-swift-export | stall 0 ms, S2 | in-app logger | <= 5 % | 1/338 stalls on a hitch >= 25 ms (0%) | pass | `xs/b3-swift-export/smooth-s2/stall-0` |
+| b3-swift-export | startup +200 ms | App Launch + POI | 150-250 ms | +248 ms (median of 5 vs 5) | pass | `xs/b3-swift-export/startup` |
+| b3-swift-export | startup +200 ms | in-app log | 150-250 ms | +244 ms (median of 5 vs 5) | pass | `xs/b3-swift-export/startup` |
+| b3-swift-export | memory +50 MiB | Activity Monitor | 40-60 MiB | +49.8 MiB (median of 3 vs 3) | pass | `xs/b3-swift-export/memory` |
+| b3-swift-export | memory +50 MiB | in-app sampler | 40-60 MiB | +49.8 MiB (median of 3 vs 3) | pass | `xs/b3-swift-export/memory` |
+| b3-swift-export | size +1 MiB | zip proxy | 0.95-1.10 MiB | +1.000 MiB | pass | `xs/b3-swift-export/size` |
+| c-kmp-cmp | stall 50 ms, self-scroll | Animation Hitches | >= 1 | 5 hitches of 40-120 ms at an injected stall; 5 >= 40 ms in the window | pass | `xs/c-kmp-cmp/smooth-autoscroll/stall-50` |
+| c-kmp-cmp | stall 50 ms, self-scroll | in-app logger | >= 90 % | 59/60 stalls on a hitch >= 25 ms (98%) | pass | `xs/c-kmp-cmp/smooth-autoscroll/stall-50` |
+| c-kmp-cmp | stall 50 ms, S2 | in-app logger | >= 90 % | 238/239 stalls on a hitch >= 25 ms (100%) | pass | `xs/c-kmp-cmp/smooth-s2/stall-50` |
+| c-kmp-cmp | stall 0 ms, self-scroll | Animation Hitches | 0 | 0 hitches >= 40 ms in the window | pass | `xs/c-kmp-cmp/smooth-autoscroll/stall-0` |
+| c-kmp-cmp | stall 0 ms, self-scroll | in-app logger | <= 5 % | 0/49 stalls on a hitch >= 25 ms (0%) | pass | `xs/c-kmp-cmp/smooth-autoscroll/stall-0` |
+| c-kmp-cmp | stall 0 ms, S2 | in-app logger | <= 5 % | 0/237 stalls on a hitch >= 25 ms (0%) | pass | `xs/c-kmp-cmp/smooth-s2/stall-0` |
+| c-kmp-cmp | startup +200 ms | App Launch + POI | 150-250 ms | +206 ms (median of 5 vs 5) | pass | `xs/c-kmp-cmp/startup` |
+| c-kmp-cmp | startup +200 ms | in-app log | 150-250 ms | +215 ms (median of 5 vs 5) | pass | `xs/c-kmp-cmp/startup` |
+| c-kmp-cmp | memory +50 MiB | Activity Monitor | 40-60 MiB | +49.9 MiB (median of 3 vs 3) | pass | `xs/c-kmp-cmp/memory` |
+| c-kmp-cmp | memory +50 MiB | in-app sampler | 40-60 MiB | +49.9 MiB (median of 3 vs 3) | pass | `xs/c-kmp-cmp/memory` |
+| c-kmp-cmp | size +1 MiB | zip proxy | 0.95-1.10 MiB | +1.000 MiB | pass | `xs/c-kmp-cmp/size` |
 <!-- END GATE TABLE -->
