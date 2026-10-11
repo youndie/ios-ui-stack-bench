@@ -1,0 +1,15 @@
+# B-04: xctrace on iPhone XS, Release build signed by the Personal Team (get-task-allow true)
+# 2026-10-11T11:56:58Z
+$ xctrace record --template 'App Launch' --device 00008020-000A6CC42692002E --time-limit 15s --launch -- io.github.youndie.iosbench.a
+Starting recording with the App Launch template. Launching process: io.github.youndie.iosbench.a. Time limit: 15.0 s
+Ctrl-C to stop the recording
+Reached specified time limit, ending recording...
+Timeline modification failed -- dylibs overlap by 0x138000:
+    0x10447c000-0x104490000 [0x14000] (1329112435375-9223372036854775807) /private/preboot/Cryptexes/OS/usr/lib/libobjc-trampolines.dylib
+    0x1043c8000-0x104500000 [0x138000] (0-9223372036854775807) /usr/lib/dyld
+Run issues were detected (trace is still ready to be viewed):
+* [Warning] Warning while binding 'time-sample' table: requested sampling period (1000000ns) differs from configured (5000000ns)
+
+Recording completed. Saving output file...
+Output file saved as: a-launch.trace
+exit 0

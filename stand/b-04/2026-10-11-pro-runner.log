@@ -1,0 +1,9 @@
+# B-04: the UI-test runner on iPhone 17 Pro (iPhone18,1, iOS 26.6.2 23G90), no arm installed
+# 2026-10-11T11:54:35Z
+$ DESTINATION=id=00008150-001E114236B9401C REBUILD=1 harness/run.sh a-native S1
+2026-10-11 13:54:41.941 xcodebuild[6592:4440441] [MT] IDELaunchReport: fe54dc1712d86c0:fe54dc1712d9600:Installing built products Finished with error: Root install style is not supported on this device
+2026-10-11 13:54:41.941 xcodebuild[6592:4440441] [MT] IDELaunchReport: fe54dc1712d86c0:fe54dc1712d86c0: Finished with error: Root install style is not supported on this device
+** TEST EXECUTE FAILED **
+
+** TEST BUILD SUCCEEDED **
+

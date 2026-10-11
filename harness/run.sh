@@ -21,11 +21,14 @@ case $arm in
 esac
 DESTINATION=${DESTINATION:-"platform=iOS Simulator,id=$(xcrun simctl list devices booted -j | python3 -c 'import json,sys; print([d["udid"] for r in json.load(sys.stdin)["devices"].values() for d in r if d["state"]=="Booted"][0])')"}
 DERIVED=${DERIVED_DATA:-$ROOT/build/DerivedData}/harness
+# A device destination signs the runner with the Personal Team of harness/Configuration/Local.xcconfig
+# and lets automatic signing register what it needs (B-04); a simulator needs no signing.
+case $DESTINATION in id=*) SIGNING="-allowProvisioningUpdates"; DERIVED="$DERIVED-device" ;; *) SIGNING="" ;; esac
 
 python3 "$ROOT/harness/generate_project.py" --check >/dev/null
 if [ ! -d "$DERIVED/Build/Products" ] || [ -n "${REBUILD:-}" ]; then
     xcodebuild build-for-testing -project "$ROOT/harness/Harness.xcodeproj" -scheme HarnessUITests \
-        -destination "$DESTINATION" -derivedDataPath "$DERIVED" >"$DERIVED.build.log" 2>&1 \
+        -destination "$DESTINATION" -derivedDataPath "$DERIVED" $SIGNING >"$DERIVED.build.log" 2>&1 \
         || { echo "harness build failed - $DERIVED.build.log" >&2; tail -20 "$DERIVED.build.log" >&2; exit 1; }
 fi
 TEST_RUNNER_BENCH_BUNDLE="io.github.youndie.iosbench.$bundle" TEST_RUNNER_BENCH_LAUNCH_ARGS="$*" \

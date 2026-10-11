@@ -39,3 +39,42 @@ and the UI-test runner beside them.
   session plan is needed whatever the runner does; this item hands B-01 the measured number of free
   slots beside the runner, and the options it allows, with what each costs the interleaving.
 - Anchors: `stand/b-04/` (target), `harness/` (target).
+
+---
+
+## Iteration 1 — 2026-10-11
+
+Devices: an iPhone XS (`iPhone11,2`, iOS 18.7.3, 22H217) and an iPhone 17 Pro (`iPhone18,1`, iOS 26.6.2,
+23G90, 120 Hz). Both are in Developer Mode, and the Personal Team is `P3Y5X9576J` (git-ignored
+`Local.xcconfig`). The raw output is in [stand/b-04/](../../stand/b-04/README.md).
+
+**Answered:**
+- **The cap is three apps per device**, enforced at install. On the XS, A, B1 and B2 installed; B3 and
+  C were refused with "This device has reached the maximum number of installed apps using a free
+  developer profile". The refusal lists the three identifiers holding the slots, and comes from
+  `MIFreeProfileValidatedAppTracker`.
+- **The UI-test runner takes a slot.** With three arms installed, `devicectl` refused to install it
+  with the same message. Once one arm was removed, it installed. So a session holds **the runner and
+  two arms** (A1.4 I5's plan follows from this).
+- **A Release build signed by a Personal Team carries `get-task-allow = true`.** That is the
+  entitlement Instruments needs to attach. It was read with `codesign` from the device build of A.
+- **`devicectl` install, launch and log pull work on the device.** The pull gives the app's own
+  header: `iPhone11,2`, iOS 18.7.3, 60 fps, nominal, battery 1.0.
+- **An App Launch recording works on the XS**, launched by `xctrace` itself with no runner. It holds
+  `life-cycle-period` and `time-profile`.
+- The App ID budget: six used (a, b1, b2, b3, c, harness.xctrunner), with probes run on the real
+  bundle ids rather than empty apps so as not to spend more.
+
+**Blocking: `xcodebuild` cannot run the UI tests on either device.** Every way tried fails before the
+first test with "Root install style is not supported on this device. To install internal content, the
+device must allow installing app bundles and roots, and be running an internal OS build":
+- the host-less harness, both through the scheme and through the `.xctestrun`;
+- with the runner already installed by hand;
+- with a patched `.xctestrun`;
+- with A declared as the UI target app;
+- on the iPhone 17 Pro as well as the XS;
+- with a throwaway project in which the UI tests are hosted by arm A (not committed).
+
+The runner itself installs and is signed and provisioned. No public report of the message was found.
+Without the runner there is no S2–S4 on a device, so this item stays `wip`, and the question goes to
+the owner.

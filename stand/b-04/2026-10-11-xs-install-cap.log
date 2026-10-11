@@ -1,0 +1,84 @@
+# B-04: free provisioning on iPhone XS (iPhone11,2, iOS 18.7.3 22H217), Personal Team P3Y5X9576J, Xcode 27.0 27A266a
+# 2026-10-11T11:46:17Z
+$ xcrun devicectl device info apps --device 00008020-000A6CC42692002E (our bundles)
+Name        Bundle Identifier        Version   Bundle Version
+
+$ xcrun devicectl device install app --device 00008020-000A6CC42692002E BenchA.app
+App installed:
+? bundleID: io.github.youndie.iosbench.a
+? installationURL: file:///private/var/containers/Bundle/Application/B2F0635C-CE56-4559-B261-666830607BA0/BenchA.app/
+? launchServicesIdentifier: unknown
+? databaseUUID: 6506C9DD-0320-4619-9E04-E21EBB98500B
+? databaseSequenceNumber: 10408
+? options: 
+exit 0
+
+# after the owner trusted the developer on the device
+$ xcrun devicectl device process launch --device 00008020-000A6CC42692002E --terminate-existing io.github.youndie.iosbench.a
+Launched application with io.github.youndie.iosbench.a bundle identifier.
+exit 0
+
+# 11:51:19 install BenchB1.app (A already installed)
+$ xcrun devicectl device install app --device 00008020-000A6CC42692002E BenchB1.app
+App installed:
+? bundleID: io.github.youndie.iosbench.b1
+exit 0
+
+# 11:51:22 install BenchB2.app (A already installed)
+$ xcrun devicectl device install app --device 00008020-000A6CC42692002E BenchB2.app
+App installed:
+? bundleID: io.github.youndie.iosbench.b2
+exit 0
+
+# 11:51:24 install BenchB3.app (A already installed)
+$ xcrun devicectl device install app --device 00008020-000A6CC42692002E BenchB3.app
+ERROR: Failed to install the app on the device. (com.apple.dt.CoreDeviceError error 3002 (0xBBA))
+       NSURL = file:///Users/youndie/Documents/GitHub/ios-ui-stack-bench/build/DerivedData-device/b3-swift-export/Build/Products/Release-iphoneos/BenchB3.app/
+       ----------------------------------------
+           ?? ??????? ?????????? ?????????? <<BenchB3>> (IXUserPresentableErrorDomain error 14 (0x0E))
+           NSLocalizedFailureReason = ?????????? ?????????? ??? ??????????, ??? ??? ?? ??????? ????????? ??? ???????????.
+           NSLocalizedRecoverySuggestion = This device has reached the maximum number of installed apps using a free developer profile: {(
+               "P3Y5X9576J.io.github.youndie.iosbench.a",
+               "P3Y5X9576J.io.github.youndie.iosbench.b2",
+               "P3Y5X9576J.io.github.youndie.iosbench.b1"
+           )}
+       ----------------------------------------
+               This device has reached the maximum number of installed apps using a free developer profile: {(
+           "P3Y5X9576J.io.github.youndie.iosbench.a",
+           "P3Y5X9576J.io.github.youndie.iosbench.b2",
+           "P3Y5X9576J.io.github.youndie.iosbench.b1"
+       )} (MIInstallerErrorDomain error 13 (0x0D))
+               FunctionName = -[MIFreeProfileValidatedAppTracker _onQueue_addReferenceForApplicationIdentifier:bundle:error:]
+               LibMISErrorNumber = -402620383
+               LegacyErrorString = ApplicationVerificationFailed
+               SourceFileLine = 171
+exit 0
+
+# 11:51:27 install BenchC.app (A already installed)
+$ xcrun devicectl device install app --device 00008020-000A6CC42692002E BenchC.app
+ERROR: Failed to install the app on the device. (com.apple.dt.CoreDeviceError error 3002 (0xBBA))
+       NSURL = file:///Users/youndie/Documents/GitHub/ios-ui-stack-bench/build/DerivedData-device/c-kmp-cmp/Build/Products/Release-iphoneos/BenchC.app/
+       ----------------------------------------
+           ?? ??????? ?????????? ?????????? <<BenchC>> (IXUserPresentableErrorDomain error 14 (0x0E))
+           NSLocalizedFailureReason = ?????????? ?????????? ??? ??????????, ??? ??? ?? ??????? ????????? ??? ???????????.
+           NSLocalizedRecoverySuggestion = This device has reached the maximum number of installed apps using a free developer profile: {(
+               "P3Y5X9576J.io.github.youndie.iosbench.a",
+               "P3Y5X9576J.io.github.youndie.iosbench.b2",
+               "P3Y5X9576J.io.github.youndie.iosbench.b1"
+           )}
+       ----------------------------------------
+               This device has reached the maximum number of installed apps using a free developer profile: {(
+           "P3Y5X9576J.io.github.youndie.iosbench.a",
+           "P3Y5X9576J.io.github.youndie.iosbench.b2",
+           "P3Y5X9576J.io.github.youndie.iosbench.b1"
+       )} (MIInstallerErrorDomain error 13 (0x0D))
+               LegacyErrorString = ApplicationVerificationFailed
+               LibMISErrorNumber = -402620383
+               FunctionName = -[MIFreeProfileValidatedAppTracker _onQueue_addReferenceForApplicationIdentifier:bundle:error:]
+               SourceFileLine = 171
+exit 0
+
+$ xcrun devicectl device info apps --device 00008020-000A6CC42692002E (our bundles)
+BenchA      io.github.youndie.iosbench.a    1.0       1             
+BenchB1     io.github.youndie.iosbench.b1   1.0       1             
+BenchB2     io.github.youndie.iosbench.b2   1.0       1             

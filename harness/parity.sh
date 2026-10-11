@@ -14,9 +14,12 @@ case $(mkdir -p "$out" && cd "$out" && pwd) in "$ROOT"/logs/*)
 esac
 DESTINATION=${DESTINATION:-"platform=iOS Simulator,id=$(xcrun simctl list devices booted -j | python3 -c 'import json,sys; print([d["udid"] for r in json.load(sys.stdin)["devices"].values() for d in r if d["state"]=="Booted"][0])')"}
 DERIVED=${DERIVED_DATA:-$ROOT/build/DerivedData}/harness
+# A device destination signs the runner with the Personal Team of harness/Configuration/Local.xcconfig
+# and lets automatic signing register what it needs (B-04); a simulator needs no signing.
+case $DESTINATION in id=*) SIGNING="-allowProvisioningUpdates"; DERIVED="$DERIVED-device" ;; *) SIGNING="" ;; esac
 python3 "$ROOT/harness/generate_project.py" --check >/dev/null
 xcodebuild build-for-testing -project "$ROOT/harness/Harness.xcodeproj" -scheme HarnessUITests \
-    -destination "$DESTINATION" -derivedDataPath "$DERIVED" >"$DERIVED.build.log" 2>&1 \
+    -destination "$DESTINATION" -derivedDataPath "$DERIVED" $SIGNING >"$DERIVED.build.log" 2>&1 \
     || { echo "harness build failed - $DERIVED.build.log" >&2; exit 1; }
 for arm in ${*:-a-native b1-objc b2-skie b3-swift-export c-kmp-cmp}; do
     case $arm in a-native) b=a ;; b1-objc) b=b1 ;; b2-skie) b=b2 ;; b3-swift-export) b=b3 ;; c-kmp-cmp) b=c ;; esac
