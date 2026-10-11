@@ -12,7 +12,7 @@ set -eu
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 arm=$1; scenario=$2; shift 2
 case $scenario in
-    S1) test=testS1ColdStart ;; S2) test=testS2Fling ;; S3) test=testS3Filter ;; S4) test=testS4NavigationChurn ;;
+    S1) test=testS1ColdStart ;; S2) test=testS2Fling ;; S3) test=testS3Filter ;; S4) test=testS4NavigationChurn ;; IDLE) test=testIdle ;;
     *) echo "unknown scenario $scenario" >&2; exit 2 ;;
 esac
 case $arm in

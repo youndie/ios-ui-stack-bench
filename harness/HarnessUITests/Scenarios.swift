@@ -104,6 +104,15 @@ final class Scenarios: XCTestCase {
 
     // MARK: - the arm
 
+    /// Idle: launch, wait for the list, then touch nothing for 30 s. B-16 sets the app's own figures
+    /// in this run against the same launch without a runner (kill criterion 5, I6).
+    func testIdle() throws {
+        let app = try arm()
+        app.terminate()
+        launch(app, scenario: "idle")
+        Thread.sleep(forTimeInterval: 30)
+    }
+
     private func arm() throws -> XCUIApplication {
         guard let bundle = environment["BENCH_BUNDLE"], !bundle.isEmpty else {
             throw XCTSkip("BENCH_BUNDLE is not set; run the scenarios through harness/run.sh")
