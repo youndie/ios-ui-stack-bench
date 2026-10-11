@@ -1,7 +1,7 @@
 ---
 id: B-04
 title: "What free provisioning allows on the devices: apps per device, the test runner, Instruments on Release"
-status: open
+status: wip
 priority: P0
 size: S
 stage: stage-0-gate
