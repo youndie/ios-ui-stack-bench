@@ -96,7 +96,7 @@ this file.
 
 | Task | | Priority | Size | Blocked by |
 |---|---|---|---|---|
-| [B-12](docs/backlog/B-12-rq1-size.md) `[ ]` | RQ1 — size: what KMP and CMP add to an arm64 app, uncompressed and zip -9, by component | P1 | S | B-11 |
+| [B-12](docs/backlog/B-12-rq1-size.md) `[~]` | RQ1 — size: what KMP and CMP add to an arm64 app, uncompressed and zip -9, by component | P1 | S | B-11 |
 | [B-16](docs/backlog/B-16-dry-run-and-the-ruler.md) `[ ]` | Dry run on one device: the ruler, the runner's and the instruments' own cost, thermal drift | P1 | M | B-15, B-24 |
 | [B-17](docs/backlog/B-17-runs-on-the-older-device.md) `[ ]` | P3 — the full matrix on the older device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-18](docs/backlog/B-18-runs-on-the-newer-device.md) `[ ]` | P3 — the full matrix on the newer device: S1–S4, every arm, rotated order | P1 | L | B-16 |

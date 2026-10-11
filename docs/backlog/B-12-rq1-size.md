@@ -1,7 +1,7 @@
 ---
 id: B-12
 title: "RQ1 — size: what KMP and CMP add to an arm64 app, uncompressed and zip -9, by component"
-status: open
+status: wip
 priority: P1
 size: S
 stage: stage-3-runs
