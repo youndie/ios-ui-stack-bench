@@ -1,7 +1,7 @@
 ---
 id: B-06
 title: "RQ0 — the gate: every metric captured on a device, the injected stall seen in every arm"
-status: wip
+status: done
 priority: P0
 size: M
 stage: stage-0-gate
@@ -79,3 +79,28 @@ before the gate's own rows.
 first recording under `logs/b-06/`: the stall seen by the logger at ≥ 90 % (and ≤ 5 % at 0 ms), by
 Hitches at least once in the scrolling window (and nothing ≥ 40 ms at 0 ms), startup +150 to +250 ms
 at the median of 5 vs 5, memory +40 to +60 MiB at the median of 3 vs 3, size +0.95 to +1.10 MiB.
+
+## Result — 2026-10-11
+
+The gate ran on the XS for all five arms, from commit `e3ab58f`, into
+[logs/b-06/](../../logs/b-06/README.md); [GATE.md](../../GATE.md) has the generated table and its
+reading. **RQ0 is not green under its own rule, by one row of 55**: B1's in-app startup control came
+out just above its 250 ms ceiling, while App Launch, the instrument startup is read from (A1.7),
+passes for B1 and every other arm. The ceiling is not moved. The stall is seen by both instruments in
+every arm, C included, so H1 holds on the XS. Kill criteria 1 and 2 do not fire. That commit closed
+the amendment window, and BRIEF.md names it.
+
+Found on the way, for the items that use these tools:
+- **xctrace leaves its raw kernel traces behind.** The Mac's temporary folder held about 29 GB of
+  `instruments*.ktrace` after the dry run and half the gate, and a full disk killed the first gate
+  run. Only `logs/b-06` was lost, and it was rerun from scratch. A session command has to delete them
+  after each recording ([B-24](B-24-xctrace-record-and-readers.md)). The phone's disk matters as
+  well: the XS filled up during a recording.
+- **xctrace needs the phone unlocked.** A locked XS fails the runner with "Timed out while enabling
+  automation mode".
+- **C's S2 run is shorter** than the SwiftUI arms' runs: its log holds fewer one-second stall ticks
+  for the same 40 flings. RQ3 divides by the scroll windows' length, so its ratio is unaffected. The
+  difference itself is B-17's to look at, not this item's.
+- **The trace readers exist now.** `analysis/gate_reader.py` reads Animation Hitches, App Launch with
+  Points of Interest, and Activity Monitor, with a control built from real exports. B-24 reuses them
+  for the sessions, rather than writing them anew.

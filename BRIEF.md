@@ -197,6 +197,12 @@ never as the brief's two-device verdict.
 
 **No threshold moves.**
 
+### The window closed — 2026-10-11
+
+The first measurement under `logs/` is commit `847bd43` ("test(gate): record RQ0's controls on the
+iPhone XS", [B-06](docs/backlog/B-06-rq0-the-gate.md)). Nothing above this line changes from here on.
+`make check` (`brief_freeze.py --history --window logs`) holds the freeze before it.
+
 ## Amendment set 2 — after the window
 
 Empty, and better left so. An amendment here is made by the owner, says that it is late, fixes an
