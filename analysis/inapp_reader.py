@@ -29,6 +29,10 @@ secondary to Instruments' Animation Hitches, which is the brief's instrument:
 It measures when the main thread got to run a frame callback, not when a frame reached the display;
 a stall that blocks the main thread shows in both, a render-server hitch only in Instruments.
 
+**CPU, secondary** (amendment A2.1): `cpu_total_ms` is the process's CPU time, user plus system,
+at its last sample - the total since the process started, which for one launch per scenario run is
+the brief's "total process CPU time per scenario".
+
 **RQ4's growth over S4** - the brief's "growth over 50 push/pop cycles after warm-up" leaves the
 warm-up's end open (research §2, I7). Proposed for B-01, and implemented here until it decides:
     after cycle n   the first footprint sample at or after the n-th `detailDisappeared`
@@ -146,6 +150,7 @@ def summarise(lines, scenario):
         "process_to_list_ms": (marks["listPopulated"] - start) * 1000 if start and "listPopulated" in marks else "",
         "launch_to_list_ms": (marks["listPopulated"] - marks["launch"]) * 1000 if {"launch", "listPopulated"} <= marks.keys() else "",
         "peak_footprint_bytes": max(footprint) if footprint else "",
+        "cpu_total_ms": max((l["cpuMs"] for l in lines if l["k"] == "footprint" and l.get("cpuMs", -1) >= 0), default=""),
         "scroll_windows": len(spans),
         "scroll_seconds": window_s,
         "frames_in_windows": len(in_window),

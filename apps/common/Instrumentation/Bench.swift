@@ -21,7 +21,8 @@ import os
 ///   `scenario:<name>` at launch when the harness passes `-benchScenario <name>`, `query` on every
 ///   change of the search query, `detailAppeared` / `detailDisappeared` around the detail screen;
 /// - `frame` — every `CADisplayLink` callback: `t` its timestamp, `tt` its target timestamp;
-/// - `footprint` — `phys_footprint` from `task_vm_info`, every 250 ms, from a utility queue;
+/// - `footprint` — `phys_footprint` from `task_vm_info`, every 250 ms, from a utility queue, with the
+///   process's CPU time so far (`cpuMs`, user plus system, from `getrusage`);
 /// - `scroll` — each transition of the list between scrolling and resting: `phase` `begin` or
 ///   `end`, the content offset in points where the UI knows it exactly (`offset`, SwiftUI), or the
 ///   first visible item and its offset in pixels (`first`, `firstOffsetPx`, Compose), and the last
@@ -229,10 +230,19 @@ final class Bench {
         let timer = DispatchSource.makeTimerSource(queue: queue)
         timer.schedule(deadline: .now(), repeating: .milliseconds(250), leeway: .milliseconds(5))
         timer.setEventHandler { [weak self] in
-            self?.write(["k": "footprint", "t": CACurrentMediaTime(), "bytes": Self.physFootprint()])
+            self?.write(["k": "footprint", "t": CACurrentMediaTime(), "bytes": Self.physFootprint(), "cpuMs": Self.cpuMilliseconds()])
         }
         timer.resume()
         sampler = timer
+    }
+
+    /// The process's CPU time so far, user plus system, in ms (`getrusage`): RQ's secondary CPU metric
+    /// (amendment A2.1), because CPU Profiler cannot record beside the UI-test runner on a device.
+    static func cpuMilliseconds() -> Double {
+        var usage = rusage()
+        guard getrusage(RUSAGE_SELF, &usage) == 0 else { return -1 }
+        func ms(_ t: timeval) -> Double { Double(t.tv_sec) * 1000 + Double(t.tv_usec) / 1000 }
+        return ms(usage.ru_utime) + ms(usage.ru_stime)
     }
 
     static func physFootprint() -> UInt64 {

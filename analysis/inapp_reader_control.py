@@ -69,6 +69,18 @@ def _():
     return close(s["longest_hitch_ms"], 50 - 1000 / 60, 0.05) and close(s["hitch_time_ratio_ms_per_s"], (50 - 1000 / 60) / 40, 0.01)
 
 
+@case("cpu_total_ms is the process's CPU time at its last sample; a failed reading (-1) is ignored")
+def _():
+    lines = log()
+    k = 0
+    for l in lines:
+        if l["k"] == "footprint":
+            l["cpuMs"] = -1 if k == 49 else 100.0 + 10 * k
+            k += 1
+    s = reader.summarise(lines, "S2")
+    return close(s["cpu_total_ms"], 100.0 + 10 * 48)
+
+
 @case("a writeError line makes the run invalid: the log lost lines it cannot show")
 def _():
     lines = log() + [{"k": "writeError", "t": 120.0, "failed": 3, "error": "EIO"}]

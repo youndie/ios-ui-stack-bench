@@ -31,7 +31,7 @@ def spread(center, sd, n=19, seed=1):
 
 def fill(rows):
     """Every row carries every metric column the engine reads; missing ones are empty."""
-    cols = {"process_to_list_ms", "hitch_time_ratio_ms_per_s", "longest_hitch_ms", "peak_footprint_bytes", "growth_cycles_5_to_50_bytes"}
+    cols = {v.STARTUP, "hitch_time_ratio_ms_per_s", "longest_hitch_ms", "peak_footprint_bytes", "growth_cycles_5_to_50_bytes"}
     for r in rows:
         for c in cols:
             r.setdefault(c, "")
@@ -49,8 +49,8 @@ def case(name):
 
 
 def rq2_with(delta, sd=5):
-    rows = runs("a-native", "older", "S1", spread(400, sd), "process_to_list_ms")
-    rows += runs("c-kmp-cmp", "older", "S1", spread(400 + delta, sd, seed=2), "process_to_list_ms")
+    rows = runs("a-native", "older", "S1", spread(400, sd), v.STARTUP)
+    rows += runs("c-kmp-cmp", "older", "S1", spread(400 + delta, sd, seed=2), v.STARTUP)
     return v.rq2(fill(rows))[0]
 
 
@@ -77,8 +77,8 @@ def _():
 
 @case("RQ2: same session for both arms is printed as yes, two sessions as no")
 def _():
-    rows = runs("a-native", "older", "S1", spread(400, 5), "process_to_list_ms", session="s1")
-    rows += runs("c-kmp-cmp", "older", "S1", spread(410, 5), "process_to_list_ms", session="s2")
+    rows = runs("a-native", "older", "S1", spread(400, 5), v.STARTUP, session="s1")
+    rows += runs("c-kmp-cmp", "older", "S1", spread(410, 5), v.STARTUP, session="s2")
     return rq2_with(10).row["same_device_same_session"] == "yes" and v.rq2(fill(rows))[0].row["same_device_same_session"] == "no"
 
 
@@ -95,9 +95,14 @@ def _():
     return v.combine(v.rq3(rq3_rows(2, 2))) == "GREEN"
 
 
-@case("RQ3: C at 12 ms/s on the newer device -> RED")
+@case("RQ3, A1.7: the newer device is not read - C at 12 ms/s there leaves the XS's GREEN")
 def _():
-    return v.combine(v.rq3(rq3_rows(2, 12))) == "RED"
+    return v.combine(v.rq3(rq3_rows(2, 12))) == "GREEN"
+
+
+@case("RQ3: C at 12 ms/s on the XS -> RED")
+def _():
+    return v.combine(v.rq3(rq3_rows(12, 2))) == "RED"
 
 
 @case("RQ3: C at 7 ms/s -> INCONCLUSIVE, naming the metric")
@@ -141,7 +146,7 @@ def _():
     for device in v.DEVICES:
         for arm, seed in (("a-native", 1), ("b1-objc", 2)):
             rows += runs(arm, device, "S2", spread(3, 0.1, seed=seed), "hitch_time_ratio_ms_per_s")
-            rows += runs(arm, device, "S1", spread(400, 5, seed=seed), "process_to_list_ms")
+            rows += runs(arm, device, "S1", spread(400, 5, seed=seed), v.STARTUP)
             rows += runs(arm, device, "S2", spread(100 * MB, 0.5 * MB, seed=seed), "peak_footprint_bytes")
     return v.combine(v.rq5(fill(rows), "b1-objc")) == "GREEN"
 
@@ -153,9 +158,9 @@ def _():
 
 @case("warm-up and invalid runs are not counted")
 def _():
-    rows = runs("a-native", "older", "S1", [400] * 5, "process_to_list_ms")
+    rows = runs("a-native", "older", "S1", [400] * 5, v.STARTUP)
     rows[1]["valid"] = "0"
-    return len(v.counted(fill(rows), "a-native", "older", "S1", "process_to_list_ms")) == 4
+    return len(v.counted(fill(rows), "a-native", "older", "S1", v.STARTUP)) == 4
 
 
 @case("the bootstrap is seeded: two runs give the same interval")

@@ -26,8 +26,19 @@ What it does, in the brief's protocol:
 - appends one row per attempt to <out>/runs.csv, the input of analysis/verdicts.py, and keeps every
   log and its CSVs under <out>/<scenario>/<arm>/run-<n>-attempt-<k>/.
 
-A device is driven through `xcrun devicectl`; that half runs for the first time in B-04/B-06 and is
-the one part of this file not yet exercised.
+On a device (B-24, BRIEF.md A1.7 and A2.1):
+- **S1 is recorded by App Launch with Points of Interest**, launched by `xctrace record --launch`, with
+  no runner: wait 10 s, launch, record 10 s; `xctrace` ends the app when it stops (the brief's
+  "terminate, wait 10 s, launch"). The run's row carries the trace's `trace_process_to_list_ms` -
+  RQ2's and RQ5's startup - beside the app's own figures. The tables, the trace's digest and the
+  `xctrace` log go into the attempt's directory (harness/recording.py).
+- **S2-S4 run through the harness** as on the simulator; no `xctrace` recording survives beside it.
+- **The cross-checks**, once per arm at the session's end (`"crosscheck": false` skips them): Animation
+  Hitches and Activity Monitor on a run where the app scrolls its own list (`-benchAutoScroll 40`),
+  into <out>/crosscheck/<arm>/<instrument>/, read beside the app's log of the same launch into
+  <out>/crosscheck.csv.
+`session.json` records the plan, the installed executables' digests, the device as `devicectl`
+reports it, the Xcode and `xctrace` versions and the commit.
 """
 import csv
 import glob
@@ -43,6 +54,10 @@ import time
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "analysis"))
 import inapp_reader  # noqa: E402
+import xctrace_reader  # noqa: E402
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import recording  # noqa: E402
 
 BUNDLES = {"a-native": "a", "b1-objc": "b1", "b2-skie": "b2", "b3-swift-export": "b3", "c-kmp-cmp": "c"}
 SCENARIOS = ("S1", "S2", "S3", "S4")
@@ -124,7 +139,7 @@ class Target:
         else:
             sh("xcrun", "devicectl", "device", "copy", "from", "--device", self.udid,
                "--domain-type", "appDataContainer", "--domain-identifier", bundle,
-               "--source", "Documents/bench", "--destination", into)
+               "--source", "Documents/bench", "--destination", into, check=False)  # absent until the app first runs
         return glob.glob(os.path.join(into, "**", "*.ndjson"), recursive=True)
 
     def new_logs(self, bundle, into):
@@ -133,6 +148,37 @@ class Target:
         fresh = [p for p in paths if os.path.basename(p) not in seen]
         seen.update(os.path.basename(p) for p in paths)
         return fresh
+
+
+def run_s1_traced(target, arm, where, name):
+    """S1 on a device: wait 10 s, then App Launch with Points of Interest launches the app (A1.7)."""
+    time.sleep(10)
+    bundle = f"io.github.youndie.iosbench.{BUNDLES[arm]}"
+    ok = recording.record(target.udid, bundle, "App Launch", ["-benchScenario", "S1"], where, 10, name)
+    return "passed" if ok else "no result"
+
+
+def crosscheck(target, arm, out):
+    """Animation Hitches and Activity Monitor on a self-scrolling launch, each beside the app's log."""
+    bundle = f"io.github.youndie.iosbench.{BUNDLES[arm]}"
+    rows = []
+    for template, key in (("Animation Hitches", "hitches"), ("Activity Monitor", "activity")):
+        where = os.path.join(out, "crosscheck", arm, key)
+        ok = recording.record(target.udid, bundle, template, ["-benchAutoScroll", "40"], where, 75, f"crosscheck_{arm}_{key}")
+        with tempfile.TemporaryDirectory() as tmp:
+            logs = target.new_logs(bundle, tmp)
+            app = {}
+            if len(logs) == 1:
+                with open(logs[0], "rb") as src, open(os.path.join(where, "app.ndjson"), "wb") as dst:
+                    dst.write(src.read())
+                lines = inapp_reader.load(os.path.join(where, "app.ndjson"))
+                cpu = [l["cpuMs"] for l in lines if l["k"] == "footprint" and l.get("cpuMs", -1) >= 0]
+                app = {"app_peak_footprint_bytes": max((l["bytes"] for l in lines if l["k"] == "footprint"), default=""),
+                       "app_cpu_total_ms": max(cpu, default="")}
+        trace = xctrace_reader.hitch_summary(where) if key == "hitches" else xctrace_reader.activity(where)
+        rows.append({"arm": arm, "instrument": template, "recorded": int(ok), "app_logs": len(logs), **trace, **app})
+        print(f"crosscheck {arm} {template}: {'recorded' if ok else 'FAILED'}", flush=True)
+    return rows
 
 
 def run_scenario(plan, arm, scenario):
@@ -153,21 +199,34 @@ def main():
     for arm in arms:  # whatever logs the installed apps already hold are not this session's
         with tempfile.TemporaryDirectory() as tmp:
             target.new_logs(f"io.github.youndie.iosbench.{BUNDLES[arm]}", tmp)
+    stand = {"xcode": " ".join(sh("xcodebuild", "-version").stdout.split()),
+             "xctrace": sh("xcrun", "xctrace", "version").stdout.strip(),
+             "commit": sh("git", "-C", ROOT, "rev-parse", "HEAD").stdout.strip()}
+    if target.kind == "device":
+        with tempfile.NamedTemporaryFile(suffix=".json") as f:
+            sh("xcrun", "devicectl", "device", "info", "details", "--device", target.udid, "-j", f.name, "-q")
+            r = json.load(open(f.name))["result"]
+        stand["device"] = {"model": r["hardwareProperties"].get("marketingName"), "hw_machine": r["hardwareProperties"].get("productType"),
+                           "ios": r["deviceProperties"].get("osVersionNumber"), "ios_build": r["deviceProperties"].get("osBuildUpdate")}
     with open(os.path.join(out, "session.json"), "w") as f:
-        json.dump({"plan": plan, "installed": digests, "started": time.time()}, f, indent=1)
-    print(f"session {plan['session']}: installed {', '.join(f'{a} {d[:12]}' for a, d in digests.items())}")
+        json.dump({"plan": plan, "installed": digests, "stand": stand, "started": time.time()}, f, indent=1)
+    print(f"session {plan['session']}: installed {', '.join(f'{a} {d[:12]}' for a, d in digests.items())}", flush=True)
 
     rows = []
     for scenario in SCENARIOS:
         for run in range(plan["runs"].get(scenario, 0)):
             for arm in rotation(arms, run):
                 for attempt in range(1, MAX_ATTEMPTS + 1):
-                    result = run_scenario(plan, arm, scenario)
+                    where = os.path.join(out, scenario, arm, f"run-{run}-attempt-{attempt}")
+                    os.makedirs(where, exist_ok=True)
+                    traced = scenario == "S1" and target.kind == "device"
+                    if traced:
+                        result = run_s1_traced(target, arm, where, f"{plan['session']}_{arm}_S1_{run}_{attempt}")
+                    else:
+                        result = run_scenario(plan, arm, scenario)
                     bundle = f"io.github.youndie.iosbench.{BUNDLES[arm]}"
                     with tempfile.TemporaryDirectory() as tmp:
                         logs = target.new_logs(bundle, tmp)
-                        where = os.path.join(out, scenario, arm, f"run-{run}-attempt-{attempt}")
-                        os.makedirs(where, exist_ok=True)
                         if len(logs) != 1:
                             summary = {"valid": 0, "reason": f"{len(logs)} logs from one run"}
                         else:
@@ -175,6 +234,10 @@ def main():
                                 dst.write(src.read())
                             lines = inapp_reader.load(os.path.join(where, "app.ndjson"))
                             summary = inapp_reader.summarise(lines, scenario)
+                    if traced:
+                        summary = {**summary, **xctrace_reader.launch(where)}
+                        if summary["trace_process_to_list_ms"] == "" and summary.get("valid") == 1:
+                            summary = {**summary, "valid": 0, "reason": "no listPopulated in the App Launch trace"}
                     action, why = decide(summary, target.kind)
                     if result != "passed" and action == "count":
                         action, why = "repeat", f"UI test {result}"
@@ -184,7 +247,7 @@ def main():
                            "installed_sha256": digests[arm], **summary}
                     row["valid"] = int(summary.get("valid") == 1 and action == "count")
                     rows.append(row)
-                    print(f"{scenario} run {run} {arm} attempt {attempt}: {action} {why}".rstrip())
+                    print(f"{scenario} run {run} {arm} attempt {attempt}: {action} {why}".rstrip(), flush=True)
                     if action == "stop":
                         write(out, rows)
                         raise SystemExit(f"session stopped: {why}")
@@ -192,14 +255,17 @@ def main():
                         break
     write(out, rows)
     print(f"session {plan['session']}: {len(rows)} attempts, runs.csv in {out}")
+    if target.kind == "device" and plan.get("crosscheck", True):
+        checks = [r for arm in arms for r in crosscheck(target, arm, out)]
+        write(out, checks, "crosscheck.csv")
     return 0
 
 
-def write(out, rows):
+def write(out, rows, name="runs.csv"):
     fields = []
     for r in rows:
         fields += [k for k in r if k not in fields]
-    with open(os.path.join(out, "runs.csv"), "w", newline="", encoding="utf-8") as f:
+    with open(os.path.join(out, name), "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=fields)
         w.writeheader()
         w.writerows(rows)
