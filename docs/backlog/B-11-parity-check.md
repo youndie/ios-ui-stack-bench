@@ -1,7 +1,7 @@
 ---
 id: B-11
 title: "Visual parity before any measurement: item count, row height, first-screen diff"
-status: open
+status: wip
 priority: P1
 size: M
 stage: stage-1-build
