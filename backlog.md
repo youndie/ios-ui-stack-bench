@@ -92,7 +92,7 @@ this file.
 
 <!-- BEGIN INDEX -->
 
-## Open (15)
+## Open (14)
 
 | Task | | Priority | Size | Blocked by |
 |---|---|---|---|---|
@@ -106,13 +106,12 @@ this file.
 | [B-18](docs/backlog/B-18-runs-on-the-newer-device.md) `[ ]` | P3 — the full matrix on the newer device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-19](docs/backlog/B-19-write-up.md) `[ ]` | P4 — the write-up: one verdict per RQ, regenerated from the CSVs, negative results included | P1 | M | B-12, B-17, B-18 |
 | [B-24](docs/backlog/B-24-xctrace-record-and-readers.md) `[ ]` | Record with xctrace beside every scenario, export its tables, and read them - on a device | P1 | M | B-06 |
-| [B-25](docs/backlog/B-25-session-runner.md) `[ ]` | One command per session: preflight, install, rotated runs, collection, runs.csv | P1 | M | B-14 |
 | [B-26](docs/backlog/B-26-size-tooling.md) `[ ]` | The size measurement as a script: unsigned arm64 archives, zip -9, link-map breakdown, determinism | P1 | M | B-21 |
 | [B-27](docs/backlog/B-27-parity-tooling.md) `[ ]` | Parity tooling: first-screen screenshots, geometry from the accessibility tree, list-region diff | P1 | M | B-13 |
 | [B-28](docs/backlog/B-28-gate-control-hooks.md) `[ ]` | The positive controls RQ0 needs: a known launch delay, a known dirty allocation, a known resource | P1 | S | B-14 |
 | [B-23](docs/backlog/B-23-kotlin-2-5-round.md) `[ ]` | A later round on Kotlin 2.5.0: arm B3 without D8, once Kotlin 2.5.0 is stable | P3 | M | - |
 
-## Closed (13)
+## Closed (14)
 
 **P0 — the gate**
 
@@ -135,5 +134,6 @@ this file.
 - [B-13](docs/backlog/B-13-ui-test-scenarios.md) `[x]` - The UI-test scenarios S1–S4, one target driving every arm by bundle id
 - [B-14](docs/backlog/B-14-trace-export-and-readers.md) `[x]` - xctrace record and export, and the readers that turn traces and in-app logs into CSVs
 - [B-15](docs/backlog/B-15-analysis-and-intervals.md) `[x]` - The analysis: median and IQR per variant, bootstrap 95 % CIs, the verdict word per RQ
+- [B-25](docs/backlog/B-25-session-runner.md) `[x]` - One command per session: preflight, install, rotated runs, collection, runs.csv
 
 <!-- END INDEX -->

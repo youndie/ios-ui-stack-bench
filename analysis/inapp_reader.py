@@ -127,8 +127,13 @@ def summarise(lines, scenario):
     over = [r for r in in_window if r["interval_ms"] > 1.5 * r["expected_ms"] > 0]
     start = header.get("processStart")
     growth = growth_s4(lines) if scenario == "S4" else ("", "", "")
+    thermal = [l["state"] for l in sorted((l for l in lines if l["k"] == "thermal"), key=lambda l: l["t"])]
     return {
         "bundle": header.get("bundle", ""),
+        "battery": header.get("battery", ""),
+        "low_power": int(bool(header.get("lowPower"))) if header else "",
+        "thermal_start": header.get("thermal", ""),
+        "thermal_worst": worst_thermal([header.get("thermal", "nominal")] + thermal) if header else "",
         "machine": header.get("machine", ""),
         "os": header.get("os", ""),
         "scenario": scenario,
@@ -151,6 +156,14 @@ def summarise(lines, scenario):
         "footprint_after_cycle50_bytes": growth[1],
         "growth_cycles_5_to_50_bytes": growth[2],
     }
+
+
+THERMAL_ORDER = ["nominal", "fair", "serious", "critical"]
+
+
+def worst_thermal(states):
+    known = [s for s in states if s in THERMAL_ORDER]
+    return max(known, key=THERMAL_ORDER.index) if known else "unknown"
 
 
 def growth_s4(lines):

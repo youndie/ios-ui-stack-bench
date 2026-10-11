@@ -142,6 +142,15 @@ def _():
     return s["footprint_after_cycle5_bytes"] == 1_036_000 and s["growth_cycles_5_to_50_bytes"] == 360_000
 
 
+@case("thermal: the worst state the run went through, from the header and every change")
+def _():
+    lines = log()
+    lines[0]["thermal"] = "nominal"
+    lines.append({"k": "thermal", "t": 120.0, "state": "fair"})
+    lines.append({"k": "thermal", "t": 121.0, "state": "nominal"})
+    return reader.summarise(lines, "S2")["thermal_worst"] == "fair" and reader.summarise(log(), "S2")["thermal_worst"] == "nominal"
+
+
 @case("peak footprint is the largest sample")
 def _():
     return reader.summarise(log(), "S2")["peak_footprint_bytes"] == 10_000_049
