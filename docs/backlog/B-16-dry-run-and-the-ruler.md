@@ -1,7 +1,7 @@
 ---
 id: B-16
 title: "Dry run on one device: the ruler, the runner's and the instruments' own cost, thermal drift"
-status: open
+status: wip
 priority: P1
 size: M
 stage: stage-2-harness
