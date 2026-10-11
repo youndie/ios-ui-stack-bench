@@ -1,7 +1,7 @@
 ---
 id: B-29
 title: "Bring the five arms to parity on the simulator, so B-11 on the devices confirms rather than builds"
-status: wip
+status: done
 priority: P1
 size: M
 stage: stage-1-build
@@ -32,3 +32,29 @@ once the runs are ready — so the layout work belongs here, where it costs no d
   is read rather than assumed — the same in every arm.
 - Anchors: `compose-ui/src/commonMain/kotlin/bench/compose/App.kt`, `apps/common/ListUI/Views.swift`,
   `docs/flags.md`.
+
+---
+
+## Findings — 2026-10-11
+
+**Done on the simulator.** `harness/parity.sh` now reports the same geometry for all five arms within
+one point:
+- the number of visible rows;
+- the first row's height and top;
+- the last visible row's bottom;
+- the thumbnail size, now read from the tree in C as well.
+
+The numbers stay in `build/`. B-11 confirms this on the devices and fixes the pixel tolerance.
+
+What C needed, each listed in `docs/flags.md` with its reason, and none of it leaving Material's
+components:
+- **Row text at iOS's text-style sizes in points**, at the font's natural line height, 2 dp apart
+  like the SwiftUI `VStack`. Material's type scale had made C's row 12 points shorter.
+- **The separator inside the row**, inset to the text as a SwiftUI separator is. As a separate 1 dp
+  element it made the row pitch one point longer than the row, and C showed one row fewer.
+- **The title at the large-title size, and the list running under the home indicator**, so C's list
+  starts and ends where the SwiftUI list does. The search field stays at the top in C and sits in
+  Liquid Glass at the bottom in A and B: chrome, outside the compared band (A1.4, I12).
+- **A content description on the thumbnail**, so its 48 × 48 is read, not assumed.
+
+C's S3 and S4 still pass with the reworked row. The B arms needed nothing: they draw A's views.

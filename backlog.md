@@ -92,7 +92,7 @@ this file.
 
 <!-- BEGIN INDEX -->
 
-## Open (12)
+## Open (11)
 
 | Task | | Priority | Size | Blocked by |
 |---|---|---|---|---|
@@ -106,10 +106,9 @@ this file.
 | [B-18](docs/backlog/B-18-runs-on-the-newer-device.md) `[ ]` | P3 — the full matrix on the newer device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-19](docs/backlog/B-19-write-up.md) `[ ]` | P4 — the write-up: one verdict per RQ, regenerated from the CSVs, negative results included | P1 | M | B-12, B-17, B-18 |
 | [B-24](docs/backlog/B-24-xctrace-record-and-readers.md) `[ ]` | Record with xctrace beside every scenario, export its tables, and read them - on a device | P1 | M | B-06 |
-| [B-29](docs/backlog/B-29-parity-on-the-simulator.md) `[~]` | Bring the five arms to parity on the simulator, so B-11 on the devices confirms rather than builds | P1 | M | B-27 |
 | [B-23](docs/backlog/B-23-kotlin-2-5-round.md) `[ ]` | A later round on Kotlin 2.5.0: arm B3 without D8, once Kotlin 2.5.0 is stable | P3 | M | - |
 
-## Closed (17)
+## Closed (18)
 
 **P0 — the gate**
 
@@ -127,6 +126,7 @@ this file.
 - [B-20](docs/backlog/B-20-variant-b2-skie.md) `[x]` - Variant B2 — KMP + SwiftUI over SKIE: the full spec
 - [B-21](docs/backlog/B-21-variant-b3-swift-export.md) `[x]` - Variant B3 — KMP + SwiftUI over Swift export: the full spec, or the reason it cannot be built
 - [B-22](docs/backlog/B-22-ci-builds-every-arm.md) `[x]` - CI builds every arm on macOS, so a green pull request means the apps still build
+- [B-29](docs/backlog/B-29-parity-on-the-simulator.md) `[x]` - Bring the five arms to parity on the simulator, so B-11 on the devices confirms rather than builds
 
 **P2 — harness**
 

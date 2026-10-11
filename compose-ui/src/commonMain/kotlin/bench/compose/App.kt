@@ -17,7 +17,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -48,6 +53,9 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.TextStyle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -71,7 +79,9 @@ fun App(catalog: Catalog, probe: Probe) {
             val navController = rememberNavController()
             // The item the detail screen shows; a route argument would be parsed back into the same id.
             var selected by remember { mutableStateOf<Item?>(null) }
-            Box(Modifier.fillMaxSize().safeDrawingPadding()) {
+            // Top and sides inside the safe area; the bottom is the list's, which scrolls under the home
+            // indicator as a UIKit/SwiftUI list does (B-29).
+            Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal))) {
                 NavHost(navController, startDestination = "list") {
                     composable("list") {
                         ListScreen(items, catalog::filter, onOpen = { selected = it; navController.navigate("detail") }, probe)
@@ -89,13 +99,14 @@ fun App(catalog: Catalog, probe: Probe) {
 private fun ListScreen(items: List<Item>, onQuery: (String) -> Unit, onOpen: (Item) -> Unit, probe: Probe) {
     var query by rememberSaveable { mutableStateOf("") }
     Column(Modifier.fillMaxSize()) {
-        Text("Items", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+        // iOS's large title size, so the list starts where the SwiftUI arms' list starts (B-29).
+        Text("Items", style = TextStyle(fontSize = 34.sp, fontWeight = FontWeight.Bold), modifier = Modifier.padding(horizontal = 16.dp))
         OutlinedTextField(
             value = query,
             onValueChange = { query = it; probe.mark("query"); onQuery(it) },
             placeholder = { Text("Search") },
             singleLine = true,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 4.dp),
         )
         val listState = rememberLazyListState()
         // Logged on the transitions only (B-13): the S2 reader needs how far each fling went.
@@ -109,41 +120,61 @@ private fun ListScreen(items: List<Item>, onQuery: (String) -> Unit, onOpen: (It
                 )
             }
         }
-        LazyColumn(Modifier.fillMaxSize(), state = listState) {
+        LazyColumn(Modifier.fillMaxSize(), state = listState, contentPadding = WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom).asPaddingValues()) {
             items(items, key = { it.id }) { item ->
                 // The first row composed is the first row on its way to the screen, as SwiftUI's
                 // onAppear of the first row is in the other arms; the frame that shows it is marked.
                 if (item.id == items.first().id) LaunchedEffect(Unit) { probe.mark("rowAppeared") }
-                ItemRow(item, Modifier.clickable { onOpen(item) })
-                HorizontalDivider()
+                // The separator inside the row, inset to the text as a SwiftUI List separator is, so a
+                // row's pitch is its height (B-29).
+                Column(Modifier.clickable { onOpen(item) }) {
+                    ItemRow(item)
+                    HorizontalDivider(Modifier.padding(start = 76.dp))
+                }
             }
         }
     }
 }
 
-/** A row: a 48 dp thumbnail, the title, two lines of text, and a numeric badge. */
+/**
+ * A row: a 48 dp thumbnail, the title, two lines of text, and a numeric badge.
+ *
+ * Laid out to the SwiftUI rows' geometry so the first screens can be compared (B-29, A1.4 I12): the
+ * text sizes are iOS's own text styles in points - headline 17 semibold, subheadline 15, footnote 13,
+ * caption 12 - at their natural line height, the lines 2 dp apart like the SwiftUI VStack, and the
+ * vertical padding chosen so that a row is as tall as a SwiftUI List row. Material's components stay;
+ * only these sizes depart from Material's defaults (docs/flags.md).
+ */
 @Composable
 private fun ItemRow(item: Item, modifier: Modifier = Modifier) {
     Row(
-        modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 15.dp, bottom = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Thumbnail(item.thumbnail, Modifier.size(48.dp).clip(RoundedCornerShape(8.dp)))
-        Column(Modifier.weight(1f)) {
-            Text(item.title, style = MaterialTheme.typography.titleMedium)
-            Text(item.subtitle, style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Text(item.detail, style = MaterialTheme.typography.bodySmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(item.title, style = RowText.title)
+            Text(item.subtitle, style = RowText.subtitle, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(item.detail, style = RowText.detail, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         Text(
             "${item.badge}",
-            style = MaterialTheme.typography.labelMedium,
+            style = RowText.badge,
             modifier = Modifier
                 .clip(RoundedCornerShape(50))
                 .background(MaterialTheme.colorScheme.primaryContainer)
                 .padding(horizontal = 8.dp, vertical = 2.dp),
         )
     }
+}
+
+/** iOS's text styles at the default content size, in points, at their natural line height. */
+private object RowText {
+    val title = TextStyle(fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+    val subtitle = TextStyle(fontSize = 15.sp)
+    val detail = TextStyle(fontSize = 13.sp)
+    val badge = TextStyle(fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
 }
 
 /** The detail screen: a large image, the title, a square turning once every 2 s, the text blocks. */
@@ -171,5 +202,5 @@ private fun DetailScreen(item: Item, onBack: () -> Unit, probe: Probe) {
 @Composable
 private fun Thumbnail(index: Int, modifier: Modifier) {
     val resource = Res.allDrawableResources.getValue("thumb_" + index.toString().padStart(2, '0'))
-    Image(painterResource(resource), contentDescription = null, contentScale = ContentScale.Crop, modifier = modifier)
+    Image(painterResource(resource), contentDescription = "Thumbnail", contentScale = ContentScale.Crop, modifier = modifier)
 }
