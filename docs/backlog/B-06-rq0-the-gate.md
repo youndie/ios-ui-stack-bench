@@ -1,7 +1,7 @@
 ---
 id: B-06
 title: "RQ0 — the gate: every metric captured on a device, the injected stall seen in every arm"
-status: open
+status: wip
 priority: P0
 size: M
 stage: stage-0-gate
@@ -46,3 +46,36 @@ positive control that answers it.
 - AC: if kill criterion 1 or 2 fires, the stop is written up in GATE.md with the obstacles in the
   order they were hit, and the backlog is closed accordingly — simulator numbers are not a substitute.
 - Anchors: `logs/b-06/`, `GATE.md` (target), `instrumentation/` (target).
+
+---
+
+## Iteration 1 — 2026-10-11
+
+**What the gate became, and why** (amendment A1.7, owner):
+- **The XS only.** The owner reads every question on the iPhone XS. The 17 Pro comes later or not at
+  all, so "both devices" in the AC above reads "the XS".
+- **Animation Hitches cannot record beside the UI-test runner on a device.** On the XS, a recording
+  started before or during S2 ended within a second, "Device disconnected", in three tries of four;
+  the test passed. The smoothness control therefore runs twice. Once on a run where the app scrolls
+  its own list (`-benchAutoScroll`, a new hook absent from every measured run), launched by `xctrace
+  --launch`: both instruments see the same stalls there. And once on S2 through the harness, for the
+  logger RQ3 is computed from.
+- **App Launch records no signposts** unless the Points of Interest instrument is added. With it,
+  "list populated" is in the trace for every arm, including C, where the first frame comes before
+  the list.
+- **Allocations exports none of its data**, so memory's Instruments figure is Activity Monitor's
+  `memory-physical-footprint` of the app's process.
+- **The log writer could kill the app.** `FileHandle.write(_:)` raises an Objective-C exception on a
+  failed write. On the XS a full disk did exactly that mid-S2. It now uses `write(contentsOf:)`,
+  records a `writeError` line, and the reader marks such a run invalid (a new control case).
+  The owner freed space on the phone.
+
+**Probes before the gate** (scratchpad, not reported): on the XS, Animation Hitches shows the 50 ms
+stall as ~50 ms "Pre-Commit latency" hitches in A and in C on the self-scrolling run, and nothing at
+0 ms. So research §1.4's open question, whether Hitches sees CMP's Metal-layer frames, leans "yes"
+before the gate's own rows.
+
+**The pass conditions** are fixed in `analysis/gate_reader.py`'s header and committed before the
+first recording under `logs/b-06/`: the stall seen by the logger at ≥ 90 % (and ≤ 5 % at 0 ms), by
+Hitches at least once in the scrolling window (and nothing ≥ 40 ms at 0 ms), startup +150 to +250 ms
+at the median of 5 vs 5, memory +40 to +60 MiB at the median of 3 vs 3, size +0.95 to +1.10 MiB.

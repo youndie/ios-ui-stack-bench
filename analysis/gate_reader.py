@@ -15,8 +15,10 @@
                        the 0 ms stall, no hitch >= 40 ms inside that window.
     startup            median over 5 launches with `-benchDelayListMs 200` minus median over 5 without,
                        150-250 ms - in the trace (Points of Interest `listPopulated` minus the first
-                       `life-cycle-period` start) and in the app's log (`listPopulated` minus the process
-                       start) alike.
+                       `life-cycle-period` start) and in the app's log (`listPopulated` minus `launch`,
+                       the app's earliest Swift code) alike. Not the app's process start: under
+                       `xctrace --launch` the process is spawned suspended until Instruments attaches, and
+                       the kernel's start time takes that wait in, 480-560 ms and varying (B-06's dry run).
     memory             median over 3 launches with `-benchAllocateMB 50` minus median over 3 without,
                        of the largest footprint, 40-60 MiB - Activity Monitor's
                        `memory-physical-footprint` of the app's process and the app's `phys_footprint`
@@ -146,7 +148,7 @@ def check_hitches(run, stall):
 def signposts_with_message(path, message):
     """Bench emits phases as the event `phase` with the phase's name as its message."""
     rows = table(path) or []
-    return sorted(ns(r["time"]) for r in rows if r.get("message") and r["message"][1] == message)
+    return sorted(ns(r["time"]) for r in rows if r.get("message") and r["message"][0] == message)
 
 
 def launch_ms(run):
@@ -157,10 +159,9 @@ def launch_ms(run):
         trace = (listed[0] - min(ns(p["start"]) for p in periods)) / 1e6
     lines = app_lines(run)
     if lines:
-        header = next((l for l in lines if l["k"] == "header"), {})
-        lp = mark(lines, "listPopulated")
-        if lp and header.get("processStart"):
-            app = (lp[0] - header["processStart"]) * 1000
+        lp, start = mark(lines, "listPopulated"), mark(lines, "launch")
+        if lp and start:
+            app = (lp[0] - start[0]) * 1000
     return trace, app
 
 

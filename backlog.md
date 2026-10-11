@@ -97,7 +97,7 @@ this file.
 | Task | | Priority | Size | Blocked by |
 |---|---|---|---|---|
 | [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md) `[ ]` | Pin the stand, settle the brief's incoherences as amendments, and close the window | P0 | S | B-04 |
-| [B-06](docs/backlog/B-06-rq0-the-gate.md) `[ ]` | RQ0 — the gate: every metric captured on a device, the injected stall seen in every arm | P0 | M | B-01, B-05 |
+| [B-06](docs/backlog/B-06-rq0-the-gate.md) `[~]` | RQ0 — the gate: every metric captured on a device, the injected stall seen in every arm | P0 | M | B-01, B-05 |
 | [B-11](docs/backlog/B-11-parity-check.md) `[ ]` | Visual parity before any measurement: item count, row height, first-screen diff | P1 | M | B-08, B-09, B-10, B-20, B-21 |
 | [B-12](docs/backlog/B-12-rq1-size.md) `[ ]` | RQ1 — size: what KMP and CMP add to an arm64 app, uncompressed and zip -9, by component | P1 | S | B-11 |
 | [B-16](docs/backlog/B-16-dry-run-and-the-ruler.md) `[ ]` | Dry run on one device: the ruler, the runner's and the instruments' own cost, thermal drift | P1 | M | B-15, B-24 |
