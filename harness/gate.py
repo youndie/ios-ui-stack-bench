@@ -20,9 +20,13 @@ record, each into <out>/<arm>/<check>/<run>/:
         the zip proxy of the device build, and of it with 1 MiB of seeded random bytes added.
 
 Each recording keeps: the exported tables it is read through (`*.xml`, `xctrace export` verbatim),
-`trace.sha256` of the bundle (the bundles stay in build/b06-traces/, never committed), `xctrace.log`,
+`trace.sha256` of the bundle, `xctrace.log`,
 and the app's own log of that launch (`app.ndjson`). `<out>/<arm>/header.json` is the run's header
 (logs/README.md). Nothing is read or judged here - that is analysis/gate_reader.py's.
+
+The bundles are written to build/b06-traces/ and deleted once exported and hashed: a self-scrolling
+Hitches trace is ~30 MB, an arm's set ~600 MB, and the driving Mac has a few GB free. The digest still
+ties every export to its recording. `GATE_KEEP_TRACES=1` keeps them.
 
 A recording that fails is kept as `attempt-<k>` with its log and retried once; a device has to be
 unlocked, with UI automation allowed (B-04).
@@ -139,6 +143,8 @@ def record(device, arm, template, args, where, seconds):
                    f'/trace-toc/run[@number="1"]/data/table[@schema="{table}"]', check=False).stdout
             open(os.path.join(where, f"{table}.xml"), "w").write(x)
         open(os.path.join(where, "trace.sha256"), "w").write(f"{tree_sha256(trace)}  {os.path.basename(trace)}\n")
+        if not os.environ.get("GATE_KEEP_TRACES"):
+            shutil.rmtree(trace)
         keep_app_log(device, bundle, where)
         return True
     return False
