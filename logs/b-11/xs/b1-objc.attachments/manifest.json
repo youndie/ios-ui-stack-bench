@@ -1,0 +1,17 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "00008020-000A6CC42692002E",
+        "deviceName" : "iPhone (3)",
+        "exportedFileName" : "91DF14CE-678D-486B-B040-E787091D51A6.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "first-screen_0_D7CD3880-FD9D-4C0E-9959-71FD9FB26290.png",
+        "timestamp" : 1791750170.191
+      }
+    ],
+    "testIdentifier" : "Parity/testFirstScreen()",
+    "testIdentifierURL" : "test://com.apple.xcode/Harness/HarnessUITests/Parity/testFirstScreen"
+  }
+]
