@@ -143,7 +143,8 @@ def maximum(rq, rows, device, scenario, metric, arm, green, red, gtext, rtext):
 # ---------------------------------------------------------------- the questions
 
 def rq1(sizes, b_arm):
-    size = {r["arm"]: float(r["compressed_bytes"]) for r in sizes}
+    # scripts/measure_size.py writes two clean builds per arm; build 1 is the measurement.
+    size = {r["arm"]: float(r["compressed_bytes"]) for r in sizes if r.get("build", "1") in ("1", 1)}
     out = []
     for arm, g, r in ((b_arm, 2, 5), ("c-kmp-cmp", 12, 20)):
         if arm not in size or "a-native" not in size:
