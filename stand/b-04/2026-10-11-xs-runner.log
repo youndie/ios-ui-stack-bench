@@ -1,0 +1,50 @@
+# B-04: does the UI-test runner take one of the three slots? iPhone XS, A, B1, B2 installed
+# 2026-10-11T11:51:42Z
+$ DESTINATION=id=00008020-000A6CC42692002E harness/run.sh a-native S1
+2026-10-11 13:51:55.019 xcodebuild[5414:4434142] [MT] IDELaunchReport: 99b99624850a84c0:99b99624850a9400:Installing built products Finished with error: Root install style is not supported on this device
+2026-10-11 13:51:55.020 xcodebuild[5414:4434142] [MT] IDELaunchReport: 99b99624850a84c0:99b99624850a84c0: Finished with error: Root install style is not supported on this device
+Testing failed:
+** TEST EXECUTE FAILED **
+exit 0
+
+# 11:52:26 the runner installed by hand, A, B1, B2 still installed
+  "application-identifier" => "P3Y5X9576J.io.github.youndie.iosbench.harness.xctrunner"
+  "get-task-allow" => true
+$ xcrun devicectl device install app --device 00008020-000A6CC42692002E HarnessUITests-Runner.app
+ERROR: Failed to install the app on the device. (com.apple.dt.CoreDeviceError error 3002 (0xBBA))
+       NSURL = file:///Users/youndie/Documents/GitHub/ios-ui-stack-bench/build/DerivedData/harness-device/Build/Products/Debug-iphoneos/HarnessUITests-Runner.app/
+       ----------------------------------------
+           ?? ??????? ?????????? ?????????? <<HarnessUITests-Runner>> (IXUserPresentableErrorDomain error 14 (0x0E))
+           NSLocalizedFailureReason = ?????????? ?????????? ??? ??????????, ??? ??? ?? ??????? ????????? ??? ???????????.
+           NSLocalizedRecoverySuggestion = This device has reached the maximum number of installed apps using a free developer profile: {(
+               "P3Y5X9576J.io.github.youndie.iosbench.a",
+               "P3Y5X9576J.io.github.youndie.iosbench.b2",
+               "P3Y5X9576J.io.github.youndie.iosbench.b1"
+           )}
+       ----------------------------------------
+               This device has reached the maximum number of installed apps using a free developer profile: {(
+           "P3Y5X9576J.io.github.youndie.iosbench.a",
+           "P3Y5X9576J.io.github.youndie.iosbench.b2",
+           "P3Y5X9576J.io.github.youndie.iosbench.b1"
+       )} (MIInstallerErrorDomain error 13 (0x0D))
+               LibMISErrorNumber = -402620383
+               SourceFileLine = 171
+               LegacyErrorString = ApplicationVerificationFailed
+               FunctionName = -[MIFreeProfileValidatedAppTracker _onQueue_addReferenceForApplicationIdentifier:bundle:error:]
+
+# 11:52:43 B2 uninstalled: A, B1 and the runner
+$ xcrun devicectl device uninstall app --device 00008020-000A6CC42692002E io.github.youndie.iosbench.b2
+App uninstalled.
+$ DESTINATION=id=00008020-000A6CC42692002E harness/run.sh a-native S1
+2026-10-11 13:52:45.614 xcodebuild[5911:4436652] [MT] IDELaunchReport: b43a1b00e3950640:b43a1b00e3950800:Installing built products Finished with error: Root install style is not supported on this device
+2026-10-11 13:52:45.614 xcodebuild[5911:4436652] [MT] IDELaunchReport: b43a1b00e3950640:b43a1b00e3950640: Finished with error: Root install style is not supported on this device
+Testing failed:
+** TEST EXECUTE FAILED **
+$ xcrun devicectl device info apps --device 00008020-000A6CC42692002E (our bundles)
+BenchA      io.github.youndie.iosbench.a    1.0       1             
+BenchB1     io.github.youndie.iosbench.b1   1.0       1             
+
+# 11:52:56 the runner by hand into the free slot (A, B1 installed)
+$ xcrun devicectl device install app --device 00008020-000A6CC42692002E HarnessUITests-Runner.app
+App installed:
+? bundleID: io.github.youndie.iosbench.harness.xctrunner

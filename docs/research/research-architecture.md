@@ -147,6 +147,25 @@ are compared only through A, or by sharing a session. B1 and C share one, becaus
 brief's "cost of Compose UI" (D5). Which sessions exist depends on whether the runner takes a slot:
 two free slots beside A, or one.
 
+**Measured 2026-10-11 on both devices ([B-04](../backlog/B-04-free-provisioning-probe.md)): one
+slot.** The runner takes a slot, so a session holds the runner and two arms. That cannot hold A, B1
+and C together. The owner chose pairs, five sessions per device: {A, B1}, {A, B2}, {A, B3}, {A, C} and
+{B1, C}, with the phones on charge throughout ([BRIEF.md](../../BRIEF.md) A1.5).
+
+| Fact | Where verified |
+|---|---|
+| The cap is 3 apps per device, enforced at install: the fourth is refused with "This device has reached the maximum number of installed apps using a free developer profile", listing the three identifiers that hold the slots | `stand/b-04/2026-10-11-xs-install-cap.log` |
+| The UI-test runner (`io.github.youndie.iosbench.harness.xctrunner`) is refused by the same limit with three arms installed, and installs once one is removed | `stand/b-04/2026-10-11-xs-runner.log` |
+| A Release build signed by the Personal Team carries `get-task-allow = true`; its profile is issued for 7 days (created 2026-10-11, expires 2026-10-18) | `codesign -d --entitlements`, `security cms -D` of `embedded.mobileprovision`, same day |
+| `xctrace record --launch` records App Launch, Animation Hitches and Allocations of arm A on the iPhone XS. The Hitches trace holds `hitches-summary` and the `hitches-*-interval` tables; the Allocations trace exports no allocation table through `xctrace export --toc` | `stand/b-04/2026-10-11-xs-xctrace.log` |
+| `xctrace` lists a paired device under "Devices Offline", and times out "waiting for device to boot", until something opens its tunnel; one `devicectl` request does | the same log |
+| `xcodebuild test` cannot install the runner on either device: "Root install style is not supported on this device". The message is the system CoreDevice framework's (642.16, installed by Xcode 27.0 and loaded by any Xcode), so Xcode 26.6 fails the same way. The trigger is the `DSTROOTPath` key that build-for-testing writes into the `.xctestrun` (`/tmp/Harness.dst`): with it, XCTHarness takes the internal install style, which needs an internal iOS build. A copy of the `.xctestrun` without the key runs S1–S4 of arm A on the XS with Xcode 27.0 | `stand/b-04/2026-10-11-xs-runner-dstroot.log`, `stand/b-04/2026-10-11-xs-runner-xcode26.log`; the strings of the system CoreDevice framework 642.16 and of Xcode 27.0's XCTHarness framework, read on the Mac |
+| The runner needs UI automation allowed on the phone: until it is, it starts and fails "Timed out while enabling automation mode" | `stand/b-04/2026-10-11-xs-runner-dstroot.log` |
+
+**Consequence — the harness runs a device from a patched `.xctestrun`**, and every arm and the
+runner stay on the pinned Xcode 27.0. `harness/run.sh` and `harness/parity.sh` drop the one key
+before `test-without-building`; the simulator path is unchanged.
+
 ### 1.6 120 Hz: the key C cannot run without
 
 | Fact | Where verified |

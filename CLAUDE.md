@@ -18,7 +18,7 @@ measurement, a harness, a document with its verdicts, and the raw logs behind ev
    - **A and B get Liquid Glass on the newer device and nothing turns it off** with the iOS 27 SDK
      (§1.7); a whole-screen pixel diff of A against C cannot pass, so do not spend kill criterion
      3's five days trying.
-   - **Three apps per device on a free account**, and the UI-test runner may be a fourth (§1.5).
+   - **Three apps per device on a free account**, and the UI-test runner takes one (§1.5): a session is two arms, five pairs per device (BRIEF.md A1.5).
    - **"Cold start" is a warm launch** in Apple's terms (§1.3); **three numbers in the brief's
      Context are misquoted** (§1.1) — cite the sources, never the Context.
    - **B is three arms since amendment A1.1** — B1 Objective-C export, B2 SKIE, B3 Swift export —

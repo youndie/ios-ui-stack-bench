@@ -1,0 +1,46 @@
+# B-04: why xcodebuild cannot install the runner, and the fix. iPhone XS (iOS 18.7.3): A, B1 and the runner installed
+# The message is CoreDevice's, not Xcode's: the system framework both Xcodes load (27.0 installed it)
+$ strings /Library/Developer/PrivateFrameworks/CoreDevice.framework/Versions/A/CoreDevice | grep -E 'Root install style|Installation of item at'
+Installation of item at %s will use application install style
+Root install style is not supported on this device
+$ plutil -extract CFBundleVersion raw /Library/Developer/PrivateFrameworks/CoreDevice.framework/Versions/A/Resources/Info.plist
+642.16
+
+# XCTHarness chooses the internal (root/rsync) install style when the .xctestrun names a DSTROOT
+$ strings /Applications/Xcode.app/Contents/SharedFrameworks/XCTHarness.framework/Versions/A/XCTHarness | grep -E 'DSTROOTPath|useInternalOrRsyncInstallStyle'
+DSTROOTPath
+useInternalOrRsyncInstallStyle
+
+# The runner installs by hand (devicectl) without complaint
+$ xcrun devicectl device install app --device 00008020-000A6CC42692002E HarnessUITests-Runner.app  -> App installed: io.github.youndie.iosbench.harness.xctrunner
+
+# Xcode 26.6, .xctestrun with the injected diagnostics (DYLD_INSERT_LIBRARIES libRPAC, PERFC_*, APP_DISTRIBUTOR_ID_OVERRIDE) removed:
+2026-10-11 14:28:32.036 xcodebuild[14598:4496403] [MT] IDELaunchReport: 5e8c4b8568f28f40:5e8c4b8568f29140:Installing HarnessUITests on iPhone (3) Finished with error: Root install style is not support
+2026-10-11 14:28:32.036 xcodebuild[14598:4496403] [MT] IDELaunchReport: 5e8c4b8568f28f40:5e8c4b8568f28f40: Finished with error: Root install style is not supported on this device
+	Root install style is not supported on this device
+	HarnessUITests-Runner encountered an error (Failed to install or launch the test runner. (Underlying Error: Root install style is not supported on this device. To install internal content, the device
+** TEST EXECUTE FAILED **
+
+# Xcode 26.6, .xctestrun with DSTROOTPath (/tmp/Harness.dst) removed:
+2026-10-11 14:30:05.482902+0200 HarnessUITests-Runner[2724:526711] [Default] Running tests...
+2026-10-11 14:31:05.740203+0200 HarnessUITests-Runner[2724:526711] [Default] Failed to initialize for UI testing: Error Domain=com.apple.dt.XCTest.XCTFuture Code=1000 "Timed out while enabling automation mode." UserInfo={NSLocalizedDescript
+** TEST EXECUTE FAILED **
+
+# Xcode 27.0 (27A266a, the pin), build-for-testing, then the .xctestrun without DSTROOTPath:
+2026-10-11 14:31:45.583653+0200 HarnessUITests-Runner[2735:527928] [Default] Running tests...
+2026-10-11 14:32:45.711267+0200 HarnessUITests-Runner[2735:527928] [Default] Failed to initialize for UI testing: Error Domain=com.apple.dt.XCTest.XCTFuture Code=1000 "Timed out while enabling automation mode." UserInfo={NSLocalizedDescript
+** TEST EXECUTE FAILED **
+# 'Timed out while enabling automation mode': UI automation was not yet allowed on the phone; once it was:
+
+# 2026-10-11T12:34Z-12:46Z harness/run.sh, which now runs a device from the .xctestrun without DSTROOTPath, Xcode 27.0
+$ DESTINATION=id=00008020-000A6CC42692002E harness/run.sh a-native S1..S4
+Test Case '-[HarnessUITests.Scenarios testS1ColdStart]' passed (15.547 seconds).
+Test Case '-[HarnessUITests.Scenarios testS2Fling]' passed (336.663 seconds).
+Test Case '-[HarnessUITests.Scenarios testS3Filter]' passed (38.186 seconds).
+Test Case '-[HarnessUITests.Scenarios testS4NavigationChurn]' passed (232.376 seconds).
+
+# the four logs arm A wrote, pulled with devicectl, read by analysis/inapp_reader.py (validity and counts only; these are probes, not measurements)
+S1 1791722085-2745.ndjson: valid 1, thermal nominal, lines {'header': 1, 'mark': 4, 'footprint': 12, 'frame': 80}, markers {'launch': 1, 'scenario:S1': 1, 'firstFrame': 1, 'listPopulated': 1}
+S2 1791722102-2749.ndjson: valid 1, thermal nominal, lines {'header': 1, 'mark': 4, 'footprint': 1342, 'frame': 19872, 'scroll': 80}, markers {'launch': 1, 'scenario:S2': 1, 'firstFrame': 1, 'listPopulated': 1}
+S3 1791722444-2759.ndjson: valid 1, thermal nominal, lines {'header': 1, 'mark': 28, 'footprint': 148, 'frame': 1687}, markers {'launch': 1, 'scenario:S3': 1, 'firstFrame': 1, 'listPopulated': 1, 'query': 24}
+S4 1791722487-2765.ndjson: valid 1, thermal nominal, lines {'header': 1, 'mark': 104, 'footprint': 925, 'frame': 12758}, markers {'launch': 1, 'scenario:S4': 1, 'firstFrame': 1, 'listPopulated': 1, 'detailAppeared': 50, 'detailDisappeared': 50}

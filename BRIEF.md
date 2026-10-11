@@ -125,6 +125,27 @@ and decisions D3 and D4, as written. **No threshold moves.** What each now means
 Two rows are still to be completed inside the window, each by the item named: I5's session plan
 (B-04) and I12's tolerance (B-11).
 
+### A1.5 — the session plan (I5) and charging (2026-10-11, owner, before the first measurement)
+
+[B-04](docs/backlog/B-04-free-provisioning-probe.md) measured the cap: three apps per device, and
+the UI-test runner takes one of them, so **a session holds the runner and two arms**. A, B1 and C
+cannot share one, as I5 assumed. The owner's choice, out of the options B-04 put to them:
+
+- **Five sessions per device, each a pair:** {A, B1}, {A, B2}, {A, B3}, {A, C} and {B1, C}. Inside a
+  session the two arms alternate in the brief's rotation (`harness/session.py`). Nothing is
+  reinstalled mid-session; arms are swapped between sessions.
+- **Every verdict reads one session.** RQ2–RQ4 read {A, C}. RQ5 for each B arm reads its {A, B}.
+  The B1→C "cost of Compose UI" reads {B1, C}. A is measured in four sessions per device. Its
+  figures from all four are printed side by side, so the drift between sessions is shown, not
+  assumed away.
+- **The phones stay on charge throughout every session.** Then a battery cannot run out partway
+  through a session of about four hours. The cost is the heat of charging. It is the same for
+  every arm in a session, and the write-up states it as a limitation. The stop rules stand: Low Power
+  Mode, battery under 50 %, a thermal state above nominal.
+
+**No threshold moves.** I5 is complete. One row is still open inside the window: I12's tolerance
+(B-11).
+
 ## Amendment set 2 — after the window
 
 Empty, and better left so. An amendment here is made by the owner, says that it is late, fixes an
