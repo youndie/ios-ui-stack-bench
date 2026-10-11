@@ -100,6 +100,7 @@ gate: docs-gate
 	$(PY) harness/generate_project.py --check
 	$(PY) analysis/inapp_reader_control.py
 	$(PY) analysis/verdicts_control.py
+	$(PY) harness/session_control.py
 
 report: docs-report
 

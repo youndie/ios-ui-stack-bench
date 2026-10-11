@@ -10,7 +10,9 @@ import os
 /// `t`, seconds on the `CACurrentMediaTime` clock (the clock `CADisplayLink` timestamps use):
 ///
 /// - `header` — bundle id, `hw.machine`, iOS version, the process start on the same clock, the
-///   screen's maximum frame rate, the frame logger's requested range, thermal state, Low Power Mode;
+///   screen's maximum frame rate, the frame logger's requested range, thermal state, Low Power Mode,
+///   battery level (0-1, or -1 where the system does not know it - a simulator) - what the session
+///   runner's preflight reads (B-25);
 /// - `mark` — the phase markers, also emitted as `os_signpost` events for `xctrace`: `launch` (this
 ///   object started, the earliest Swift code of the app), `firstFrame` (the first display-link
 ///   tick), `listPopulated` (the first display-link tick after the first row appeared — a row
@@ -129,6 +131,7 @@ final class Bench {
     }
 
     private func writeHeader() {
+        UIDevice.current.isBatteryMonitoringEnabled = true
         let now = CACurrentMediaTime()
         let wallNow = Date().timeIntervalSince1970
         write([
@@ -142,6 +145,7 @@ final class Bench {
             "requestedFps": UIScreen.main.maximumFramesPerSecond,
             "thermal": Self.thermalName(),
             "lowPower": ProcessInfo.processInfo.isLowPowerModeEnabled,
+            "battery": Double(UIDevice.current.batteryLevel),
             "stallMs": Self.argument("benchStallMs").flatMap(Int.init) ?? -1,
         ])
     }
