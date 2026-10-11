@@ -1,7 +1,7 @@
 ---
 id: B-24
 title: "Record with xctrace beside every scenario, export its tables, and read them - on a device"
-status: open
+status: wip
 priority: P1
 size: M
 stage: stage-2-harness
