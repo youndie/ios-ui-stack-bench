@@ -1,7 +1,7 @@
 ---
 id: B-28
 title: "The positive controls RQ0 needs: a known launch delay, a known dirty allocation, a known resource"
-status: open
+status: wip
 priority: P1
 size: S
 stage: stage-0-gate
