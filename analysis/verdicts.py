@@ -3,7 +3,7 @@
 
     python3 analysis/verdicts.py <runs.csv> [--sizes sizes.csv] [--out verdicts.csv]
 
-`runs.csv` is one row per scenario run: `device` (older | newer), `session`, `arm` (a-native,
+`runs.csv` is one row per scenario run: `device` (older | newer; only older is read, A1.7), `session`, `arm` (a-native,
 b1-objc, b2-skie, b3-swift-export, c-kmp-cmp), `scenario`, `counted` (0 for the batch's warm-up run),
 `valid` (from analysis/inapp_reader.py), and the reader's summary columns. `sizes.csv` is one row per
 arm: `arm`, `compressed_bytes`. Standard library only; the bootstrap is seeded, so a re-run prints the
@@ -34,7 +34,11 @@ SEED = 20261010
 RESAMPLES = 10_000
 MB = 1_000_000  # proposal (I15): decimal, as Apple's size reports count
 B_ARMS = ("b1-objc", "b2-skie", "b3-swift-export")
-DEVICES = ("older", "newer")
+# A1.7: every question is read on the older device, the iPhone XS; the newer one is not measured, and
+# every verdict says so. A newer device's rows in runs.csv are ignored.
+DEVICES = ("older",)
+# A1.7: startup is read from App Launch with Points of Interest (analysis/xctrace_reader.py).
+STARTUP = "trace_process_to_list_ms"
 
 
 # ---------------------------------------------------------------- statistics
@@ -158,7 +162,7 @@ def rq1(sizes, b_arm):
 
 def rq2(rows):
     # The brief names the older device.
-    return [compare("RQ2", rows, "older", "S1", "process_to_list_ms", "c-kmp-cmp", "median difference",
+    return [compare("RQ2", rows, "older", "S1", STARTUP, "c-kmp-cmp", "median difference",
                     lambda v: v <= 100, lambda v: v > 250, "<= +100 ms", "> +250 ms")]
 
 
@@ -175,7 +179,7 @@ def rq3(rows, metric="hitch_time_ratio_ms_per_s"):
 
 
 def rq4(rows):
-    # Proposal (I3): read on both devices, green only if green on both. Peak footprint from S2, as
+    # Read on DEVICES - the XS only since A1.7 (I3 had both). Peak footprint from S2, as
     # the brief says; growth from S4, after cycle 5 to after cycle 50 (I7).
     out = []
     for device in DEVICES:
@@ -187,12 +191,12 @@ def rq4(rows):
 
 
 def rq5(rows, b_arm, metric="hitch_time_ratio_ms_per_s"):
-    # Proposal (I3): read on both devices, green only if green on both.
+    # Read on DEVICES - the XS only since A1.7 (I3 had both).
     out = []
     for device in DEVICES:
         out.append(compare("RQ5", rows, device, "S2", metric, b_arm, "median difference",
                            lambda v: v <= 1, lambda v: v > 2, "<= +1 ms/s", "> +2 ms/s"))
-        out.append(compare("RQ5", rows, device, "S1", "process_to_list_ms", b_arm, "median difference",
+        out.append(compare("RQ5", rows, device, "S1", STARTUP, b_arm, "median difference",
                            lambda v: v <= 50, lambda v: v > 150, "<= +50 ms", "> +150 ms"))
         out.append(compare("RQ5", rows, device, "S2", "peak_footprint_bytes", b_arm, "median difference",
                            lambda v: v <= 20 * MB, lambda v: v > 50 * MB, "<= +20 MB", "> +50 MB"))
@@ -232,6 +236,7 @@ def main():
     rows, sizes = read(args.runs), (read(args.sizes) if args.sizes else [])
     table = []
     print(f"bootstrap: {RESAMPLES} resamples, seed {SEED}, percentile 95 % interval")
+    print("read on the iPhone XS only; the newer device was not measured (BRIEF.md A1.7)")
     for name, components in questions(rows, sizes):
         print(f"{name}: {combine(components)}")
         for c in components:

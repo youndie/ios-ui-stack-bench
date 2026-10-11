@@ -24,9 +24,9 @@ Each recording keeps: the exported tables it is read through (`*.xml`, `xctrace 
 and the app's own log of that launch (`app.ndjson`). `<out>/<arm>/header.json` is the run's header
 (logs/README.md). Nothing is read or judged here - that is analysis/gate_reader.py's.
 
-The bundles are written to build/b06-traces/ and deleted once exported and hashed: a self-scrolling
-Hitches trace is ~30 MB, an arm's set ~600 MB, and the driving Mac has a few GB free. The digest still
-ties every export to its recording. `GATE_KEEP_TRACES=1` keeps them.
+Recording, export, hashing and clean-up are harness/recording.py's: the bundles and xctrace's raw
+kernel traces are deleted once exported (`KEEP_TRACES=1` keeps the bundles); the digest still ties
+every export to its recording.
 
 A recording that fails is kept as `attempt-<k>` with its log and retried once; a device has to be
 unlocked, with UI automation allowed (B-04).
@@ -43,29 +43,17 @@ import sys
 import tempfile
 import time
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import recording  # noqa: E402
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUNDLES = {"a-native": "a", "b1-objc": "b1", "b2-skie": "b2", "b3-swift-export": "b3", "c-kmp-cmp": "c"}
-TRACES = os.path.join(ROOT, "build", "b06-traces")
-TABLES = {
-    "Animation Hitches": ["hitches-summary", "PointsOfInterestEvents"],
-    "App Launch": ["life-cycle-period", "PointsOfInterestEvents"],
-    "Activity Monitor": ["activity-monitor-process-live"],
-}
 
 
 def sh(*cmd, check=True, **kw):
     return subprocess.run(cmd, capture_output=True, text=True, check=check, **kw)
 
 
-def tree_sha256(path):
-    """One digest for a bundle: sha256 over 'relative path, file sha256' lines in path order."""
-    lines = []
-    for base, _, files in sorted(os.walk(path)):
-        for name in sorted(files):
-            full = os.path.join(base, name)
-            with open(full, "rb") as f:
-                lines.append(f"{os.path.relpath(full, path)} {hashlib.sha256(f.read()).hexdigest()}")
-    return hashlib.sha256("\n".join(lines).encode()).hexdigest()
 
 
 class Device:
@@ -74,8 +62,7 @@ class Device:
         self.seen = {}
 
     def wake(self):
-        # xctrace lists a paired device as offline until its tunnel is open (B-04).
-        sh("xcrun", "devicectl", "device", "info", "apps", "--device", self.udid, check=False)
+        recording.wake(self.udid)
 
     def details(self):
         with tempfile.NamedTemporaryFile(suffix=".json") as f:
@@ -116,38 +103,18 @@ def keep_app_log(device, bundle, where):
 
 
 def record(device, arm, template, args, where, seconds):
-    """One xctrace recording with --launch, its tables exported, retried once on failure."""
+    """One recording through harness/recording.py, then the app's own log of that launch."""
     bundle = f"io.github.youndie.iosbench.{BUNDLES[arm]}"
-    os.makedirs(where, exist_ok=True)
+    arm_dir, check, run = where.split(os.sep)[-3:]
+    ok = recording.record(device.udid, bundle, template, args, where, seconds, f"gate_{arm_dir}_{check}_{run}")
     for attempt in (1, 2):
-        arm_dir, check, run = where.split(os.sep)[-3:]
-        trace = os.path.join(TRACES, f"{arm_dir}_{check}_{run}-{attempt}.trace")
-        shutil.rmtree(trace, ignore_errors=True)
-        device.wake()
-        cmd = ["xcrun", "xctrace", "record", "--template", template, "--device", device.udid, "--time-limit", f"{seconds}s", "--output", trace]
-        if template != "Activity Monitor":
-            cmd += ["--instrument", "Points of Interest"]
-        cmd += ["--launch", "--", bundle, *args]
-        r = subprocess.run(cmd, capture_output=True, text=True)
-        log = f"$ {' '.join(cmd[1:])}\n{r.stdout}{r.stderr}exit {r.returncode}\n"
-        ok = r.returncode == 0 and os.path.isdir(trace) and "disconnected" not in r.stdout
-        if not ok:
-            failed = os.path.join(where, f"attempt-{attempt}")
-            os.makedirs(failed, exist_ok=True)
-            open(os.path.join(failed, "xctrace.log"), "w").write(log)
+        failed = os.path.join(where, f"attempt-{attempt}")
+        if os.path.isdir(failed) and not os.path.exists(os.path.join(failed, "app-logs.txt")):
             keep_app_log(device, bundle, failed)
-            continue
-        open(os.path.join(where, "xctrace.log"), "w").write(log)
-        for table in TABLES[template]:
-            x = sh("xcrun", "xctrace", "export", "--input", trace, "--xpath",
-                   f'/trace-toc/run[@number="1"]/data/table[@schema="{table}"]', check=False).stdout
-            open(os.path.join(where, f"{table}.xml"), "w").write(x)
-        open(os.path.join(where, "trace.sha256"), "w").write(f"{tree_sha256(trace)}  {os.path.basename(trace)}\n")
-        if not os.environ.get("GATE_KEEP_TRACES"):
-            shutil.rmtree(trace)
+            break
+    if ok:
         keep_app_log(device, bundle, where)
-        return True
-    return False
+    return ok
 
 
 def harness_s2(device, arm, stall, where):
@@ -228,7 +195,6 @@ def main():
     if sh("git", "-C", ROOT, "status", "--porcelain", "--", "apps", "shared", "bridge-objc", "bridge-skie",
           "bridge-swift-export", "compose-ui", "harness").stdout.strip():
         raise SystemExit("the apps' or the harness's sources are not committed: a header names the commit they were built from")
-    os.makedirs(TRACES, exist_ok=True)
     device = Device(udid)
     details = device.details()
     xcode = " ".join(sh("xcodebuild", "-version").stdout.split())

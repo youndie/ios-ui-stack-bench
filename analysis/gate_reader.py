@@ -41,10 +41,10 @@ import json
 import os
 import statistics
 import sys
-import xml.etree.ElementTree as ET
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import inapp_reader  # noqa: E402
+from xctrace_reader import ns, signposts, signposts_with_message, table  # noqa: E402
 
 MIB = 1 << 20
 STALL_SEEN_MS = 25.0
@@ -52,37 +52,7 @@ HITCH_MIN_MS, HITCH_MAX_MS, HITCH_NEAR_S = 40.0, 120.0, 0.150
 AUTOSCROLL_TAIL_S = 1.5
 
 
-# ---------------------------------------------------------------- xctrace exports
-
-def table(path):
-    """Rows of one exported table as {mnemonic: (fmt, text)}, `ref`s resolved to their `id`s."""
-    if not os.path.exists(path) or os.path.getsize(path) == 0:
-        return None
-    root = ET.parse(path).getroot()
-    node = root.find(".//node")
-    if node is None:
-        return None
-    cols = [c.find("mnemonic").text for c in node.find("schema").findall("col")]
-    ids, rows = {}, []
-    for r in node.findall("row"):
-        row = {}
-        for col, e in zip(cols, list(r)):
-            for d in e.iter():
-                if d.get("id"):
-                    ids[d.get("id")] = (d.get("fmt"), d.text)
-            row[col] = ids.get(e.get("ref")) if e.get("ref") else (e.get("fmt"), e.text)
-        rows.append(row)
-    return rows
-
-
-def ns(cell):
-    return int(cell[1])
-
-
-def signposts(path, name):
-    rows = table(path) or []
-    return sorted(ns(r["time"]) for r in rows if r.get("name") and r["name"][1] == name)
-
+# ---------------------------------------------------------------- xctrace exports: analysis/xctrace_reader.py
 
 # ---------------------------------------------------------------- app logs
 
@@ -145,10 +115,6 @@ def check_hitches(run, stall):
     return ("pass" if not long else "fail"), f"{len(long)} hitches >= {HITCH_MIN_MS:.0f} ms in the window", "0"
 
 
-def signposts_with_message(path, message):
-    """Bench emits phases as the event `phase` with the phase's name as its message."""
-    rows = table(path) or []
-    return sorted(ns(r["time"]) for r in rows if r.get("message") and r["message"][0] == message)
 
 
 def launch_ms(run):

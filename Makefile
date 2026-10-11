@@ -101,6 +101,7 @@ gate: docs-gate
 	$(PY) analysis/inapp_reader_control.py
 	$(PY) analysis/verdicts_control.py
 	$(PY) analysis/gate_reader_control.py
+	$(PY) analysis/xctrace_reader_control.py
 	$(PY) harness/session_control.py
 	$(PY) analysis/linkmap_control.py
 	$(PY) scripts/parity_diff_control.py

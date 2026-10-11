@@ -205,7 +205,24 @@ iPhone XS", [B-06](docs/backlog/B-06-rq0-the-gate.md)). Nothing above this line 
 
 ## Amendment set 2 — after the window
 
-Empty, and better left so. An amendment here is made by the owner, says that it is late, fixes an
-incoherence rather than an inconvenient number, and is declared before the run it governs; it may
-add evidence, never relax a threshold to meet a number. A budget extended by the owner is recorded
-here too, with the elapsed days still reported.
+An amendment here is made by the owner, says that it is late, fixes an incoherence rather than an
+inconvenient number, and is declared before the run it governs; it may add evidence, never relax a
+threshold to meet a number. A budget extended by the owner is recorded here too, with the elapsed
+days still reported.
+
+### A2.1 — CPU from the app's own clock (2026-10-11, owner, **late**: after the window, before any session)
+
+The brief's secondary CPU metric is "`xctrace` CPU Profiler, total process CPU time per scenario".
+On a device no `xctrace` recording survives beside the UI-test runner, which drives S2–S4 (A1.7).
+And CPU Profiler's samples are weighted in cycles (`cycle-weight`), not time. So:
+
+- **CPU is the process's own CPU time, user plus system, from `getrusage`.** The app logs it with
+  every footprint sample (`cpuMs`), and `analysis/inapp_reader.py` reports `cpu_total_ms`, its last
+  value. That is the process total for a run, which is one launch per scenario.
+- **The cross-check is Activity Monitor's CPU Time of the app's process.** It comes from the same
+  recordings that cross-check memory (A1.7), on a self-scrolling run of each arm. The owner chose
+  "CPU Profiler as the cross-check", but Activity Monitor is used instead because it reports time,
+  not cycles.
+
+CPU has no threshold and decides no verdict, so nothing moves.
+
