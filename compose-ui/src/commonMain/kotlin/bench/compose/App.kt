@@ -63,7 +63,9 @@ import bench.compose.resources.Res
 import bench.compose.resources.allDrawableResources
 import bench.shared.Catalog
 import bench.shared.Item
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
 /**
@@ -72,7 +74,7 @@ import org.jetbrains.compose.resources.painterResource
  * resources through `painterResource`.
  */
 @Composable
-fun App(catalog: Catalog, probe: Probe) {
+fun App(catalog: Catalog, probe: Probe, autoScrolls: Int = 0) {
     MaterialTheme {
         Surface(Modifier.fillMaxSize()) {
             val items by catalog.visible.collectAsState()
@@ -84,7 +86,7 @@ fun App(catalog: Catalog, probe: Probe) {
             Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal))) {
                 NavHost(navController, startDestination = "list") {
                     composable("list") {
-                        ListScreen(items, catalog::filter, onOpen = { selected = it; navController.navigate("detail") }, probe)
+                        ListScreen(items, catalog::filter, onOpen = { selected = it; navController.navigate("detail") }, probe, autoScrolls)
                     }
                     composable("detail") {
                         selected?.let { DetailScreen(it, onBack = { navController.popBackStack() }, probe) }
@@ -96,7 +98,7 @@ fun App(catalog: Catalog, probe: Probe) {
 }
 
 @Composable
-private fun ListScreen(items: List<Item>, onQuery: (String) -> Unit, onOpen: (Item) -> Unit, probe: Probe) {
+private fun ListScreen(items: List<Item>, onQuery: (String) -> Unit, onOpen: (Item) -> Unit, probe: Probe, autoScrolls: Int) {
     var query by rememberSaveable { mutableStateOf("") }
     Column(Modifier.fillMaxSize()) {
         // iOS's large title size, so the list starts where the SwiftUI arms' list starts (B-29).
@@ -118,6 +120,19 @@ private fun ListScreen(items: List<Item>, onQuery: (String) -> Unit, onOpen: (It
                     listState.firstVisibleItemScrollOffset,
                     listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1,
                 )
+            }
+        }
+        // RQ0's Animation Hitches control (A1.7): the list scrolls itself, in the pattern the SwiftUI
+        // arms use - 1 s after launch, every 1.5 s, to item 20 and back to item 0. Off in every
+        // measured run.
+        if (autoScrolls > 0) {
+            LaunchedEffect(listState) {
+                delay(1000)
+                repeat(autoScrolls) { i ->
+                    probe.mark("autoScroll")
+                    launch { listState.animateScrollToItem(if (i % 2 == 0) 20 else 0) }
+                    delay(1500)
+                }
             }
         }
         LazyColumn(Modifier.fillMaxSize(), state = listState, contentPadding = WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom).asPaddingValues()) {

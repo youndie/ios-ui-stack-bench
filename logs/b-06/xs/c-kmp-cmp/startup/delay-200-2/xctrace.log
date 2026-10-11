@@ -1,0 +1,10 @@
+$ xctrace record --template App Launch --device 00008020-000A6CC42692002E --time-limit 12s --output /Users/youndie/Documents/GitHub/ios-ui-stack-bench/build/b06-traces/c-kmp-cmp_startup_delay-200-2-1.trace --instrument Points of Interest --launch -- io.github.youndie.iosbench.c -benchDelayListMs 200
+Starting recording with the App Launch template and Points of Interest Instrument. Launching process: io.github.youndie.iosbench.c. Time limit: 12.0 s
+Ctrl-C to stop the recording
+Reached specified time limit, ending recording...
+Recording completed. Saving output file...
+Output file saved as: c-kmp-cmp_startup_delay-200-2-1.trace
+Run issues were detected (trace is still ready to be viewed):
+* [Warning] Warning while binding 'time-sample' table: requested sampling period (5000000ns) differs from configured (1000000ns)
+
+exit 0

@@ -171,6 +171,38 @@ computed on a device:
 The two device rows of the pins are filled from B-04 (above). **No threshold moves.** Every row of
 §2 is settled. The window closes with the first file under `logs/`, and BRIEF.md names that commit.
 
+### A1.7 — the older device only, and how each instrument is recorded (2026-10-11, owner, before the first measurement)
+
+**Every question is read on the iPhone XS.** The iPhone 17 Pro is measured later or not at all. If
+anything is optimised, the aim is the most out of the older device first. A1.5's five pair sessions
+are the XS's. I3's "green only if green on both" and RQ3's "on both devices" become "on the XS".
+Dropping a device can only push a verdict towards green: the newer device can no longer turn RQ3 or
+RQ4 red. So every verdict is printed as **"on the XS only; the newer device was not measured"**,
+never as the brief's two-device verdict.
+
+**How each instrument is recorded on a device.** B-06 found this on the XS:
+- **Animation Hitches cannot record beside the UI-test runner.** A recording started before or during
+  an S2 run ends within a second, "Device disconnected", in three tries of four. The test passes and
+  the app's log is valid. **RQ3 is therefore computed from the in-app frame logger in S2** (I4 allowed
+  that already, for a grey RQ0). Animation Hitches is the cross-check. It records runs in which the
+  app scrolls its own list (`-benchAutoScroll`, absent from every measured run), launched by
+  `xctrace --launch` with no runner. RQ0's stall control runs in both: S2 for the logger, the
+  self-scrolling run for both instruments at once.
+- **App Launch records no signposts of its own.** It is recorded with the Points of Interest
+  instrument added, so "list populated" is in the trace. Startup in the trace is therefore the
+  `listPopulated` signpost minus the first `life-cycle-period` interval's start.
+- **Allocations exports none of its allocation data.** Instruments' memory figure is Activity
+  Monitor's `memory-physical-footprint` of the app's process. The in-app `phys_footprint` sampler
+  stays primary, as RQ4 names it.
+
+**No threshold moves.**
+
+### The window closed — 2026-10-11
+
+The first measurement under `logs/` is commit `847bd43` ("test(gate): record RQ0's controls on the
+iPhone XS", [B-06](docs/backlog/B-06-rq0-the-gate.md)). Nothing above this line changes from here on.
+`make check` (`brief_freeze.py --history --window logs`) holds the freeze before it.
+
 ## Amendment set 2 — after the window
 
 Empty, and better left so. An amendment here is made by the owner, says that it is late, fixes an

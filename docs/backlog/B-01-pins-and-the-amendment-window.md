@@ -1,7 +1,7 @@
 ---
 id: B-01
 title: "Pin the stand, settle the brief's incoherences as amendments, and close the window"
-status: open
+status: done
 priority: P0
 size: S
 stage: stage-0-gate
@@ -70,3 +70,10 @@ All of it waits for the devices. The status stays `open`.
 
 The window's close is all that remains. B-06 adds the first file under `logs/`, so the pull request
 that does it names its commit in BRIEF.md and moves this item to `done`.
+
+## Closed — 2026-10-11
+
+The window closed with commit `847bd43`, B-06's gate recordings, the first file under `logs/`
+other than its README. BRIEF.md names it. Amendment A1.7 came in before it: the owner reads every
+question on the XS, and fixed how each instrument is recorded. Every item of research §2 is
+settled, and every pin has a value.

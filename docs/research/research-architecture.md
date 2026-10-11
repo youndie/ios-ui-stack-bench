@@ -122,6 +122,11 @@ CMP ≥ 1.11, C's frames reach the screen as ordinary Core Animation commits, so
 in [B-06](../backlog/B-06-rq0-the-gate.md)). `parallelRendering` stays at its default; it is
 recorded as a pin, because a change of default between CMP versions changes what C is.
 
+**H1 confirmed on the iPhone XS, 2026-10-11 ([B-06](../backlog/B-06-rq0-the-gate.md),
+[GATE.md](../../GATE.md)).** On the self-scrolling run, Animation Hitches shows the injected 50 ms
+stall as hitches at the stall in C, as in every other arm, and shows nothing at 0 ms. The in-app
+logger agrees in every arm. The newer device is not measured (BRIEF.md A1.7).
+
 ### 1.5 A free Apple ID: what it allows
 
 | Fact | Where verified |
