@@ -1,7 +1,7 @@
 ---
 id: B-29
 title: "Bring the five arms to parity on the simulator, so B-11 on the devices confirms rather than builds"
-status: open
+status: wip
 priority: P1
 size: M
 stage: stage-1-build
