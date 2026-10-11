@@ -37,9 +37,23 @@ MAP = """# Path: /x/BenchC.app/BenchC
 EXPECTED = {"linker": 0x10, "app": 0x300, "kotlin": 0x1000, "native-in-kotlin": 0x800, "other": 0x20, "system": 0}
 
 
+CATEGORIES = [
+    ("/Users/x/repo/logs/b-12/work/b3-1/dd/Build/Intermediates.noindex/ArchiveIntermediates/iosApp/BuildProductsPath/"
+     "Release-iphoneos/libShared.a(Shared.swift.o)", "swift-export"),
+    ("/Users/x/repo/build/size-dev/work/b3-1/dd/Build/Products/Release-iphoneos/libShared.a(Shared.swift.o)", "swift-export"),
+    ("/Users/x/repo/logs/b-12/work/b3-1/dd/BuildProductsPath/Release-iphoneos/libShared.a(SwiftExportBinary.o)", "kotlin"),
+    ("/Users/x/repo/logs/b-12/work/b3-1/dd/BuildProductsPath/Release-iphoneos/libShared.a(mimalloc.cpp.o)", "native-in-kotlin"),
+    ("/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/21/lib/darwin/"
+     "libclang_rt.ios.a(os_version_check.c.o)", "other"),
+]
+
+
 def main():
     _, sizes = linkmap.parse(MAP)
-    ok = sizes == EXPECTED
+    wrong = [(p, c, linkmap.category(p)) for p, c in CATEGORIES if linkmap.category(p) != c]
+    for p, c, got in wrong:
+        print(f"  FAIL {p[-60:]}: {got}, expected {c}")
+    ok = sizes == EXPECTED and not wrong
     print(("" if ok else f"  FAIL got {sizes}, expected {EXPECTED}\n") + f"control for linkmap.py: {'1/1' if ok else '0/1'} cases behave")
     return 0 if ok else 1
 

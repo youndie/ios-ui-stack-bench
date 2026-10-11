@@ -22,6 +22,7 @@ Symbols in zero-fill sections (`__bss`, `__common`) are left out: they take addr
 bytes. The sum is then smaller than the executable - Mach-O headers, LINKEDIT (symbol tables,
 fixups) and padding are not symbols - and the remainder is reported, not hidden.
 """
+import os
 import re
 import sys
 
@@ -45,7 +46,10 @@ def category(path):
             return "kotlin"
         if ".framework/" in container:
             return "native-in-kotlin"
-        if container.endswith(".a") and "/build/" in container:
+        # A static library of the arm's own build (B3's merged libShared.a), wherever the derived data
+        # lives: the toolchain's own archives (libclang_rt*) are not the arm's. Matching on "/build/"
+        # made the category depend on the output directory (B-12).
+        if container.endswith(".a") and not os.path.basename(container).startswith("libclang_rt"):
             return "swift-export" if name.endswith(".o") and not name.endswith(".cpp.o") else "native-in-kotlin"
     if path.endswith((".tbd", ".dylib")):
         return "system"

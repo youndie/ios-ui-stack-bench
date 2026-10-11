@@ -1,7 +1,7 @@
 ---
 id: B-12
 title: "RQ1 — size: what KMP and CMP add to an arm64 app, uncompressed and zip -9, by component"
-status: wip
+status: done
 priority: P1
 size: S
 stage: stage-3-runs
@@ -52,3 +52,25 @@ B-10 saw is not reproduced. B2's and C's executables differ between clean builds
 bytes inside the final link's stubs and text, at an identical size (research §1.13).
 `scripts/measure_size.py` is the tool this item runs; it writes into `logs/` only with
 `BENCH_WINDOW_CLOSED=1`, the owner's go.
+
+---
+
+## Done — 2026-10-11
+
+`BENCH_WINDOW_CLOSED=1 python3 scripts/measure_size.py logs/b-12` measured two clean archives per arm.
+`analysis/size_report.py` turns them into [logs/b-12/report.md](../../logs/b-12/report.md):
+`python3 analysis/size_report.py logs/b-12/sizes.csv --linkmaps logs/b-12/linkmaps --md logs/b-12/report.md`.
+The report holds the sizes, the four differences against A, one verdict each (B1, B2, B3 and C,
+never a combined B), the determinism of the two builds, the 1 MiB control, and the link-map breakdown.
+**All four differences are green.**
+
+- **Determinism.** A, B1 and C are byte-identical over two clean builds. B2 and B3 differ in a
+  few bytes at the same executable size, and their zips by a byte. In B-26 it was B2 and C that
+  differed. Which arm's link reproduces moves between runs, and the size does not, so no verdict can
+  move.
+- **The link maps of build 1** are kept, gzipped, in `logs/b-12/linkmaps/`. The archives and the
+  derived data are not.
+- **Found and fixed:** `analysis/linkmap.py` classed the arm's own static library as `swift-export`
+  only when its path held `/build/`. With the output under `logs/`, B3's Swift export wrappers fell
+  into `other`. `sizes.csv`'s `map_*` columns carry that, as written at capture. The report
+  classifies from the stored maps with the fixed classifier, and the control now covers both paths.
