@@ -1,7 +1,7 @@
 ---
 id: B-27
 title: "Parity tooling: first-screen screenshots, geometry from the accessibility tree, list-region diff"
-status: open
+status: wip
 priority: P1
 size: M
 stage: stage-2-harness

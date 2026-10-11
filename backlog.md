@@ -106,7 +106,7 @@ this file.
 | [B-18](docs/backlog/B-18-runs-on-the-newer-device.md) `[ ]` | P3 — the full matrix on the newer device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-19](docs/backlog/B-19-write-up.md) `[ ]` | P4 — the write-up: one verdict per RQ, regenerated from the CSVs, negative results included | P1 | M | B-12, B-17, B-18 |
 | [B-24](docs/backlog/B-24-xctrace-record-and-readers.md) `[ ]` | Record with xctrace beside every scenario, export its tables, and read them - on a device | P1 | M | B-06 |
-| [B-27](docs/backlog/B-27-parity-tooling.md) `[ ]` | Parity tooling: first-screen screenshots, geometry from the accessibility tree, list-region diff | P1 | M | B-13 |
+| [B-27](docs/backlog/B-27-parity-tooling.md) `[~]` | Parity tooling: first-screen screenshots, geometry from the accessibility tree, list-region diff | P1 | M | B-13 |
 | [B-28](docs/backlog/B-28-gate-control-hooks.md) `[ ]` | The positive controls RQ0 needs: a known launch delay, a known dirty allocation, a known resource | P1 | S | B-14 |
 | [B-23](docs/backlog/B-23-kotlin-2-5-round.md) `[ ]` | A later round on Kotlin 2.5.0: arm B3 without D8, once Kotlin 2.5.0 is stable | P3 | M | - |
 
