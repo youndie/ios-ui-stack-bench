@@ -34,7 +34,8 @@ esac
 case $DESTINATION in id=*)
     udid=${DESTINATION#id=}
     { echo "commit $(git -C "$ROOT" rev-parse HEAD)"; xcodebuild -version | tr '\n' ' '; echo
-      xcrun devicectl device info details --device "$udid" 2>/dev/null | grep -E 'marketingName|productType|osVersionNumber|osBuildUpdate' | tr -s ' '
+      j=$(mktemp); xcrun devicectl device info details --device "$udid" -j "$j" -q >/dev/null 2>&1
+      python3 -c 'import json,sys; r=json.load(open(sys.argv[1]))["result"]; h,d=r["hardwareProperties"],r["deviceProperties"]; print(h["marketingName"], h["productType"], "iOS", d["osVersionNumber"], d["osBuildUpdate"])' "$j"; rm -f "$j"
       date -u +%Y-%m-%dT%H:%M:%SZ; } > "$out/header.txt" ;;
 esac
 for arm in ${*:-a-native b1-objc b2-skie b3-swift-export c-kmp-cmp}; do
