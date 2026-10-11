@@ -26,8 +26,8 @@ still gates every number, and no arm is measured before it is green on a device.
 
 **What the loop takes, and what waits for the owner.** The loop works the items that need no
 device: B-05, B-07–B-10, B-13–B-15, B-20–B-22, and — so that the devices find everything ready
-(owner, 2026-10-11) — B-25 to B-28: the session runner, the size tooling, the parity tooling and
-RQ0's control hooks. The device items — [B-04](docs/backlog/B-04-free-provisioning-probe.md),
+(owner, 2026-10-11) — B-25 to B-29: the session runner, the size tooling, the parity tooling,
+RQ0's control hooks, and parity reached on the simulator. The device items — [B-04](docs/backlog/B-04-free-provisioning-probe.md),
 [B-06](docs/backlog/B-06-rq0-the-gate.md), [B-11](docs/backlog/B-11-parity-check.md)'s check on the
 devices, [B-12](docs/backlog/B-12-rq1-size.md), [B-16](docs/backlog/B-16-dry-run-and-the-ruler.md)–[B-19](docs/backlog/B-19-write-up.md)
 — and [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md)'s close of the window wait for the
@@ -106,11 +106,11 @@ this file.
 | [B-18](docs/backlog/B-18-runs-on-the-newer-device.md) `[ ]` | P3 — the full matrix on the newer device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-19](docs/backlog/B-19-write-up.md) `[ ]` | P4 — the write-up: one verdict per RQ, regenerated from the CSVs, negative results included | P1 | M | B-12, B-17, B-18 |
 | [B-24](docs/backlog/B-24-xctrace-record-and-readers.md) `[ ]` | Record with xctrace beside every scenario, export its tables, and read them - on a device | P1 | M | B-06 |
-| [B-27](docs/backlog/B-27-parity-tooling.md) `[~]` | Parity tooling: first-screen screenshots, geometry from the accessibility tree, list-region diff | P1 | M | B-13 |
 | [B-28](docs/backlog/B-28-gate-control-hooks.md) `[ ]` | The positive controls RQ0 needs: a known launch delay, a known dirty allocation, a known resource | P1 | S | B-14 |
+| [B-29](docs/backlog/B-29-parity-on-the-simulator.md) `[ ]` | Bring the five arms to parity on the simulator, so B-11 on the devices confirms rather than builds | P1 | M | B-27 |
 | [B-23](docs/backlog/B-23-kotlin-2-5-round.md) `[ ]` | A later round on Kotlin 2.5.0: arm B3 without D8, once Kotlin 2.5.0 is stable | P3 | M | - |
 
-## Closed (15)
+## Closed (16)
 
 **P0 — the gate**
 
@@ -135,5 +135,6 @@ this file.
 - [B-15](docs/backlog/B-15-analysis-and-intervals.md) `[x]` - The analysis: median and IQR per variant, bootstrap 95 % CIs, the verdict word per RQ
 - [B-25](docs/backlog/B-25-session-runner.md) `[x]` - One command per session: preflight, install, rotated runs, collection, runs.csv
 - [B-26](docs/backlog/B-26-size-tooling.md) `[x]` - The size measurement as a script: unsigned arm64 archives, zip -9, link-map breakdown, determinism
+- [B-27](docs/backlog/B-27-parity-tooling.md) `[x]` - Parity tooling: first-screen screenshots, geometry from the accessibility tree, list-region diff
 
 <!-- END INDEX -->
