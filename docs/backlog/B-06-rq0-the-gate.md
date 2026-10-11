@@ -28,7 +28,8 @@ positive control that answers it.
   - smoothness — the 50 ms stall, in every arm, on both devices (the brief's own control);
     plus a stall of 0 ms through the same code path, which must **not** register;
   - startup — a known delay (200 ms) inserted before "list populated" must come out as +200 ms in
-    both the App Launch trace and the in-app delta, within the run-to-run spread;
+    both the App Launch trace and the in-app delta, within the run-to-run spread — read at the
+    median of repeated runs, because a single pair of runs cannot show it (B-28);
   - memory — a known allocation (50 MB, written so the pages are dirty) must raise the sampled
     `phys_footprint` by about that much and show in the Allocations / VM Tracker trace;
   - size — a known incompressible resource (1 MB of random bytes) must raise the compressed size

@@ -32,7 +32,11 @@ import os
 ///
 /// Launch arguments: `-benchStallMs <n>` arms the stall injector (a stall of `n` ms on the main
 /// thread every `-benchStallEverySec <s>` seconds, 1 by default); `0` runs the same path and blocks
-/// for nothing — the control that must not register (B-06).
+/// for nothing — the control that must not register (B-06). Two more positive controls of RQ0 (B-28),
+/// absent from every measured run: `-benchDelayListMs <n>` holds the main thread for n ms when the
+/// first row appears, just before the frame that marks `listPopulated`, so launch-to-list grows by n;
+/// `-benchAllocateMB <n>` allocates n MiB at launch and writes every page, so `phys_footprint` grows
+/// by about n MiB and stays there.
 final class Bench {
     static let shared = Bench()
 
@@ -50,6 +54,8 @@ final class Bench {
     private var flushTimer: Timer?
     private var sampler: DispatchSourceTimer?
     private var stallTimer: Timer?
+    private var delayedList = false
+    private var ballast: UnsafeMutableRawPointer?
 
     /// Starts everything; call once, on the main thread, from the app's initialiser.
     func start() {
@@ -63,6 +69,7 @@ final class Bench {
         startFrameLogger()
         startSampler()
         startStallInjector()
+        allocateBallast()
         NotificationCenter.default.addObserver(forName: ProcessInfo.thermalStateDidChangeNotification, object: nil, queue: nil) { [weak self] _ in
             self?.write(["k": "thermal", "t": CACurrentMediaTime(), "state": Self.thermalName()])
         }
@@ -71,6 +78,11 @@ final class Bench {
     /// The first row is on its way to the screen; `listPopulated` is marked on the next frame.
     func rowAppeared() {
         dispatchPrecondition(condition: .onQueue(.main))
+        if !delayedList, let ms = Self.argument("benchDelayListMs").flatMap(Int.init), ms > 0 {
+            delayedList = true
+            usleep(useconds_t(ms * 1000))
+            write(["k": "control", "t": CACurrentMediaTime(), "delayListMs": ms])
+        }
         listPending = true
     }
 
@@ -221,6 +233,21 @@ final class Bench {
         }
         RunLoop.main.add(timer, forMode: .common)
         stallTimer = timer
+    }
+
+    // MARK: - controls
+
+    /// RQ0's memory control: n MiB, every 4 KiB of it written so the pages are dirty and count in
+    /// `phys_footprint`; held until the process ends.
+    private func allocateBallast() {
+        guard let mib = Self.argument("benchAllocateMB").flatMap(Int.init), mib > 0 else { return }
+        let bytes = mib << 20
+        let memory = UnsafeMutableRawPointer.allocate(byteCount: bytes, alignment: 16_384)
+        for offset in stride(from: 0, to: bytes, by: 4096) {
+            memory.storeBytes(of: UInt8(truncatingIfNeeded: offset >> 12) | 1, toByteOffset: offset, as: UInt8.self)
+        }
+        ballast = memory
+        write(["k": "control", "t": CACurrentMediaTime(), "allocatedMiB": mib])
     }
 
     // MARK: - system

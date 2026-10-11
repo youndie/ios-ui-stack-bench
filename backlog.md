@@ -92,7 +92,7 @@ this file.
 
 <!-- BEGIN INDEX -->
 
-## Open (13)
+## Open (12)
 
 | Task | | Priority | Size | Blocked by |
 |---|---|---|---|---|
@@ -106,17 +106,17 @@ this file.
 | [B-18](docs/backlog/B-18-runs-on-the-newer-device.md) `[ ]` | P3 — the full matrix on the newer device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-19](docs/backlog/B-19-write-up.md) `[ ]` | P4 — the write-up: one verdict per RQ, regenerated from the CSVs, negative results included | P1 | M | B-12, B-17, B-18 |
 | [B-24](docs/backlog/B-24-xctrace-record-and-readers.md) `[ ]` | Record with xctrace beside every scenario, export its tables, and read them - on a device | P1 | M | B-06 |
-| [B-28](docs/backlog/B-28-gate-control-hooks.md) `[ ]` | The positive controls RQ0 needs: a known launch delay, a known dirty allocation, a known resource | P1 | S | B-14 |
 | [B-29](docs/backlog/B-29-parity-on-the-simulator.md) `[ ]` | Bring the five arms to parity on the simulator, so B-11 on the devices confirms rather than builds | P1 | M | B-27 |
 | [B-23](docs/backlog/B-23-kotlin-2-5-round.md) `[ ]` | A later round on Kotlin 2.5.0: arm B3 without D8, once Kotlin 2.5.0 is stable | P3 | M | - |
 
-## Closed (16)
+## Closed (17)
 
 **P0 — the gate**
 
 - [B-02](docs/backlog/B-02-swift-bridge.md) `[x]` - Choose the Swift bridge for B and C: Objective-C export with an adapter, SKIE, or Swift export
 - [B-03](docs/backlog/B-03-filter-scenario-verdict.md) `[x]` - Decide whether S3 (filter) gets its own green and red, or stays descriptive
 - [B-05](docs/backlog/B-05-hello-world-variants.md) `[x]` - Hello-world arms A, B1, B2, B3 and C with the instrumentation the study will measure through
+- [B-28](docs/backlog/B-28-gate-control-hooks.md) `[x]` - The positive controls RQ0 needs: a known launch delay, a known dirty allocation, a known resource
 
 **P1 — build**
 
