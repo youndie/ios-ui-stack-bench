@@ -1,7 +1,7 @@
 ---
 id: B-26
 title: "The size measurement as a script: unsigned arm64 archives, zip -9, link-map breakdown, determinism"
-status: open
+status: wip
 priority: P1
 size: M
 stage: stage-2-harness
