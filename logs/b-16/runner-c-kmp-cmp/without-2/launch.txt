@@ -1,0 +1,1 @@
+devicectl launch, pid 4790, terminated after 32 s

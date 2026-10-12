@@ -125,7 +125,7 @@ def main():
     sh("xcrun", "devicectl", "device", "install", "app", "--device", udid, app)
     head = {"commit": sh("git", "-C", ROOT, "rev-parse", "HEAD").stdout.strip(),
             "xcode": " ".join(sh("xcodebuild", "-version").stdout.split()), "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
-    name = "header.json" if not os.path.exists(os.path.join(out, "header.json")) else f"header-{'-'.join(parts)}.json"
+    name = "header.json" if not os.path.exists(os.path.join(out, "header.json")) else f"header-{'-'.join(parts)}-{ARM}.json"
     json.dump({**head, "parts": parts}, open(os.path.join(out, name), "w"), indent=1)
     logs = Logs(udid)
     logs.new()

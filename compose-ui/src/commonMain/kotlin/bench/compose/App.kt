@@ -126,14 +126,15 @@ private fun ListScreen(items: List<Item>, onQuery: (String) -> Unit, onOpen: (It
             }
         }
         // RQ0's Animation Hitches control (A1.7): the list scrolls itself, in the pattern the SwiftUI
-        // arms use - 1 s after launch, every 1.5 s, to item 20 and back to item 0. Off in every
+        // arms use - 1 s after launch, every 1.5 s, a screen further down, then back up. Off in every
         // measured run.
         if (autoScrolls > 0) {
             LaunchedEffect(listState) {
                 delay(1000)
                 repeat(autoScrolls) { i ->
                     probe.mark("autoScroll")
-                    launch { listState.animateScrollToItem(if (i % 2 == 0) 20 else 0) }
+                    // Bench.autoScrollTarget's formula: a screen further per step, down then back up.
+                    launch { listState.animateScrollToItem(if (i < autoScrolls / 2) 8 * (i + 1) else 8 * (autoScrolls - i - 1)) }
                     delay(1500)
                 }
             }

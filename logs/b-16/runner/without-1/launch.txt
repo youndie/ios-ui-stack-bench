@@ -1,0 +1,1 @@
+devicectl launch, pid 4729, terminated after 32 s

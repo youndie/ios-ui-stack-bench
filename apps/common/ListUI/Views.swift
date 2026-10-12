@@ -44,11 +44,12 @@ struct RootView: View {
 
     @MainActor private func autoScroll(_ proxy: ScrollViewProxy) async {
         try? await Task.sleep(for: .seconds(1))
-        let ids = model.items.prefix(21).map(\.id)
-        guard ids.count == 21 else { return }
+        let n = Bench.autoScrolls
+        let ids = model.items.prefix(8 * (n / 2) + 1).map(\.id)
+        guard ids.count == 8 * (n / 2) + 1 else { return }
         for i in 0..<Bench.autoScrolls {
             Bench.shared.phase("autoScroll")
-            withAnimation { proxy.scrollTo(i % 2 == 0 ? ids[20] : ids[0], anchor: .top) }
+            withAnimation { proxy.scrollTo(ids[Bench.autoScrollTarget(step: i, of: n)], anchor: .top) }
             try? await Task.sleep(for: .seconds(1.5))
         }
     }

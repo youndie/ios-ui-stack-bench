@@ -315,8 +315,16 @@ final class Bench {
 
     /// A launch argument `-<name> <value>`, as the argument domain of `UserDefaults` holds it: a string.
     /// `-benchAutoScroll <n>`: how many times the list scrolls itself, 0 in every measured run. The
-    /// pattern is the same in every arm: 1 s after launch, every 1.5 s, to item 20 and back to item 0.
+    /// pattern is the same in every arm: 1 s after launch, every 1.5 s, a screen further down and then back up
+/// (`autoScrollTarget`).
     static let autoScrolls: Int = argument("benchAutoScroll").flatMap(Int.init) ?? 0
+
+    /// Step `i` of `n` scrolls about a screen further: to item 8 (i + 1) for the first half, then back
+    /// the same way to item 0 - the self-scrolling stand-in for S2's 20 flings down and 20 up (B-16,
+    /// A2.2). The same formula is in arm C's App.kt.
+    static func autoScrollTarget(step i: Int, of n: Int) -> Int {
+        i < n / 2 ? 8 * (i + 1) : 8 * (n - i - 1)
+    }
 
     private static func argument(_ name: String) -> String? {
         UserDefaults.standard.string(forKey: name)
