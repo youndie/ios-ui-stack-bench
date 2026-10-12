@@ -1,7 +1,7 @@
 ---
 id: B-17
 title: "P3 — the full matrix on the older device: S1–S4, every arm, rotated order"
-status: open
+status: wip
 priority: P1
 size: L
 stage: stage-3-runs
