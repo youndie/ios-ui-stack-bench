@@ -1,7 +1,7 @@
 ---
 id: B-30
 title: "S2′ and S4′ without the runner: the app drives itself, the session records it (A2.2)"
-status: open
+status: wip
 priority: P0
 size: M
 stage: stage-2-harness
