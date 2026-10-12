@@ -287,3 +287,18 @@ The owner's decision:
 This amendment is made after RQ1 was first read (green on `zip -9`). The worst case moves RQ1 towards
 red, not green. Apple's estimate keeps the brief's intent, the download proxy. **No threshold moves.**
 
+### A2.5 — the remaining sessions as runner-free triples (2026-10-12, owner, **late**: after the first session, before the others)
+
+A1.5's pairs exist because the UI-test runner takes one of a free account's three slots. Since A2.2,
+every scenario that decides a verdict (S1, S2p, S4p) runs with no runner. Only the harness's S2, a
+cross-check, and S3, descriptive, still need it. The owner's decision for the sessions after {A, C}:
+- **Two sessions of three arms, no runner installed:** {A, B1, B2}, then {A, B3, C}. Each runs S1 ×20,
+  S2p ×10 and S4p ×10, the arms rotated A→B→C as the brief first wrote it. RQ5 compares each B arm
+  with A inside one session, as before.
+- **Not recorded for the B arms:** the harness's S2 cross-check and S3. C has both, from {A, C}.
+- **B1 → C**, the cost of Compose UI that A1.5 gave its own session, is read through A, as I5 allows.
+  The figures of both sessions are printed side by side.
+- {A, C} stays as recorded. The second session's C against A is printed beside the first's, as a
+  repeat.
+
+**No threshold moves.**
