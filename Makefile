@@ -108,6 +108,7 @@ gate: docs-gate
 	$(PY) analysis/parity_reader_control.py
 	$(PY) analysis/size_report_control.py
 	$(PY) analysis/download_report_control.py
+	$(PY) analysis/readme_results.py --check
 	$(PY) analysis/dryrun_reader_control.py
 
 report: docs-report
