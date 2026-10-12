@@ -92,10 +92,11 @@ this file.
 
 <!-- BEGIN INDEX -->
 
-## Open (4)
+## Open (5)
 
 | Task | | Priority | Size | Blocked by |
 |---|---|---|---|---|
+| [B-31](docs/backlog/B-31-rq1-download-size.md) `[~]` | RQ1 on Apple's download estimate, with the encrypted worst case beside it (A2.4) | P0 | S | B-12 |
 | [B-17](docs/backlog/B-17-runs-on-the-older-device.md) `[~]` | P3 — the full matrix on the older device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-18](docs/backlog/B-18-runs-on-the-newer-device.md) `[ ]` | P3 — the full matrix on the newer device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-19](docs/backlog/B-19-write-up.md) `[ ]` | P4 — the write-up: one verdict per RQ, regenerated from the CSVs, negative results included | P1 | M | B-12, B-17, B-18 |
