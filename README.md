@@ -37,10 +37,15 @@ Read on the iPhone XS only (BRIEF.md A1.7); every figure is regenerated from `lo
 | RQ3 — longest hitch, C | green | 33 ms; green < 100 ms, red >= 250 ms | [logs/b-17/xs-1](logs/b-17/xs-1/verdicts.txt) |
 | RQ4 — footprint growth over 50 cycles, C | green | -1.3 MB (95 % interval -2.3 to 0.7); green < 5 MB, red >= 20 MB | [logs/b-17/xs-1](logs/b-17/xs-1/verdicts.txt) |
 | RQ4 — peak footprint, C / A | inconclusive | 2.51× (95 % interval 2.46–2.59); green <= 2x, red > 3x | [logs/b-17/xs-1](logs/b-17/xs-1/verdicts.txt) |
+| RQ5 — peak footprint, B1 − A | green | +6.2 MB (95 % interval +3.7 to +9.2); green <= +20 MB, red > +50 MB | [logs/b-17/xs-2](logs/b-17/xs-2/verdicts.txt) |
+| RQ5 — hitch time, B1 − A | inconclusive | +0.4 ms/s (95 % interval -1.1 to 1.3); green <= +1 ms/s, red > +2 ms/s | [logs/b-17/xs-2](logs/b-17/xs-2/verdicts.txt) |
+| RQ5 — startup, B1 − A | green | +7 ms (95 % interval 0 to 21); green <= +50 ms, red > +150 ms | [logs/b-17/xs-2](logs/b-17/xs-2/verdicts.txt) |
+| RQ5 — peak footprint, B2 − A | green | +6.7 MB (95 % interval +3.7 to +9.6); green <= +20 MB, red > +50 MB | [logs/b-17/xs-2](logs/b-17/xs-2/verdicts.txt) |
+| RQ5 — hitch time, B2 − A | inconclusive | +1.6 ms/s (95 % interval -0.5 to 2.5); green <= +1 ms/s, red > +2 ms/s | [logs/b-17/xs-2](logs/b-17/xs-2/verdicts.txt) |
+| RQ5 — startup, B2 − A | green | +13 ms (95 % interval 5 to 30); green <= +50 ms, red > +150 ms | [logs/b-17/xs-2](logs/b-17/xs-2/verdicts.txt) |
 
-RQ3's bars are absolute, and on this phone the native list itself is not under them: A's own hitch time on the same self-scrolling run is 15.6 ms/s (median), so C's red is read beside A's level. The scroll is driven by the app itself, not by a finger (A2.2); on real flings through the UI-test runner the frame logger shows the same direction.
+RQ3's bars are absolute, and on this phone the native list itself is not under them: A's own hitch time on the same self-scrolling run is 15.2 ms/s (median), so C's red is read beside A's level. The scroll is driven by the app itself, not by a finger (A2.2); on real flings through the UI-test runner the frame logger shows the same direction.
 
-Still open: RQ5 (what Kotlin under a SwiftUI UI costs: B1, B2 and B3 against A) waits for the sessions {A, B1, B2} and {A, B3, C} (A2.5).
 
 <!-- END RESULTS -->
 

@@ -2,6 +2,7 @@
 """Run one measurement session from a plan: install, rotated runs, collection, runs.csv (B-25).
 
     python3 harness/session.py <plan.json>
+    python3 harness/session.py --rebuild <plan.json>   runs.csv again from the attempt directories
 
 A plan names the device, the arms, the runs per scenario and where the output goes:
 
@@ -213,7 +214,66 @@ def run_scenario(plan, arm, scenario, where=None):
     return "passed" if "passed (" in out else ("failed" if "failed (" in out else "no result")
 
 
+def evaluate(plan, kind, arm, scenario, run, attempt, where, result, logs, digests):
+    """One attempt's row of runs.csv, from what its directory holds: the app's log, and for a traced
+    scenario on a device, the exported tables. The same code reads a running session and a rebuilt one."""
+    traced = scenario in TRACED and kind == "device"
+    if logs != 1 or not os.path.exists(os.path.join(where, "app.ndjson")):
+        summary = {"valid": 0, "reason": f"{logs} logs from one run"}
+    else:
+        summary = inapp_reader.summarise(inapp_reader.load(os.path.join(where, "app.ndjson")), scenario)
+    if traced:
+        trace = TRACED[scenario][3](where)
+        summary = {**summary, **trace}
+        if summary.get("valid") == 1 and any(v == "" for v in trace.values()):
+            summary = {**summary, "valid": 0, "reason": f"the {TRACED[scenario][0]} trace lacks {[k for k, v in trace.items() if v == '']}"}
+    action, why = decide(summary, kind)
+    if result != "passed" and action == "count":
+        action, why = "repeat", f"UI test {result}"
+    row = {"device": plan["device"], "session": plan["session"], "arm": arm, "scenario": scenario,
+           "run": run, "attempt": attempt, "counted": int(run > 0 and action == "count"),
+           "decision": action, "why": why, "test": result,
+           "installed_sha256": digests[arm], **summary}
+    row["valid"] = int(summary.get("valid") == 1 and action == "count")
+    return row
+
+
+def rebuild(plan):
+    """runs.csv again from a session's attempt directories, for a session stopped before it wrote it.
+    An attempt that holds no app log, or a traced one with no exported tables, was cut off by the stop:
+    its row says so and counts for nothing."""
+    out = os.path.join(ROOT, plan["out"])
+    digests = json.load(open(os.path.join(out, "session.json")))["installed"]
+    kind = "simulator" if plan["device"] == "simulator" else "device"
+    rows = []
+    for scenario in SCENARIOS:
+        for run in range(plan["runs"].get(scenario, 0)):
+            for arm in rotation(plan["arms"], run):
+                for attempt in range(1, MAX_ATTEMPTS + 1):
+                    where = os.path.join(out, scenario, arm, f"run-{run}-attempt-{attempt}")
+                    if not os.path.isdir(where):
+                        break
+                    if scenario in TRACED and kind == "device":
+                        result = "passed" if os.path.exists(os.path.join(where, "xctrace.log")) else "no result"
+                    else:
+                        log = os.path.join(where, "test.log")
+                        text = open(log).read() if os.path.exists(log) else ""
+                        result = "passed" if "passed (" in text else ("failed" if "failed (" in text else "no result")
+                    logs = 1 if os.path.exists(os.path.join(where, "app.ndjson")) else 0
+                    row = evaluate(plan, kind, arm, scenario, run, attempt, where, result, logs, digests)
+                    if result == "no result" and logs == 0:
+                        row.update(decision="interrupted", why="cut off when the session was stopped", counted=0, valid=0)
+                    rows.append(row)
+                    if row["decision"] == "count":
+                        break
+    write(out, rows)
+    print(f"session {plan['session']} rebuilt: {len(rows)} attempts, {sum(r['counted'] for r in rows)} counted, runs.csv in {out}")
+    return 0
+
+
 def main():
+    if sys.argv[1:2] == ["--rebuild"]:
+        return rebuild(json.load(open(sys.argv[2])))
     plan = json.load(open(sys.argv[1]))
     target = Target(plan)
     out = os.path.join(ROOT, plan["out"])
@@ -255,27 +315,13 @@ def main():
                     bundle = f"io.github.youndie.iosbench.{BUNDLES[arm]}"
                     with tempfile.TemporaryDirectory() as tmp:
                         logs = target.new_logs(bundle, tmp)
-                        if len(logs) != 1:
-                            summary = {"valid": 0, "reason": f"{len(logs)} logs from one run"}
-                        else:
+                        if len(logs) == 1:
                             with open(logs[0], "rb") as src, open(os.path.join(where, "app.ndjson"), "wb") as dst:
                                 dst.write(src.read())
-                            lines = inapp_reader.load(os.path.join(where, "app.ndjson"))
-                            summary = inapp_reader.summarise(lines, scenario)
-                    if traced:
-                        trace = TRACED[scenario][3](where)
-                        summary = {**summary, **trace}
-                        if summary.get("valid") == 1 and any(v == "" for v in trace.values()):
-                            summary = {**summary, "valid": 0, "reason": f"the {TRACED[scenario][0]} trace lacks {[k for k, v in trace.items() if v == '']}"}
-                    action, why = decide(summary, target.kind)
-                    if result != "passed" and action == "count":
-                        action, why = "repeat", f"UI test {result}"
-                    row = {"device": plan["device"], "session": plan["session"], "arm": arm, "scenario": scenario,
-                           "run": run, "attempt": attempt, "counted": int(run > 0 and action == "count"),
-                           "decision": action, "why": why, "test": result,
-                           "installed_sha256": digests[arm], **summary}
-                    row["valid"] = int(summary.get("valid") == 1 and action == "count")
+                    row = evaluate(plan, target.kind, arm, scenario, run, attempt, where, result, len(logs), digests)
+                    action, why = row["decision"], row["why"]
                     rows.append(row)
+                    write(out, rows)  # after every attempt: a session stopped from outside keeps what it ran
                     print(f"{scenario} run {run} {arm} attempt {attempt}: {action} {why}".rstrip(), flush=True)
                     if action == "stop":
                         write(out, rows)

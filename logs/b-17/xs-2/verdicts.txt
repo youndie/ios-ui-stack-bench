@@ -1,0 +1,22 @@
+bootstrap: 10000 resamples, seed 20261010, percentile 95 % interval
+read on the iPhone XS only; the newer device was not measured (BRIEF.md A1.7)
+RQ2: NOT MEASURED
+    trace_process_to_list_ms [older] median difference =  CI (, ) runs 19/0 same session  -> not measured
+RQ3: NOT MEASURED
+    trace_hitch_time_ratio_ms_per_s [older] median =  CI (, ) runs 0 same session  -> not measured
+    trace_longest_hitch_ms [older] max over runs =  CI (, ) runs 0 same session  -> not measured
+RQ4: NOT MEASURED
+    peak_footprint_bytes [older] median ratio =  CI (, ) runs 9/0 same session  -> not measured
+    growth_cycles_5_to_50_bytes [older] median =  CI (, ) runs 0 same session  -> not measured
+RQ5 b1-objc: INCONCLUSIVE - missed: trace_hitch_time_ratio_ms_per_s on older (inconclusive)
+    trace_hitch_time_ratio_ms_per_s [older] median difference = 0.44393792998810255 CI (-1.1493314189382637, 1.2738280914697544) runs 9/9 same session yes -> inconclusive
+    trace_process_to_list_ms [older] median difference = 7.2342910000000415 CI (-0.24887500000005502, 20.72633400000001) runs 19/19 same session yes -> green
+    peak_footprint_bytes [older] median difference = 6193152.0 CI (3735552.0, 9191424.0) runs 9/9 same session yes -> green
+RQ5 b2-skie: INCONCLUSIVE - missed: trace_hitch_time_ratio_ms_per_s on older (inconclusive)
+    trace_hitch_time_ratio_ms_per_s [older] median difference = 1.6377137267780242 CI (-0.5400372558632416, 2.500583060360336) runs 9/9 same session yes -> inconclusive
+    trace_process_to_list_ms [older] median difference = 12.869458000000009 CI (5.158958000000041, 30.00725) runs 19/19 same session yes -> green
+    peak_footprint_bytes [older] median difference = 6701096.0 CI (3653632.0, 9633792.0) runs 9/9 same session yes -> green
+RQ5 b3-swift-export: NOT MEASURED
+    trace_hitch_time_ratio_ms_per_s [older] median difference =  CI (, ) runs 9/0 same session  -> not measured
+    trace_process_to_list_ms [older] median difference =  CI (, ) runs 19/0 same session  -> not measured
+    peak_footprint_bytes [older] median difference =  CI (, ) runs 9/0 same session  -> not measured

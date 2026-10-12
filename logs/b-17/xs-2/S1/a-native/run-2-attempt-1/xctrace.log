@@ -1,0 +1,10 @@
+$ xctrace record --template App Launch --device 00008020-000A6CC42692002E --time-limit 10s --output /Users/youndie/Documents/GitHub/ios-ui-stack-bench/build/traces/xs-2_a-native_S1_2_1-1.trace --instrument Points of Interest --launch -- io.github.youndie.iosbench.a -benchScenario S1
+Starting recording with the App Launch template and Points of Interest Instrument. Launching process: io.github.youndie.iosbench.a. Time limit: 10.0 s
+Ctrl-C to stop the recording
+Reached specified time limit, ending recording...
+Recording completed. Saving output file...
+Output file saved as: xs-2_a-native_S1_2_1-1.trace
+Run issues were detected (trace is still ready to be viewed):
+* [Warning] Warning while binding 'time-sample' table: requested sampling period (5000000ns) differs from configured (1000000ns)
+
+exit 0
