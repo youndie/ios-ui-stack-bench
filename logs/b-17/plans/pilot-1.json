@@ -1,0 +1,1 @@
+{"session": "pilot-1", "device": "older", "destination": "id=00008020-000A6CC42692002E", "udid": "00008020-000A6CC42692002E", "apps": "build/DerivedData-device", "arms": ["a-native", "c-kmp-cmp"], "runs": {"S1": 2, "S2p": 2, "S4p": 2}, "out": "logs/b-17/pilot-1"}
