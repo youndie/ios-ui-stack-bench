@@ -73,6 +73,10 @@ def decide(summary, kind):
              state was not nominal at any point of it
     count    otherwise
     """
+    if "battery" not in summary:
+        # No app log at all: the run did not happen (the runner failed, the phone was locked), which says
+        # nothing about the battery. The ruler session of B-16 stopped here once as "battery None".
+        return "repeat", f"invalid: {summary.get('reason', 'no app log')}"
     if summary.get("low_power") == 1:
         return "stop", "Low Power Mode is on"
     battery = summary.get("battery")
@@ -181,9 +185,12 @@ def crosscheck(target, arm, out):
     return rows
 
 
-def run_scenario(plan, arm, scenario):
+def run_scenario(plan, arm, scenario, where=None):
     env = dict(os.environ, DESTINATION=plan["destination"])
-    out = sh(os.path.join(ROOT, "harness", "run.sh"), arm, scenario, env=env, check=False).stdout
+    r = sh(os.path.join(ROOT, "harness", "run.sh"), arm, scenario, env=env, check=False)
+    out = r.stdout
+    if where:
+        open(os.path.join(where, "test.log"), "w").write(r.stdout + r.stderr)
     return "passed" if "passed (" in out else ("failed" if "failed (" in out else "no result")
 
 
@@ -223,7 +230,7 @@ def main():
                     if traced:
                         result = run_s1_traced(target, arm, where, f"{plan['session']}_{arm}_S1_{run}_{attempt}")
                     else:
-                        result = run_scenario(plan, arm, scenario)
+                        result = run_scenario(plan, arm, scenario, where)
                     bundle = f"io.github.youndie.iosbench.{BUNDLES[arm]}"
                     with tempfile.TemporaryDirectory() as tmp:
                         logs = target.new_logs(bundle, tmp)

@@ -38,7 +38,8 @@ import os
 /// absent from every measured run: `-benchDelayListMs <n>` holds the main thread for n ms when the
 /// first row appears, just before the frame that marks `listPopulated`, so launch-to-list grows by n;
 /// `-benchAllocateMB <n>` allocates n MiB at launch and writes every page, so `phys_footprint` grows
-/// by about n MiB and stays there. And one for Animation Hitches, which cannot record beside the
+/// by about n MiB and stays there. `-benchInstrumentsOff 1` runs without the frame logger and the
+/// footprint sampler (B-16), keeping the markers. And one for Animation Hitches, which cannot record beside the
 /// UI-test runner on a device (A1.7): `-benchAutoScroll <n>` makes the list scroll itself n times
 /// (`autoScrolls`, read by the list screens), so `xctrace --launch` records scrolling with no runner.
 /// Each step is an `autoScroll` phase marker: SwiftUI's `onScrollPhaseChange` does not report a
@@ -72,8 +73,14 @@ final class Bench {
         writeHeader()
         mark(.launch)
         if let scenario = Self.argument("benchScenario") { phase("scenario:\(scenario)") }
-        startFrameLogger()
-        startSampler()
+        // B-16's control of the instruments themselves: `-benchInstrumentsOff 1` keeps the header, the
+        // markers and their signposts, and drops the frame logger and the footprint sampler.
+        if Self.argument("benchInstrumentsOff") == nil {
+            startFrameLogger()
+            startSampler()
+        } else {
+            startFirstFrameMarker()
+        }
         startStallInjector()
         allocateBallast()
         NotificationCenter.default.addObserver(forName: ProcessInfo.thermalStateDidChangeNotification, object: nil, queue: nil) { [weak self] _ in
@@ -201,6 +208,25 @@ final class Bench {
         RunLoop.main.add(flushTimer!, forMode: .common)
     }
 
+    /// Without the frame logger, a display link that only marks `firstFrame` and `listPopulated` and
+    /// then removes itself, so the launch markers mean the same with the instruments on and off.
+    private func startFirstFrameMarker() {
+        let link = CADisplayLink(target: self, selector: #selector(markOnly(_:)))
+        link.add(to: .main, forMode: .common)
+        self.link = link
+    }
+
+    @objc private func markOnly(_ link: CADisplayLink) {
+        if !sawFirstFrame {
+            sawFirstFrame = true
+            mark(.firstFrame)
+        } else if listPending {
+            listPending = false
+            mark(.listPopulated)
+            link.invalidate()
+        }
+    }
+
     @objc private func tick(_ link: CADisplayLink) {
         if !sawFirstFrame {
             sawFirstFrame = true
@@ -289,8 +315,16 @@ final class Bench {
 
     /// A launch argument `-<name> <value>`, as the argument domain of `UserDefaults` holds it: a string.
     /// `-benchAutoScroll <n>`: how many times the list scrolls itself, 0 in every measured run. The
-    /// pattern is the same in every arm: 1 s after launch, every 1.5 s, to item 20 and back to item 0.
+    /// pattern is the same in every arm: 1 s after launch, every 1.5 s, a screen further down and then back up
+/// (`autoScrollTarget`).
     static let autoScrolls: Int = argument("benchAutoScroll").flatMap(Int.init) ?? 0
+
+    /// Step `i` of `n` scrolls about a screen further: to item 8 (i + 1) for the first half, then back
+    /// the same way to item 0 - the self-scrolling stand-in for S2's 20 flings down and 20 up (B-16,
+    /// A2.2). The same formula is in arm C's App.kt.
+    static func autoScrollTarget(step i: Int, of n: Int) -> Int {
+        i < n / 2 ? 8 * (i + 1) : 8 * (n - i - 1)
+    }
 
     private static func argument(_ name: String) -> String? {
         UserDefaults.standard.string(forKey: name)

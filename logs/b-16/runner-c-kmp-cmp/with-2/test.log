@@ -1,0 +1,6 @@
+Test Case '-[HarnessUITests.Scenarios testIdle]' started.
+Test Case '-[HarnessUITests.Scenarios testIdle]' passed (33.941 seconds).
+Test Suite 'Scenarios' passed at 2026-10-12 03:00:55.292.
+Test Suite 'HarnessUITests.xctest' passed at 2026-10-12 03:00:55.292.
+Test Suite 'Selected tests' passed at 2026-10-12 03:00:55.293.
+** TEST EXECUTE SUCCEEDED **

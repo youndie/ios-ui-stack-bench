@@ -107,6 +107,7 @@ gate: docs-gate
 	$(PY) scripts/parity_diff_control.py
 	$(PY) analysis/parity_reader_control.py
 	$(PY) analysis/size_report_control.py
+	$(PY) analysis/dryrun_reader_control.py
 
 report: docs-report
 

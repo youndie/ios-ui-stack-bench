@@ -226,3 +226,33 @@ And CPU Profiler's samples are weighted in cycles (`cycle-weight`), not time. So
 
 CPU has no threshold and decides no verdict, so nothing moves.
 
+### A2.2 — memory, CPU and smoothness without the runner (2026-10-12, owner, **late**: after the window, before any session)
+
+[B-16](docs/backlog/B-16-dry-run-and-the-ruler.md)'s dry run on the XS:
+- **Kill criterion 5 fires for CPU and memory.** In an idle launch, the UI-test runner raises the
+  app's own CPU time by 66 % in A and 55 % in C, and its footprint by 6.0 MB in A and 12.6 MB in C
+  (`logs/b-16/runner*`), against a 10 % line. The brief's remedy, "reported only from in-app
+  logging", does not help: under I6 the in-app figures are what the runner contaminates. And the
+  contamination differs by stack, so even C − A is biased under the runner.
+- **The frame logger is blind to the render server.** It reads exactly zero hitch time for A in S2.
+  Animation Hitches reads A at well above zero on a self-scrolling launch of the same list. The logger
+  sees a stall only when it blocks the main thread.
+
+The owner's decisions:
+- **Memory and CPU are measured with no runner attached.** RQ4's peak footprint, RQ5's footprint and
+  the CPU of A2.1 come from the app's own log on launches that `xctrace --launch` starts. On those
+  launches the app drives itself: S2′ scrolls its own list, 20 steps down and 20 back up, about a
+  screen each, a step every 1.5 s (`-benchAutoScroll 40`). S4′ pushes and pops the detail screen of the
+  first item 50 times (`-benchAutoNavigate 50`). RQ4's growth is read on S4′ as I7 defines it.
+- **Smoothness is Animation Hitches on S2′.** That covers RQ3's hitch time ratio and longest hitch,
+  and RQ5's hitch time ratio, from the trace of the same launch. The logger on the harness's S2 (real
+  flings through XCUITest) is the cross-check, printed beside it, and decides nothing.
+- **What stays as written:** S1 (App Launch, no runner, A1.7) and S3 (descriptive, A1.2). The
+  scenarios' run counts and the rotation are unchanged.
+
+**No threshold moves.** S2′ and S4′ are not the brief's S2 and S4: the scroll is programmatic in both
+stacks (SwiftUI's `ScrollViewReader.scrollTo` with animation, Compose's `animateScrollToItem`), not a
+finger's fling. Every verdict that reads them says so. Recorded beside RQ3 in every report: on S2′
+the XS drops frames in A itself (B-16's ruler prints A's own level), so RQ3's absolute bars are read
+against a native list that is not at Apple's "good" band on this device.
+
