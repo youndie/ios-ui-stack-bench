@@ -150,16 +150,18 @@ def maximum(rq, rows, device, scenario, metric, arm, green, red, gtext, rtext):
 
 # ---------------------------------------------------------------- the questions
 
-def rq1(sizes, b_arm):
-    # scripts/measure_size.py writes two clean builds per arm; build 1 is the measurement.
-    size = {r["arm"]: float(r["compressed_bytes"]) for r in sizes if r.get("build", "1") in ("1", 1)}
+def rq1(sizes, b_arm, key="compressed_bytes"):
+    # The size tools write two clean builds per arm; build 1 is the measurement. `key` is the proxy:
+    # B-12's zip (`compressed_bytes`), or since A2.4 Apple's estimate (`apple_download_bytes`) and the
+    # encrypted worst case (`worst_case_bytes`) of scripts/measure_download.py.
+    size = {r["arm"]: float(r[key]) for r in sizes if r.get("build", "1") in ("1", 1)}
     out = []
     for arm, g, r in ((b_arm, 2, 5), ("c-kmp-cmp", 12, 20)):
         if arm not in size or "a-native" not in size:
-            out.append(Component("RQ1", arm, "-", "compressed_bytes", "difference", "", None, "-", "", "not measured", "", ""))
+            out.append(Component("RQ1", arm, "-", key, "difference", "", None, "-", "", "not measured", "", ""))
             continue
         d = size[arm] - size["a-native"]
-        out.append(Component("RQ1", arm, "-", "compressed_bytes", f"{arm} - a-native", d, None, "1/1", "n/a",
+        out.append(Component("RQ1", arm, "-", key, f"{arm} - a-native", d, None, "1/1", "n/a",
                              judge(d, None, lambda v, g=g: v <= g * MB, lambda v, r=r: v > r * MB), f"<= {g} MB", f"> {r} MB"))
     return out
 

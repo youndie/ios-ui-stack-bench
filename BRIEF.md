@@ -264,3 +264,26 @@ scenario that decides a verdict keeps the brief's count: S1 ×20; S2p, S3 and S4
 sessions run **{A, C} first**, the study's main question, then {A, B1}, {A, B2}, {A, B3} and {B1, C}.
 **No threshold moves.**
 
+### A2.4 — RQ1's download size: Apple's estimate, with the encrypted worst case beside it (2026-10-12, owner, **late**: after RQ1 was first read)
+
+The owner pointed out that the App Store encrypts the app's code after upload, and that encrypted bytes
+barely compress. So `zip -9` of an unencrypted build may understate what a phone downloads, and most
+for C, whose weight is mostly code. What is documented, as read on 2026-10-12:
+- Apple writes that the App Store adds DRM and re-compresses, so the size "may end up being slightly
+  larger" than what was uploaded. It names its own App Thinning Size Report as the close estimate of
+  download and install size before upload ("Reducing your app's size", developer.apple.com).
+- A third-party tool documentation (Emerge) says encryption inflated downloads on earlier iOS
+  versions and no longer does on newer ones. It names no versions.
+- Only App Store Connect shows the real figure, and a free account cannot upload.
+
+The owner's decision:
+- **RQ1 is read on Apple's estimate.** That is `sizeCompressedApp` of the thinned variant that serves the
+  iPhone XS, from a development export with app thinning (`scripts/measure_download.py`, B-31).
+- **Beside every RQ1 figure, the worst case is printed.** It is the same variant zipped after the main
+  executable's encrypted range has been overwritten with random bytes. **Its verdict is printed too,
+  and the write-up states plainly that a download on an iOS version that still compresses after
+  encryption can be that large.** B-12's `zip -9` stays in its log.
+
+This amendment is made after RQ1 was first read (green on `zip -9`). The worst case moves RQ1 towards
+red, not green. Apple's estimate keeps the brief's intent, the download proxy. **No threshold moves.**
+

@@ -101,7 +101,7 @@ this file.
 | [B-19](docs/backlog/B-19-write-up.md) `[ ]` | P4 — the write-up: one verdict per RQ, regenerated from the CSVs, negative results included | P1 | M | B-12, B-17, B-18 |
 | [B-23](docs/backlog/B-23-kotlin-2-5-round.md) `[ ]` | A later round on Kotlin 2.5.0: arm B3 without D8, once Kotlin 2.5.0 is stable | P3 | M | - |
 
-## Closed (26)
+## Closed (27)
 
 **P0 — the gate**
 
@@ -140,5 +140,6 @@ this file.
 **P3 — runs**
 
 - [B-12](docs/backlog/B-12-rq1-size.md) `[x]` - RQ1 — size: what KMP and CMP add to an arm64 app, uncompressed and zip -9, by component
+- [B-31](docs/backlog/B-31-rq1-download-size.md) `[x]` - RQ1 on Apple's download estimate, with the encrypted worst case beside it (A2.4)
 
 <!-- END INDEX -->
