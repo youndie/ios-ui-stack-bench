@@ -92,18 +92,17 @@ this file.
 
 <!-- BEGIN INDEX -->
 
-## Open (6)
+## Open (5)
 
 | Task | | Priority | Size | Blocked by |
 |---|---|---|---|---|
-| [B-30](docs/backlog/B-30-runner-free-scenarios.md) `[~]` | S2′ and S4′ without the runner: the app drives itself, the session records it (A2.2) | P0 | M | - |
 | [B-16](docs/backlog/B-16-dry-run-and-the-ruler.md) `[~]` | Dry run on one device: the ruler, the runner's and the instruments' own cost, thermal drift | P1 | M | B-15, B-24, B-30 |
 | [B-17](docs/backlog/B-17-runs-on-the-older-device.md) `[ ]` | P3 — the full matrix on the older device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-18](docs/backlog/B-18-runs-on-the-newer-device.md) `[ ]` | P3 — the full matrix on the newer device: S1–S4, every arm, rotated order | P1 | L | B-16 |
 | [B-19](docs/backlog/B-19-write-up.md) `[ ]` | P4 — the write-up: one verdict per RQ, regenerated from the CSVs, negative results included | P1 | M | B-12, B-17, B-18 |
 | [B-23](docs/backlog/B-23-kotlin-2-5-round.md) `[ ]` | A later round on Kotlin 2.5.0: arm B3 without D8, once Kotlin 2.5.0 is stable | P3 | M | - |
 
-## Closed (24)
+## Closed (25)
 
 **P0 — the gate**
 
@@ -136,6 +135,7 @@ this file.
 - [B-25](docs/backlog/B-25-session-runner.md) `[x]` - One command per session: preflight, install, rotated runs, collection, runs.csv
 - [B-26](docs/backlog/B-26-size-tooling.md) `[x]` - The size measurement as a script: unsigned arm64 archives, zip -9, link-map breakdown, determinism
 - [B-27](docs/backlog/B-27-parity-tooling.md) `[x]` - Parity tooling: first-screen screenshots, geometry from the accessibility tree, list-region diff
+- [B-30](docs/backlog/B-30-runner-free-scenarios.md) `[x]` - S2′ and S4′ without the runner: the app drives itself, the session records it (A2.2)
 
 **P3 — runs**
 

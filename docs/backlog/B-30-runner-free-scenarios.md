@@ -1,7 +1,7 @@
 ---
 id: B-30
 title: "S2′ and S4′ without the runner: the app drives itself, the session records it (A2.2)"
-status: wip
+status: done
 priority: P0
 size: M
 stage: stage-2-harness
@@ -36,3 +36,24 @@ criterion 5) and the frame logger blind to the render server.
   S2′ and S4′ (their validity: 40 `autoScroll` steps; 50 alternating detail markers).
 - Anchors: `harness/session.py`, `analysis/verdicts.py`, `apps/common/ListUI/Views.swift`,
   `compose-ui/src/commonMain/kotlin/bench/compose/App.kt`.
+
+---
+
+## Done — 2026-10-12
+
+- **`-benchAutoNavigate <n>`** in both stacks. The SwiftUI arms bind their `NavigationStack` to a path
+  in every run, so all scenarios share one structure. C navigates through its `NavController`. On the
+  simulator, every arm logged exactly the S4 markers, `detailAppeared` and `detailDisappeared`,
+  alternating.
+- **`-benchAutoScroll`** steps a screen further each time, 20 down and 20 back (`Bench.autoScrollTarget`,
+  the same formula in App.kt).
+- **`harness/session.py`** records S1 (App Launch), S2p (Animation Hitches) and S4p (Activity
+  Monitor) through `xctrace --launch` with no runner, after the 10 s wait. S2 and S3 still go
+  through the harness, and on a simulator S2p and S4p are launched by `simctl`. A trace whose
+  table is missing makes the run invalid.
+- **`analysis/inapp_reader.py`** validates S2p (40 `autoScroll` steps) and S4p (as S4) and reads S4p's
+  growth. **`analysis/verdicts.py`** reads RQ3 and RQ5's smoothness from the S2p trace, and RQ4 and
+  RQ5's memory from S2p and S4p. Both controls cover the change.
+- **Checked on the XS** with a two-arm session (A and C; S1 ×2, S2p ×2, S4p ×1; scratchpad, not
+  reported). All ten runs counted, and every column the verdicts read was filled. On S4p, Activity
+  Monitor's footprint matched the app's within a few dozen kB.
