@@ -29,6 +29,12 @@ def read(path):
     return list(csv.DictReader(open(os.path.join(ROOT, path)))) if os.path.exists(os.path.join(ROOT, path)) else []
 
 
+def nz(v, d):
+    """A rounded figure without a negative zero: -0.25 at no decimals is 0, not -0."""
+    t = f"{v:.{d}f}"
+    return t[1:] if t.startswith("-") and float(t) == 0 else t
+
+
 def fmt(v, d=1):
     return f"{v:+.{d}f}"
 
@@ -83,7 +89,7 @@ def sessions():
             sgn = r["estimator"].startswith("median difference")
             v = float(r["value"]) / scale
             value = f"{fmt(v, d) if sgn else f'{v:.{d}f}'} {unit}"
-            ci = "" if r["ci_low"] == "" else f"{float(r['ci_low']) / scale:.{d}f} to {float(r['ci_high']) / scale:.{d}f}"
+            ci = "" if r["ci_low"] == "" else f"{nz(float(r['ci_low']) / scale, d)} to {nz(float(r['ci_high']) / scale, d)}"
         who = "C − A" if r["arm"] == "c-kmp-cmp" and r["estimator"].startswith("median d") else (
             "C / A" if r["estimator"] == "median ratio" else (f"{ARM.get(r['arm'], r['arm'])} − A" if r["rq"] == "RQ5" else ARM.get(r["arm"], r["arm"])))
         out.append(f"| {r['rq']} — {name}, {who} | {r['verdict']} | {value}" + (f" (95 % interval {ci})" if ci else "")
