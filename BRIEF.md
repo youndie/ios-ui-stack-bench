@@ -256,3 +256,11 @@ finger's fling. Every verdict that reads them says so. Recorded beside RQ3 in ev
 the XS drops frames in A itself (B-16's ruler prints A's own level), so RQ3's absolute bars are read
 against a native list that is not at Apple's "good" band on this device.
 
+### A2.3 — three runs of the harness's S2, and the order of the sessions (2026-10-12, owner, **late**: before the first session)
+
+S2 through the harness is A2.2's cross-check and decides no verdict. It costs an hour per arm at ten
+runs, so the owner cut it to **three runs per arm per session**: one warm-up and two counted. Every
+scenario that decides a verdict keeps the brief's count: S1 ×20; S2p, S3 and S4p ×10. The pair
+sessions run **{A, C} first**, the study's main question, then {A, B1}, {A, B2}, {A, B3} and {B1, C}.
+**No threshold moves.**
+

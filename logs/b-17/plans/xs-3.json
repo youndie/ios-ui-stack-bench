@@ -1,0 +1,19 @@
+{
+ "session": "xs-3",
+ "device": "older",
+ "destination": "id=00008020-000A6CC42692002E",
+ "udid": "00008020-000A6CC42692002E",
+ "apps": "build/DerivedData-device",
+ "arms": [
+  "a-native",
+  "b2-skie"
+ ],
+ "runs": {
+  "S1": 20,
+  "S2p": 10,
+  "S2": 3,
+  "S3": 10,
+  "S4p": 10
+ },
+ "out": "logs/b-17/xs-3"
+}
