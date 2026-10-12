@@ -8,7 +8,7 @@ physical iPhones for size, startup, scroll smoothness and memory. The methodolog
 fixed before any code and are held byte for byte by `make check`. The window for amending them
 closed with the first measurement, on 2026-10-11. The changes made after it are marked late in
 [BRIEF.md](BRIEF.md). The five arms are built, the instruments passed their gate, and the first of
-five pair sessions is done. The results below are verdicts so far, not the write-up.
+three sessions ({A, C}) is done; {A, B1, B2} and {A, B3, C} follow (A2.5). The results below are verdicts so far, not the write-up.
 
 | Variant | Logic | UI |
 |---|---|---|
@@ -40,7 +40,7 @@ Read on the iPhone XS only (BRIEF.md A1.7); every figure is regenerated from `lo
 
 RQ3's bars are absolute, and on this phone the native list itself is not under them: A's own hitch time on the same self-scrolling run is 15.6 ms/s (median), so C's red is read beside A's level. The scroll is driven by the app itself, not by a finger (A2.2); on real flings through the UI-test runner the frame logger shows the same direction.
 
-Still open: RQ5 (what Kotlin under a SwiftUI UI costs: B1, B2 and B3 against A) waits for the sessions {A, B1}, {A, B2} and {A, B3}.
+Still open: RQ5 (what Kotlin under a SwiftUI UI costs: B1, B2 and B3 against A) waits for the sessions {A, B1, B2} and {A, B3, C} (A2.5).
 
 <!-- END RESULTS -->
 

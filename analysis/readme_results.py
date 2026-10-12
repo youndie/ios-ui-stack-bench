@@ -89,7 +89,7 @@ def sessions():
         out.append(f"| {r['rq']} — {name}, {who} | {r['verdict']} | {value}" + (f" (95 % interval {ci})" if ci else "")
                    + f"; green {r['green_if']}, red {r['red_if']} | [logs/b-17/{session}](logs/b-17/{session}/verdicts.txt) |")
     if not any(k[0].startswith("RQ5") for k in found):
-        missing.append("RQ5 (what Kotlin under a SwiftUI UI costs: B1, B2 and B3 against A) waits for the sessions {A, B1}, {A, B2} and {A, B3}.")
+        missing.append("RQ5 (what Kotlin under a SwiftUI UI costs: B1, B2 and B3 against A) waits for the sessions {A, B1, B2} and {A, B3, C} (A2.5).")
     return out, missing
 
 
