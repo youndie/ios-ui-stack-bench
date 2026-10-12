@@ -1,7 +1,7 @@
 ---
 id: B-16
 title: "Dry run on one device: the ruler, the runner's and the instruments' own cost, thermal drift"
-status: wip
+status: done
 priority: P1
 size: M
 stage: stage-2-harness
@@ -65,3 +65,26 @@ in A itself, about one a second, so RQ3's absolute bars are read beside A's own 
 
 **Next.** [B-30](B-30-runner-free-scenarios.md) builds S2′ and S4′ into the session. Then this item
 reruns the ruler on A2.2's metrics, and closes.
+
+## Iteration 2 — 2026-10-12: the ruler on A2.2's metrics, and done
+
+Recorded into [logs/b-16/iteration-2/](../../logs/b-16/README.md), read into its `report.md`.
+
+- **A against A is green on startup** (RQ2, RQ5), **on peak footprint** (RQ4 ratio, RQ5 difference).
+  **It is not green on RQ5's hitch time ratio** (A2.2: Animation Hitches on S2p). The interval of A
+  against itself spans several ms/s against a bar of +1 ms/s. **RQ5's smoothness component therefore
+  cannot reach green on this stand at the brief's run count**, so no B arm's RQ5 can be green. It can
+  only be inconclusive or red. That is known now, before the sessions, as this item exists to make
+  it. The run count is not raised to chase it (CLAUDE.md, kill criterion 4).
+- **A's own level on S2p** (the reference beside RQ3's absolute bars) sits above Apple's "good"
+  band on this device.
+- **The study's own instruments**: on against off, A's launch shift is inside the ruler. Its hitch
+  ratio on S2p is somewhat higher with them on, over 3 + 3 runs and inside the ruler's interval.
+  They are on in every measured run of every arm alike.
+- **Thermal drift**: all 60 attempts stayed nominal, and none was repeated.
+- **Kill criterion 5**: iteration 1 measured it, and A2.2 settled it in BRIEF.md. Memory and CPU are
+  read with no runner, and the runner-driven figures are cross-checks only.
+
+Every AC is met. The ruler, the overhead against the 10 % line, the instruments on and off, and the
+thermal series are under `logs/b-16/`. The metrics that failed kill criterion 5 are settled in
+BRIEF.md before P3, by A2.2.

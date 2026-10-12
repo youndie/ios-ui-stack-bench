@@ -20,3 +20,11 @@ launches with no runner, because the runner contaminates the app's own memory an
 criterion 5) and the frame logger cannot see the render server. The ruler of this iteration
 measures the metrics as they were read before A2.2. B-16's second iteration reruns it on A2.2's
 metrics.
+
+## Iteration 2 — 2026-10-12, on A2.2's metrics
+
+`iteration-2/` was recorded from commit `aa93445` (`iteration-2/header.json`) by `harness/dryrun.py
+logs/b-16/iteration-2 <udid> ruler instruments`, and is read into `iteration-2/report.md`. The ruler
+is a session of A alone with S1, S2p, S2, S3 and S4p. The instruments part was recorded on the
+screen-per-step self-scroll. Kill criterion 5's runner part was not repeated: it is iteration 1's
+`runner/` and `runner-c-kmp-cmp/`, and A2.2 settled it.

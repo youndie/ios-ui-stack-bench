@@ -1,0 +1,36 @@
+{
+ "plan": {
+  "session": "ruler",
+  "device": "older",
+  "destination": "id=00008020-000A6CC42692002E",
+  "udid": "00008020-000A6CC42692002E",
+  "apps": "build/DerivedData-device",
+  "arms": [
+   "a-native"
+  ],
+  "runs": {
+   "S1": 20,
+   "S2p": 10,
+   "S2": 10,
+   "S3": 10,
+   "S4p": 10
+  },
+  "crosscheck": false,
+  "out": "/Users/youndie/Documents/GitHub/ios-ui-stack-bench/logs/b-16/iteration-2/ruler"
+ },
+ "installed": {
+  "a-native": "2de952c6dc8691e47f7902c851a900855047ef087c8b511e5488f73c6be06a5c"
+ },
+ "stand": {
+  "xcode": "Xcode 27.0 Build version 27A266a",
+  "xctrace": "xctrace version 27.0 (27A266a)",
+  "commit": "aa934458a9792094576ffd29f9f68fb8f936094e",
+  "device": {
+   "model": "iPhone XS",
+   "hw_machine": "iPhone11,2",
+   "ios": "18.7.3",
+   "ios_build": "22H217"
+  }
+ },
+ "started": 1791787702.7371771
+}
