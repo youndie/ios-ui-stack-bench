@@ -1,0 +1,33 @@
+{
+ "plan": {
+  "session": "pilot-3",
+  "device": "older",
+  "destination": "id=00008020-000A6CC42692002E",
+  "udid": "00008020-000A6CC42692002E",
+  "apps": "build/DerivedData-device",
+  "arms": [
+   "b3-swift-export"
+  ],
+  "runs": {
+   "S1": 2,
+   "S2p": 2,
+   "S4p": 2
+  },
+  "out": "logs/b-17/pilot-3"
+ },
+ "installed": {
+  "b3-swift-export": "d565c057f6f1925b8dd6b4a47c0ced58f2b1d744e2b01093f29b52592bd8c2c5"
+ },
+ "stand": {
+  "xcode": "Xcode 27.0 Build version 27A266a",
+  "xctrace": "xctrace version 27.0 (27A266a)",
+  "commit": "6fb353bb29a56d153af8687e66c5b9be61dce6c5",
+  "device": {
+   "model": "iPhone XS",
+   "hw_machine": "iPhone11,2",
+   "ios": "18.7.3",
+   "ios_build": "22H217"
+  }
+ },
+ "started": 1791802658.032939
+}

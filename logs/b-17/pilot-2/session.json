@@ -1,0 +1,35 @@
+{
+ "plan": {
+  "session": "pilot-2",
+  "device": "older",
+  "destination": "id=00008020-000A6CC42692002E",
+  "udid": "00008020-000A6CC42692002E",
+  "apps": "build/DerivedData-device",
+  "arms": [
+   "b1-objc",
+   "b2-skie"
+  ],
+  "runs": {
+   "S1": 2,
+   "S2p": 2,
+   "S4p": 2
+  },
+  "out": "logs/b-17/pilot-2"
+ },
+ "installed": {
+  "b1-objc": "7095884d6f4cbd9e6da02c5001e5bc6c11e53196cc195c3d0f7adf52190602c8",
+  "b2-skie": "fa30321b3f1d45f00e7a6e2125cad9dc8aafc664ce25052d3f054a2fbacb55a6"
+ },
+ "stand": {
+  "xcode": "Xcode 27.0 Build version 27A266a",
+  "xctrace": "xctrace version 27.0 (27A266a)",
+  "commit": "6fb353bb29a56d153af8687e66c5b9be61dce6c5",
+  "device": {
+   "model": "iPhone XS",
+   "hw_machine": "iPhone11,2",
+   "ios": "18.7.3",
+   "ios_build": "22H217"
+  }
+ },
+ "started": 1791800803.334626
+}
