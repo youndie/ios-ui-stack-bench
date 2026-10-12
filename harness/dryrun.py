@@ -33,8 +33,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import recording  # noqa: E402
 
-BUNDLE = "io.github.youndie.iosbench.a"
-APP = "build/DerivedData-device/a-native/Build/Products/Release-iphoneos"
+# `ARM=<arm>` runs the runner part for another arm (B-16: is the runner's cost the same in every stack?).
+ARM = os.environ.get("ARM", "a-native")
+BUNDLE = "io.github.youndie.iosbench." + {"a-native": "a", "b1-objc": "b1", "b2-skie": "b2", "b3-swift-export": "b3", "c-kmp-cmp": "c"}[ARM]
+APP = f"build/DerivedData-device/{ARM}/Build/Products/Release-iphoneos"
 
 
 def sh(*cmd, check=True, **kw):
@@ -83,12 +85,12 @@ def idle_without_runner(udid, where):
 def runner(out, udid, logs):
     for i in range(1, 6):
         for mode in (("with", "without") if i % 2 else ("without", "with")):
-            where = os.path.join(out, "runner", f"{mode}-{i}")
+            where = os.path.join(out, "runner" if ARM == "a-native" else f"runner-{ARM}", f"{mode}-{i}")
             os.makedirs(where, exist_ok=True)
             print(f"runner {i}: {mode}", flush=True)
             recording.wake(udid)
             if mode == "with":
-                r = subprocess.run([os.path.join(ROOT, "harness", "run.sh"), "a-native", "IDLE"], capture_output=True, text=True,
+                r = subprocess.run([os.path.join(ROOT, "harness", "run.sh"), ARM, "IDLE"], capture_output=True, text=True,
                                    env=dict(os.environ, DESTINATION=f"id={udid}"))
                 open(os.path.join(where, "test.log"), "w").write(r.stdout + r.stderr)
                 if "testIdle]' passed" not in r.stdout:
@@ -118,7 +120,7 @@ def main():
         raise SystemExit("commit the apps, the harness and the readers first: the logs name the commit they came from")
     os.makedirs(out, exist_ok=True)
     app = glob.glob(os.path.join(ROOT, APP, "*.app"))[0]
-    for other in ("b1", "b2", "b3", "c"):
+    for other in sorted({"a", "b1", "b2", "b3", "c"} - {BUNDLE.rsplit(".", 1)[1]}):
         sh("xcrun", "devicectl", "device", "uninstall", "app", "--device", udid, f"io.github.youndie.iosbench.{other}", check=False)
     sh("xcrun", "devicectl", "device", "install", "app", "--device", udid, app)
     head = {"commit": sh("git", "-C", ROOT, "rev-parse", "HEAD").stdout.strip(),
