@@ -91,6 +91,8 @@ def runner(out, udid, logs):
                 r = subprocess.run([os.path.join(ROOT, "harness", "run.sh"), "a-native", "IDLE"], capture_output=True, text=True,
                                    env=dict(os.environ, DESTINATION=f"id={udid}"))
                 open(os.path.join(where, "test.log"), "w").write(r.stdout + r.stderr)
+                if "testIdle]' passed" not in r.stdout:
+                    raise SystemExit(f"the runner's idle test did not pass - {where}/test.log")
             else:
                 idle_without_runner(udid, where)
             time.sleep(5)
@@ -121,7 +123,8 @@ def main():
     sh("xcrun", "devicectl", "device", "install", "app", "--device", udid, app)
     head = {"commit": sh("git", "-C", ROOT, "rev-parse", "HEAD").stdout.strip(),
             "xcode": " ".join(sh("xcodebuild", "-version").stdout.split()), "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
-    json.dump(head, open(os.path.join(out, "header.json"), "w"), indent=1)
+    name = "header.json" if not os.path.exists(os.path.join(out, "header.json")) else f"header-{'-'.join(parts)}.json"
+    json.dump({**head, "parts": parts}, open(os.path.join(out, name), "w"), indent=1)
     logs = Logs(udid)
     logs.new()
     if "ruler" in parts:

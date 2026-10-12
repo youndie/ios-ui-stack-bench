@@ -26,7 +26,10 @@ DERIVED=${DERIVED_DATA:-$ROOT/build/DerivedData}/harness
 case $DESTINATION in id=*) SIGNING="-allowProvisioningUpdates"; DERIVED="$DERIVED-device" ;; *) SIGNING="" ;; esac
 
 python3 "$ROOT/harness/generate_project.py" --check >/dev/null
-if [ ! -d "$DERIVED/Build/Products" ] || [ -n "${REBUILD:-}" ]; then
+# Rebuilt when asked, when never built, or when a test source is newer than the build: a runner built
+# before testIdle existed ran no test at all and reported "TEST EXECUTE SUCCEEDED" (B-16).
+stale=$(find "$ROOT/harness/HarnessUITests" -name '*.swift' -newer "$DERIVED.build.log" 2>/dev/null | head -1)
+if [ ! -d "$DERIVED/Build/Products" ] || [ -n "${REBUILD:-}" ] || [ ! -f "$DERIVED.build.log" ] || [ -n "$stale" ]; then
     xcodebuild build-for-testing -project "$ROOT/harness/Harness.xcodeproj" -scheme HarnessUITests \
         -destination "$DESTINATION" -derivedDataPath "$DERIVED" $SIGNING >"$DERIVED.build.log" 2>&1 \
         || { echo "harness build failed - $DERIVED.build.log" >&2; tail -20 "$DERIVED.build.log" >&2; exit 1; }
@@ -43,4 +46,4 @@ esac
 TEST_RUNNER_BENCH_BUNDLE="io.github.youndie.iosbench.$bundle" TEST_RUNNER_BENCH_LAUNCH_ARGS="$*" \
     xcodebuild test-without-building $TESTS \
     -destination "$DESTINATION" -derivedDataPath "$DERIVED" -only-testing:"HarnessUITests/Scenarios/$test" 2>&1 \
-    | grep -E "Test Case|error:|failed|passed|\*\* TEST" || true
+    | grep -E "Test Case|error:|failed|passed|Executed 0 tests|\*\* TEST" || true
