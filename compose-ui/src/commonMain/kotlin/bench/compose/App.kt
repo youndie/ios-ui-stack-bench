@@ -74,13 +74,27 @@ import org.jetbrains.compose.resources.painterResource
  * resources through `painterResource`.
  */
 @Composable
-fun App(catalog: Catalog, probe: Probe, autoScrolls: Int = 0) {
+fun App(catalog: Catalog, probe: Probe, autoScrolls: Int = 0, autoNavigates: Int = 0) {
     MaterialTheme {
         Surface(Modifier.fillMaxSize()) {
             val items by catalog.visible.collectAsState()
             val navController = rememberNavController()
             // The item the detail screen shows; a route argument would be parsed back into the same id.
             var selected by remember { mutableStateOf<Item?>(null) }
+            // S4′ (A2.2): the app pushes and pops the first item's detail itself, as the SwiftUI arms do -
+            // 1 s after the list has items, then a push, a pop a second later, a second before the next.
+            if (autoNavigates > 0 && items.isNotEmpty()) {
+                LaunchedEffect(Unit) {
+                    delay(1000)
+                    repeat(autoNavigates) {
+                        selected = items.first()
+                        navController.navigate("detail")
+                        delay(1000)
+                        navController.popBackStack()
+                        delay(1000)
+                    }
+                }
+            }
             // Top and sides inside the safe area; the bottom is the list's, which scrolls under the home
             // indicator as a UIKit/SwiftUI list does (B-29).
             Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal))) {

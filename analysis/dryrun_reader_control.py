@@ -17,16 +17,16 @@ import dryrun_reader as dr  # noqa: E402
 def session(offset_odd=0.0, sd=5.0):
     rng = random.Random(7)
     rows = []
-    for scenario, n in (("S1", 20), ("S2", 10), ("S4", 10)):
+    for scenario, n in (("S1", 20), ("S2p", 10), ("S4p", 10)):
         for run in range(n):
             shift = offset_odd if run % 2 else 0.0
             rows.append({"device": "older", "session": "ruler", "arm": "a-native", "scenario": scenario, "run": str(run), "attempt": "1",
                          "counted": "1" if run else "0", "valid": "1", "decision": "count", "why": "", "thermal_worst": "nominal",
                          "trace_process_to_list_ms": str(400 + shift + rng.gauss(0, sd)) if scenario == "S1" else "",
-                         "hitch_time_ratio_ms_per_s": str(1.0 + rng.gauss(0, 0.05)) if scenario == "S2" else "",
-                         "peak_footprint_bytes": str(40e6 + rng.gauss(0, 1e5)) if scenario == "S2" else "",
-                         "growth_cycles_5_to_50_bytes": str(1e5) if scenario == "S4" else "",
-                         "longest_hitch_ms": "20" if scenario == "S2" else ""})
+                         "trace_hitch_time_ratio_ms_per_s": str(1.0 + rng.gauss(0, 0.05)) if scenario == "S2p" else "",
+                         "peak_footprint_bytes": str(40e6 + rng.gauss(0, 1e5)) if scenario == "S2p" else "",
+                         "growth_cycles_5_to_50_bytes": str(1e5) if scenario == "S4p" else "",
+                         "trace_longest_hitch_ms": "20" if scenario == "S2p" else ""})
     return rows
 
 

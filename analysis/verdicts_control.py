@@ -31,7 +31,7 @@ def spread(center, sd, n=19, seed=1):
 
 def fill(rows):
     """Every row carries every metric column the engine reads; missing ones are empty."""
-    cols = {v.STARTUP, "hitch_time_ratio_ms_per_s", "longest_hitch_ms", "peak_footprint_bytes", "growth_cycles_5_to_50_bytes"}
+    cols = {v.STARTUP, v.HITCH_RATIO, v.LONGEST_HITCH, "peak_footprint_bytes", "growth_cycles_5_to_50_bytes"}
     for r in rows:
         for c in cols:
             r.setdefault(c, "")
@@ -85,8 +85,8 @@ def _():
 def rq3_rows(ratio_older, ratio_newer, longest=60):
     rows = []
     for device, ratio in (("older", ratio_older), ("newer", ratio_newer)):
-        rows += runs("c-kmp-cmp", device, "S2", spread(ratio, 0.2), "hitch_time_ratio_ms_per_s")
-        rows += runs("c-kmp-cmp", device, "S2", [longest] * 9, "longest_hitch_ms")
+        rows += runs("c-kmp-cmp", device, v.SMOOTH_SCENARIO, spread(ratio, 0.2), v.HITCH_RATIO)
+        rows += runs("c-kmp-cmp", device, v.SMOOTH_SCENARIO, [longest] * 9, v.LONGEST_HITCH)
     return fill(rows)
 
 
@@ -107,7 +107,7 @@ def _():
 
 @case("RQ3: C at 7 ms/s -> INCONCLUSIVE, naming the metric")
 def _():
-    return v.combine(v.rq3(rq3_rows(7, 2))).startswith("INCONCLUSIVE - missed: hitch_time_ratio_ms_per_s on older")
+    return v.combine(v.rq3(rq3_rows(7, 2))).startswith(f"INCONCLUSIVE - missed: {v.HITCH_RATIO} on older")
 
 
 @case("RQ3: one hitch of 260 ms in any run -> RED")
@@ -128,9 +128,9 @@ def _():
 def rq4_rows(ratio, growth_mb):
     rows = []
     for device in v.DEVICES:
-        rows += runs("a-native", device, "S2", spread(100 * MB, MB), "peak_footprint_bytes")
-        rows += runs("c-kmp-cmp", device, "S2", spread(ratio * 100 * MB, MB, seed=2), "peak_footprint_bytes")
-        rows += runs("c-kmp-cmp", device, "S4", spread(growth_mb * MB, 0.2 * MB, seed=3), "growth_cycles_5_to_50_bytes")
+        rows += runs("a-native", device, v.MEMORY_SCENARIO, spread(100 * MB, MB), "peak_footprint_bytes")
+        rows += runs("c-kmp-cmp", device, v.MEMORY_SCENARIO, spread(ratio * 100 * MB, MB, seed=2), "peak_footprint_bytes")
+        rows += runs("c-kmp-cmp", device, v.GROWTH_SCENARIO, spread(growth_mb * MB, 0.2 * MB, seed=3), "growth_cycles_5_to_50_bytes")
     return fill(rows)
 
 
@@ -145,9 +145,9 @@ def _():
     rows = []
     for device in v.DEVICES:
         for arm, seed in (("a-native", 1), ("b1-objc", 2)):
-            rows += runs(arm, device, "S2", spread(3, 0.1, seed=seed), "hitch_time_ratio_ms_per_s")
+            rows += runs(arm, device, v.SMOOTH_SCENARIO, spread(3, 0.1, seed=seed), v.HITCH_RATIO)
             rows += runs(arm, device, "S1", spread(400, 5, seed=seed), v.STARTUP)
-            rows += runs(arm, device, "S2", spread(100 * MB, 0.5 * MB, seed=seed), "peak_footprint_bytes")
+            rows += runs(arm, device, v.MEMORY_SCENARIO, spread(100 * MB, 0.5 * MB, seed=seed), "peak_footprint_bytes")
     return v.combine(v.rq5(fill(rows), "b1-objc")) == "GREEN"
 
 

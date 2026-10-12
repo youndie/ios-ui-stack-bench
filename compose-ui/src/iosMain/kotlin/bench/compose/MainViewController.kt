@@ -6,10 +6,11 @@ import platform.UIKit.UIViewController
 
 /**
  * The one full-screen controller arm C's SwiftUI host shows. [json] is the bundled fixture, read by the
- * host; [autoScrolls] is the host's `-benchAutoScroll`, 0 in every measured run (A1.7).
+ * host; [autoScrolls] and [autoNavigates] are the host's `-benchAutoScroll` and `-benchAutoNavigate`
+ * (A1.7, A2.2), 0 unless a self-driven scenario asks for them.
  */
 @Suppress("FunctionName")
-fun MainViewController(json: String, probe: Probe, autoScrolls: Int): UIViewController {
+fun MainViewController(json: String, probe: Probe, autoScrolls: Int, autoNavigates: Int): UIViewController {
     val catalog = Catalog().apply { load(json) }
-    return ComposeUIViewController { App(catalog, probe, autoScrolls) }
+    return ComposeUIViewController { App(catalog, probe, autoScrolls, autoNavigates) }
 }

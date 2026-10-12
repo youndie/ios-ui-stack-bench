@@ -12,7 +12,7 @@ A plan names the device, the arms, the runs per scenario and where the output go
       "udid": "<udid>",
       "apps": "build/DerivedData",             <apps>/<arm>/Build/Products/<config>/<Product>.app
       "arms": ["a-native", "b1-objc", "c-kmp-cmp"],
-      "runs": {"S1": 20, "S2": 10, "S3": 10, "S4": 10},
+      "runs": {"S1": 20, "S2p": 10, "S2": 10, "S3": 10, "S4p": 10},
       "out": "logs/b-17/2026-10-20-older-1"    refused under logs/ for a simulator
     }
 
@@ -60,7 +60,14 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import recording  # noqa: E402
 
 BUNDLES = {"a-native": "a", "b1-objc": "b1", "b2-skie": "b2", "b3-swift-export": "b3", "c-kmp-cmp": "c"}
-SCENARIOS = ("S1", "S2", "S3", "S4")
+SCENARIOS = ("S1", "S2p", "S2", "S3", "S4p", "S4")
+# The scenarios a device records with no runner, launched by `xctrace record --launch` (A1.7, A2.2):
+# template, the app's arguments, seconds to record, and the reader of the trace's tables.
+TRACED = {
+    "S1": ("App Launch", ["-benchScenario", "S1"], 10, xctrace_reader.launch),
+    "S2p": ("Animation Hitches", ["-benchScenario", "S2p", "-benchAutoScroll", "40"], 70, xctrace_reader.hitch_summary),
+    "S4p": ("Activity Monitor", ["-benchScenario", "S4p", "-benchAutoNavigate", "50"], 110, xctrace_reader.activity),
+}
 MAX_ATTEMPTS = 3
 
 
@@ -154,12 +161,24 @@ class Target:
         return fresh
 
 
-def run_s1_traced(target, arm, where, name):
-    """S1 on a device: wait 10 s, then App Launch with Points of Interest launches the app (A1.7)."""
+def run_traced(target, arm, scenario, where, name):
+    """S1, S2p or S4p on a device: wait 10 s (S1's "terminate, wait 10 s"), then xctrace launches the app
+    with the scenario's arguments and records it; xctrace ends the app when it stops."""
     time.sleep(10)
+    template, args, seconds, _ = TRACED[scenario]
     bundle = f"io.github.youndie.iosbench.{BUNDLES[arm]}"
-    ok = recording.record(target.udid, bundle, "App Launch", ["-benchScenario", "S1"], where, 10, name)
+    ok = recording.record(target.udid, bundle, template, args, where, seconds, name)
     return "passed" if ok else "no result"
+
+
+def run_self_driven_simulator(target, arm, scenario):
+    """S2p or S4p on a simulator, for development: launched by simctl, left to finish, terminated."""
+    template, args, seconds, _ = TRACED[scenario]
+    bundle = f"io.github.youndie.iosbench.{BUNDLES[arm]}"
+    sh("xcrun", "simctl", "launch", "--terminate-running-process", target.udid, bundle, *args)
+    time.sleep(seconds)
+    sh("xcrun", "simctl", "terminate", target.udid, bundle, check=False)
+    return "passed"
 
 
 def crosscheck(target, arm, out):
@@ -226,9 +245,11 @@ def main():
                 for attempt in range(1, MAX_ATTEMPTS + 1):
                     where = os.path.join(out, scenario, arm, f"run-{run}-attempt-{attempt}")
                     os.makedirs(where, exist_ok=True)
-                    traced = scenario == "S1" and target.kind == "device"
+                    traced = scenario in TRACED and target.kind == "device"
                     if traced:
-                        result = run_s1_traced(target, arm, where, f"{plan['session']}_{arm}_S1_{run}_{attempt}")
+                        result = run_traced(target, arm, scenario, where, f"{plan['session']}_{arm}_{scenario}_{run}_{attempt}")
+                    elif scenario in ("S2p", "S4p"):
+                        result = run_self_driven_simulator(target, arm, scenario)
                     else:
                         result = run_scenario(plan, arm, scenario, where)
                     bundle = f"io.github.youndie.iosbench.{BUNDLES[arm]}"
@@ -242,9 +263,10 @@ def main():
                             lines = inapp_reader.load(os.path.join(where, "app.ndjson"))
                             summary = inapp_reader.summarise(lines, scenario)
                     if traced:
-                        summary = {**summary, **xctrace_reader.launch(where)}
-                        if summary["trace_process_to_list_ms"] == "" and summary.get("valid") == 1:
-                            summary = {**summary, "valid": 0, "reason": "no listPopulated in the App Launch trace"}
+                        trace = TRACED[scenario][3](where)
+                        summary = {**summary, **trace}
+                        if summary.get("valid") == 1 and any(v == "" for v in trace.values()):
+                            summary = {**summary, "valid": 0, "reason": f"the {TRACED[scenario][0]} trace lacks {[k for k, v in trace.items() if v == '']}"}
                     action, why = decide(summary, target.kind)
                     if result != "passed" and action == "count":
                         action, why = "repeat", f"UI test {result}"
@@ -262,7 +284,7 @@ def main():
                         break
     write(out, rows)
     print(f"session {plan['session']}: {len(rows)} attempts, runs.csv in {out}")
-    if target.kind == "device" and plan.get("crosscheck", True):
+    if target.kind == "device" and plan.get("crosscheck", False):
         checks = [r for arm in arms for r in crosscheck(target, arm, out)]
         write(out, checks, "crosscheck.csv")
     return 0
