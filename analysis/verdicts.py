@@ -39,6 +39,10 @@ B_ARMS = ("b1-objc", "b2-skie", "b3-swift-export")
 DEVICES = ("older",)
 # A1.7: startup is read from App Launch with Points of Interest (analysis/xctrace_reader.py).
 STARTUP = "trace_process_to_list_ms"
+# A2.2: smoothness is Animation Hitches on S2p, the self-scrolling launch with no runner; memory is the
+# app's own footprint on S2p, and its growth on S4p, the self-navigating launch.
+SMOOTH_SCENARIO, HITCH_RATIO, LONGEST_HITCH = "S2p", "trace_hitch_time_ratio_ms_per_s", "trace_longest_hitch_ms"
+MEMORY_SCENARIO, GROWTH_SCENARIO = "S2p", "S4p"
 
 
 # ---------------------------------------------------------------- statistics
@@ -166,39 +170,39 @@ def rq2(rows):
                     lambda v: v <= 100, lambda v: v > 250, "<= +100 ms", "> +250 ms")]
 
 
-def rq3(rows, metric="hitch_time_ratio_ms_per_s"):
+def rq3(rows, metric=HITCH_RATIO):
     # Proposal (I2): an absolute threshold is held by the bootstrap interval of C's median; the
     # "no single hitch" conditions are a maximum over C's counted runs, with no interval.
     out = []
     for device in DEVICES:
-        out.append(absolute("RQ3", rows, device, "S2", metric, "c-kmp-cmp",
+        out.append(absolute("RQ3", rows, device, SMOOTH_SCENARIO, metric, "c-kmp-cmp",
                             lambda v: v < 5, lambda v: v > 10, "< 5 ms/s", "> 10 ms/s"))
-        out.append(maximum("RQ3", rows, device, "S2", "longest_hitch_ms", "c-kmp-cmp",
+        out.append(maximum("RQ3", rows, device, SMOOTH_SCENARIO, LONGEST_HITCH, "c-kmp-cmp",
                            lambda v: v < 100, lambda v: v >= 250, "< 100 ms", ">= 250 ms"))
     return out
 
 
 def rq4(rows):
-    # Read on DEVICES - the XS only since A1.7 (I3 had both). Peak footprint from S2, as
-    # the brief says; growth from S4, after cycle 5 to after cycle 50 (I7).
+    # Read on DEVICES - the XS only since A1.7 (I3 had both). Peak footprint from the fling scenario
+    # as the brief says - S2p since A2.2; growth after cycle 5 to after cycle 50 (I7), on S4p.
     out = []
     for device in DEVICES:
-        out.append(compare("RQ4", rows, device, "S2", "peak_footprint_bytes", "c-kmp-cmp", "median ratio",
+        out.append(compare("RQ4", rows, device, MEMORY_SCENARIO, "peak_footprint_bytes", "c-kmp-cmp", "median ratio",
                            lambda v: v <= 2, lambda v: v > 3, "<= 2x", "> 3x"))
-        out.append(absolute("RQ4", rows, device, "S4", "growth_cycles_5_to_50_bytes", "c-kmp-cmp",
+        out.append(absolute("RQ4", rows, device, GROWTH_SCENARIO, "growth_cycles_5_to_50_bytes", "c-kmp-cmp",
                             lambda v: v < 5 * MB, lambda v: v >= 20 * MB, "< 5 MB", ">= 20 MB"))
     return out
 
 
-def rq5(rows, b_arm, metric="hitch_time_ratio_ms_per_s"):
+def rq5(rows, b_arm, metric=HITCH_RATIO):
     # Read on DEVICES - the XS only since A1.7 (I3 had both).
     out = []
     for device in DEVICES:
-        out.append(compare("RQ5", rows, device, "S2", metric, b_arm, "median difference",
+        out.append(compare("RQ5", rows, device, SMOOTH_SCENARIO, metric, b_arm, "median difference",
                            lambda v: v <= 1, lambda v: v > 2, "<= +1 ms/s", "> +2 ms/s"))
         out.append(compare("RQ5", rows, device, "S1", STARTUP, b_arm, "median difference",
                            lambda v: v <= 50, lambda v: v > 150, "<= +50 ms", "> +150 ms"))
-        out.append(compare("RQ5", rows, device, "S2", "peak_footprint_bytes", b_arm, "median difference",
+        out.append(compare("RQ5", rows, device, MEMORY_SCENARIO, "peak_footprint_bytes", b_arm, "median difference",
                            lambda v: v <= 20 * MB, lambda v: v > 50 * MB, "<= +20 MB", "> +50 MB"))
     return out
 

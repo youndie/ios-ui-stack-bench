@@ -81,6 +81,22 @@ def _():
     return close(s["cpu_total_ms"], 100.0 + 10 * 48)
 
 
+@case("S2p is valid with 40 autoScroll steps and invalid with 39 (A2.2)")
+def _():
+    ok = log(scenario="S2p", pairs=0, extra_marks=[("autoScroll", 101 + i) for i in range(40)])
+    short = log(scenario="S2p", pairs=0, extra_marks=[("autoScroll", 101 + i) for i in range(39)])
+    return reader.summarise(ok, "S2p")["valid"] == 1 and reader.summarise(short, "S2p")["reason"] == "39 autoScroll steps, not 40"
+
+
+@case("S4p is read as S4: 50 alternating detail markers, and its growth")
+def _():
+    marks = [(n, 110 + 2 * i + d) for i in range(50) for d, n in ((0, "detailAppeared"), (1, "detailDisappeared"))]
+    lines = log(scenario="S4p", pairs=0, extra_marks=marks)
+    lines += [{"k": "footprint", "t": 110 + i * 0.25, "bytes": 1_000_000 + i * 1000} for i in range(500)]
+    s = reader.summarise(lines, "S4p")
+    return s["valid"] == 1 and s["growth_cycles_5_to_50_bytes"] != ""
+
+
 @case("a writeError line makes the run invalid: the log lost lines it cannot show")
 def _():
     lines = log() + [{"k": "writeError", "t": 120.0, "failed": 3, "error": "EIO"}]

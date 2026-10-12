@@ -65,7 +65,7 @@ class Logs:
 
 def ruler(out, udid):
     plan = {"session": "ruler", "device": "older", "destination": f"id={udid}", "udid": udid, "apps": "build/DerivedData-device",
-            "arms": ["a-native"], "runs": {"S1": 20, "S2": 10, "S3": 10, "S4": 10}, "crosscheck": False,
+            "arms": ["a-native"], "runs": {"S1": 20, "S2p": 10, "S2": 10, "S3": 10, "S4p": 10}, "crosscheck": False,
             "out": os.path.join(out, "ruler")}
     path = os.path.join(out, "ruler-plan.json")
     json.dump(plan, open(path, "w"), indent=1)

@@ -14,7 +14,8 @@ or repaired (B-13, B-14):
                  `scenario:<name>` once
     S2           40 scroll transitions to `begin` and 40 to `end`, strictly alternating, begin first
     S3           24 `query` markers (12 keys typed, 12 deleted)
-    S4           50 `detailAppeared` and 50 `detailDisappeared`, alternating, appeared first
+    S4, S4p      50 `detailAppeared` and 50 `detailDisappeared`, alternating, appeared first
+    S2p          40 `autoScroll` steps (A2.2's self-scroll; its smoothness is Animation Hitches')
 
 **The logger's hitch accounting** - defined here before any number exists (research §2, I4), and
 secondary to Instruments' Animation Hitches, which is the brief's instrument:
@@ -91,7 +92,9 @@ def validity(lines, scenario):
             return f"scroll transitions {phases.count('begin')} begin / {phases.count('end')} end, not 40 alternating pairs"
     if scenario == "S3" and names.count("query") != 24:
         return f"{names.count('query')} query markers, not 24"
-    if scenario == "S4":
+    if scenario == "S2p" and names.count("autoScroll") != 40:
+        return f"{names.count('autoScroll')} autoScroll steps, not 40"
+    if scenario in ("S4", "S4p"):
         detail = [n for n in names if n in ("detailAppeared", "detailDisappeared")]
         if detail != ["detailAppeared", "detailDisappeared"] * 50:
             return f"{detail.count('detailAppeared')} detail appearances / {detail.count('detailDisappeared')} disappearances, not 50 alternating"
@@ -133,7 +136,7 @@ def summarise(lines, scenario):
     footprint = [l["bytes"] for l in lines if l["k"] == "footprint"]
     over = [r for r in in_window if r["interval_ms"] > 1.5 * r["expected_ms"] > 0]
     start = header.get("processStart")
-    growth = growth_s4(lines) if scenario == "S4" else ("", "", "")
+    growth = growth_s4(lines) if scenario in ("S4", "S4p") else ("", "", "")
     thermal = [l["state"] for l in sorted((l for l in lines if l["k"] == "thermal"), key=lambda l: l["t"])]
     return {
         "bundle": header.get("bundle", ""),

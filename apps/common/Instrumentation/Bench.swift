@@ -318,6 +318,8 @@ final class Bench {
     /// pattern is the same in every arm: 1 s after launch, every 1.5 s, a screen further down and then back up
 /// (`autoScrollTarget`).
     static let autoScrolls: Int = argument("benchAutoScroll").flatMap(Int.init) ?? 0
+    /// `-benchAutoNavigate <n>`: S4′'s push/pop cycles, driven by the app itself (A2.2); 0 otherwise.
+    static let autoNavigates: Int = argument("benchAutoNavigate").flatMap(Int.init) ?? 0
 
     /// Step `i` of `n` scrolls about a screen further: to item 8 (i + 1) for the first half, then back
     /// the same way to item 0 - the self-scrolling stand-in for S2's 20 flings down and 20 up (B-16,

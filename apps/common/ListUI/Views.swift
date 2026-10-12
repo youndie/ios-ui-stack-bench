@@ -6,9 +6,12 @@ import UIKit
 /// bundled PNGs through `UIImage(named:)`, which caches them by name as the system intends.
 struct RootView: View {
     @Bindable var model: ListModel
+    /// The navigation path, bound so S4′ can push and pop by itself (A2.2); a `NavigationLink(value:)`
+    /// appends to it exactly as to an unbound stack.
+    @State private var path: [RowItem] = []
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             // The self-scrolling list exists only under `-benchAutoScroll` (A1.7); every measured run
             // takes the plain branch.
             if Bench.autoScrolls > 0 {
@@ -16,6 +19,20 @@ struct RootView: View {
             } else {
                 list
             }
+        }
+        .task { if Bench.autoNavigates > 0 { await autoNavigate() } }
+    }
+
+    /// S4′ (A2.2): 1 s after launch, push the first item's detail, pop it a second later, a second
+    /// before the next push - `-benchAutoNavigate <n>` times. The detail screen marks itself as in S4.
+    @MainActor private func autoNavigate() async {
+        try? await Task.sleep(for: .seconds(1))
+        guard let first = model.items.first else { return }
+        for _ in 0..<Bench.autoNavigates {
+            path.append(first)
+            try? await Task.sleep(for: .seconds(1))
+            path.removeLast()
+            try? await Task.sleep(for: .seconds(1))
         }
     }
 

@@ -72,8 +72,8 @@ def ruler(runs):
                         "ci_low": r["ci_low"], "ci_high": r["ci_high"], "runs": r["runs"], "verdict": r["verdict"],
                         "green_if": r["green_if"]})
     # RQ3's bars are absolute: A's own median and interval, beside them.
-    for metric in ("hitch_time_ratio_ms_per_s",):
-        both = verdicts.counted([{**r, "arm": "a"} for r in rows], "a", "older", "S2", metric)
+    for metric in (verdicts.HITCH_RATIO,):
+        both = verdicts.counted([{**r, "arm": "a"} for r in rows], "a", "older", verdicts.SMOOTH_SCENARIO, metric)
         if len(both) >= 2:
             lo, hi = verdicts.bootstrap(statistics.median, [both])
             out.append({"question": "RQ3 (A's own level)", "metric": metric, "estimator": "median", "value": statistics.median(both),
@@ -135,7 +135,8 @@ def thermal(runs):
 
 
 def verdicts_order(r):
-    return (["S1", "S2", "S3", "S4"].index(r["scenario"]), int(r["run"]), int(r["attempt"]))
+    order = ["S1", "S2p", "S2", "S3", "S4p", "S4"]
+    return (order.index(r["scenario"]) if r["scenario"] in order else len(order), int(r["run"]), int(r["attempt"]))
 
 
 def fmt(x, unit=""):
