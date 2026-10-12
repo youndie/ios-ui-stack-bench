@@ -1,0 +1,19 @@
+{
+ "session": "ruler",
+ "device": "older",
+ "destination": "id=00008020-000A6CC42692002E",
+ "udid": "00008020-000A6CC42692002E",
+ "apps": "build/DerivedData-device",
+ "arms": [
+  "a-native"
+ ],
+ "runs": {
+  "S1": 20,
+  "S2p": 10,
+  "S2": 10,
+  "S3": 10,
+  "S4p": 10
+ },
+ "crosscheck": false,
+ "out": "/Users/youndie/Documents/GitHub/ios-ui-stack-bench/logs/b-16/iteration-2/ruler"
+}

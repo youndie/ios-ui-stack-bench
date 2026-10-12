@@ -1,0 +1,4 @@
+{"battery":1,"bundle":"io.github.youndie.iosbench.a","k":"header","lowPower":false,"machine":"iPhone11,2","maxFps":60,"os":"18.7.3","processStart":130397.21760101587,"requestedFps":60,"stallMs":-1,"t":130397.77618308336,"thermal":"nominal"}
+{"k":"mark","name":"launch","t":130397.78938404169}
+{"k":"mark","name":"firstFrame","t":130398.02442795836}
+{"k":"mark","name":"listPopulated","t":130398.04059833336}

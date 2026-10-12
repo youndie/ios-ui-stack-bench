@@ -1,0 +1,10 @@
+$ xctrace record --template Animation Hitches --device 00008020-000A6CC42692002E --time-limit 40s --output /Users/youndie/Documents/GitHub/ios-ui-stack-bench/build/traces/dryrun_hitches_off_1-1.trace --instrument Points of Interest --launch -- io.github.youndie.iosbench.a -benchAutoScroll 20 -benchInstrumentsOff 1
+Starting recording with the Animation Hitches template and Points of Interest Instrument. Launching process: io.github.youndie.iosbench.a. Time limit: 40.0 s
+Ctrl-C to stop the recording
+Reached specified time limit, ending recording...
+Recording completed. Saving output file...
+Output file saved as: dryrun_hitches_off_1-1.trace
+Timeline modification failed -- dylibs overlap by 0x138000:
+    0x1006a8000-0x1006bc000 [0x14000] (3146370031361-9223372036854775807) /private/preboot/Cryptexes/OS/usr/lib/libobjc-trampolines.dylib
+    0x1005ec000-0x100724000 [0x138000] (0-9223372036854775807) /usr/lib/dyld
+exit 0
