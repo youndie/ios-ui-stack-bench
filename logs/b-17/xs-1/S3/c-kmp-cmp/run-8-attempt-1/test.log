@@ -1,0 +1,6 @@
+Test Case '-[HarnessUITests.Scenarios testS3Filter]' started.
+Test Case '-[HarnessUITests.Scenarios testS3Filter]' passed (34.348 seconds).
+Test Suite 'Scenarios' passed at 2026-10-12 17:16:52.535.
+Test Suite 'HarnessUITests.xctest' passed at 2026-10-12 17:16:52.536.
+Test Suite 'Selected tests' passed at 2026-10-12 17:16:52.537.
+** TEST EXECUTE SUCCEEDED **

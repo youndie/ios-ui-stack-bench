@@ -1,0 +1,31 @@
+bootstrap: 10000 resamples, seed 20261010, percentile 95 % interval
+read on the iPhone XS only; the newer device was not measured (BRIEF.md A1.7)
+RQ1 b1-objc: GREEN
+    compressed_bytes [-] b1-objc - a-native = 727882.0 CI (, ) runs 1/1 same session n/a -> green
+    compressed_bytes [-] c-kmp-cmp - a-native = 10219857.0 CI (, ) runs 1/1 same session n/a -> green
+RQ1 b2-skie: GREEN
+    compressed_bytes [-] b2-skie - a-native = 790320.0 CI (, ) runs 1/1 same session n/a -> green
+    compressed_bytes [-] c-kmp-cmp - a-native = 10219857.0 CI (, ) runs 1/1 same session n/a -> green
+RQ1 b3-swift-export: GREEN
+    compressed_bytes [-] b3-swift-export - a-native = 760008.0 CI (, ) runs 1/1 same session n/a -> green
+    compressed_bytes [-] c-kmp-cmp - a-native = 10219857.0 CI (, ) runs 1/1 same session n/a -> green
+RQ2: GREEN
+    trace_process_to_list_ms [older] median difference = 55.68070799999998 CI (34.41466700000001, 74.273458) runs 19/19 same session yes -> green
+RQ3: RED
+    trace_hitch_time_ratio_ms_per_s [older] median = 20.23368444923645 CI (17.524879186564814, 20.854022362527083) runs 9 same session n/a -> red
+    trace_longest_hitch_ms [older] max over runs = 33.476792 CI (, ) runs 9 same session n/a -> green
+RQ4: INCONCLUSIVE - missed: peak_footprint_bytes on older (inconclusive)
+    peak_footprint_bytes [older] median ratio = 2.5055887061501707 CI (2.4643736039996766, 2.593147358624953) runs 9/9 same session yes -> inconclusive
+    growth_cycles_5_to_50_bytes [older] median = -1310720.0 CI (-2293760.0, 688128.0) runs 9 same session n/a -> green
+RQ5 b1-objc: NOT MEASURED
+    trace_hitch_time_ratio_ms_per_s [older] median difference =  CI (, ) runs 9/0 same session  -> not measured
+    trace_process_to_list_ms [older] median difference =  CI (, ) runs 19/0 same session  -> not measured
+    peak_footprint_bytes [older] median difference =  CI (, ) runs 9/0 same session  -> not measured
+RQ5 b2-skie: NOT MEASURED
+    trace_hitch_time_ratio_ms_per_s [older] median difference =  CI (, ) runs 9/0 same session  -> not measured
+    trace_process_to_list_ms [older] median difference =  CI (, ) runs 19/0 same session  -> not measured
+    peak_footprint_bytes [older] median difference =  CI (, ) runs 9/0 same session  -> not measured
+RQ5 b3-swift-export: NOT MEASURED
+    trace_hitch_time_ratio_ms_per_s [older] median difference =  CI (, ) runs 9/0 same session  -> not measured
+    trace_process_to_list_ms [older] median difference =  CI (, ) runs 19/0 same session  -> not measured
+    peak_footprint_bytes [older] median difference =  CI (, ) runs 9/0 same session  -> not measured
