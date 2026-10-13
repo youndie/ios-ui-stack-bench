@@ -2,13 +2,13 @@
 
 One iOS app built five times — native SwiftUI, Kotlin Multiplatform with SwiftUI views over three
 different Swift bridges, and Kotlin Multiplatform with Compose Multiplatform — and measured on
-physical iPhones for size, startup, scroll smoothness and memory. The methodology and the raw data sit next to every number.
+a physical iPhone (an iPhone XS) for size, startup, scroll smoothness and memory. The methodology and the raw data sit next to every number.
 
-**Status: measuring on the iPhone XS.** The questions, their thresholds and the kill criteria were
-fixed before any code and are held byte for byte by `make check`. The window for amending them
-closed with the first measurement, on 2026-10-11. The changes made after it are marked late in
-[BRIEF.md](BRIEF.md). The five arms are built, the instruments passed their gate, and the first of
-three sessions ({A, C}) is done; {A, B1, B2} and {A, B3, C} follow (A2.5). The results below are verdicts so far, not the write-up.
+**Status: measured on the iPhone XS; the write-up is next.** The questions, their thresholds and the
+kill criteria were fixed before any code and are held byte for byte by `make check`. The window for
+amending them closed with the first measurement, on 2026-10-11. The changes of method made after it
+are marked late in [BRIEF.md](BRIEF.md), and none moves a threshold. All three sessions are recorded:
+{A, C}, then {A, B1, B2} and {A, B3, C}. The newer iPhone was set aside by the owner.
 
 | Variant | Logic | UI |
 |---|---|---|

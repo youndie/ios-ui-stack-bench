@@ -71,6 +71,14 @@ figures cannot be read as a difference between devices or methods alone.
 | The `xctrace` templates the brief names exist in this Xcode: **App Launch, Animation Hitches, Allocations, CPU Profiler**; so do the instruments **Hitches, VM Tracker, os_signpost, Display** | `xcrun xctrace list templates`, `xcrun xctrace list instruments` |
 | Free disk on the Mac: 47 GiB | `df -h /` |
 
+*Since then.*
+- The released Xcode 27.0 (27A266a) is installed and pinned.
+- Both phones are pinned in BRIEF.md: the XS on iOS 18.7.3, the 17 Pro on iOS 26.6.2. The study
+  reads the XS only (A1.7).
+- Of the templates above, Allocations exports none of its data on the device. Memory's Instruments
+  figure is Activity Monitor's (A1.7).
+- The disk ran out once, filled by `xctrace`'s leftovers (§4, risk 6).
+
 **Consequence 1 — nothing may be measured with the installed Xcode.** The brief pins "the latest
 stable Xcode"; a beta is neither stable nor what anybody reproducing the study will have. Xcode
 27.0 (27A266a) is installed before [B-04](../backlog/B-04-free-provisioning-probe.md), and its build
@@ -439,10 +447,19 @@ empty apps before any study code, logs the refusal text and the counted bundle i
 window is open. Bundle ids are fixed in B-04 and never change, because App IDs are also capped
 (10 per 7 days).
 
+*Outcome (2026-10-11 to 13).* The cap is three, and the runner takes one (B-04). Sessions were pairs
+until A2.2 moved every verdict-deciding scenario off the runner. After that they were triples with
+A in each: {A, C}, {A, B1, B2}, {A, B3, C} (A2.5). The cross-session figures for A are in
+`logs/b-17/`.
+
 **Risk 2. Animation Hitches does not see C's frames the way it sees A's.** C presents through a
 `CATransaction` since CMP 1.11 (§1.4), so the hypothesis is that it does. Mitigation: the injected
 50 ms stall in every arm, and a 0 ms stall through the same path that must *not* register
 ([B-06](../backlog/B-06-rq0-the-gate.md)); the logger-derived hitch ratio defined beforehand (I4).
+
+*Outcome.* Animation Hitches sees C's stall as it sees A's (H1 confirmed on the XS, §1.4,
+[GATE.md](../../GATE.md)). The logger turned out to be the weaker instrument: it sees main-thread
+stalls only, not render-server hitches (B-16, A2.2).
 
 **Risk 3. The instruments are part of the subject.** A `CADisplayLink` logger can raise the
 display's rate by asking for it; a 250 ms sampler and signposts cost something; in C a second
@@ -450,24 +467,46 @@ display link runs beside CMP's. Mitigation: A with the instruments on and off, a
 in [B-16](../backlog/B-16-dry-run-and-the-ruler.md); the logger's `preferredFrameRateRange` is
 recorded in every log header.
 
+*Outcome.* The instruments moved A's launch by less than the ruler resolves (B-16). A larger risk
+came from elsewhere: **the UI-test runner** raised the app's own CPU time and memory, by different
+amounts per stack (kill criterion 5). Memory, CPU and smoothness are therefore measured without it
+(A2.2).
+
 **Risk 4. The same fling moves different amounts of content.** `UIScrollView` and `LazyColumn`
 apply different deceleration, so one velocity renders different numbers of rows. Hitch time ratio is
 per second and survives it; the work done does not. Mitigation: distance travelled and first/last
 visible index recorded per fling ([B-13](../backlog/B-13-ui-test-scenarios.md)) and printed beside
 RQ3.
 
+*Outcome.* The verdict-deciding smoothness runs use the app's own scroll (S2p, A2.2): the same
+40 steps of about a screen in every arm, with Animation Hitches recording. Real flings remain as
+the logger's cross-check on S2.
+
 **Risk 5. Profiles expire after 7 days.** A session straddling an expiry reinstalls mid-session.
 Mitigation: the brief's own — reinstall everything at the start of every session — plus the
 profile's expiry printed in the session header, and a session refused to start within a day of it.
+
+*Outcome.* Every session ran inside one profile's life (issued 2026-10-11, valid to 2026-10-18).
+Another way to lose the apps turned up instead. Uninstalling every app of the Personal Team drops
+the developer trust, and the phone then refuses new installs until the owner trusts it again
+(B-17). The sessions now always leave one app installed.
 
 **Risk 6. The Mac runs out of disk.** 47 GiB free must hold the released Xcode, the Kotlin/Native
 toolchain, three apps' builds and the `.trace` bundles. Mitigation: a bundle is deleted only after
 its CSVs are exported and its `sha256` written into `logs/`; the session command checks free space
 before it starts.
 
+*Outcome.* The disk did fill. `xctrace` leaves raw `instruments*.ktrace` files of 1–2.5 GB each in
+`$TMPDIR` and never removes them; tens of GB built up and killed a gate run. `harness/recording.py`
+now deletes them after every recording, and deletes the trace bundle once it is exported and hashed
+(B-06).
+
 **Risk 7. Thermal drift.** The brief's rotation, `thermalState` logging and discard rule stand;
 [B-16](../backlog/B-16-dry-run-and-the-ruler.md) shows A's time-ordered series so that the drift the
 rotation is meant to cancel is seen, not assumed.
+
+*Outcome.* Every attempt of B-16's ruler and of the three sessions stayed `nominal`; no run was
+repeated for heat. The phone was on charge throughout (A1.5).
 
 **Risk 8. Swift export is Alpha, and B3 may not build the spec.** Its documentation expects breaking
 changes and limits what it exports (§1.8); a `StateFlow` reaching Swift as something the adapter
@@ -476,18 +515,28 @@ hello-world is part of the gate ([B-05](../backlog/B-05-hello-world-variants.md)
 that cannot carry the spec is known before P1; if it fails, B3 is reported "not measured" with the
 failure verbatim — a blocker, which is a weaker claim than a measured result — and B1, B2 and C go on.
 
+*Outcome.* B3 builds and is measured. Kotlin 2.4.20's Swift export needed workaround D8 for a
+redeclaration (KT-87791). In S1, B2 (SKIE) and B3 (Swift export) draw their first frame earlier
+than A and B1, and their list later after it. They reach a populated list at about A's time, which
+is what RQ5 reads (`trace_process_to_first_frame_ms` against `trace_process_to_list_ms` in
+`logs/b-17/xs-2` and `xs-3`). Their verdicts are in README.md. A round on Kotlin 2.5.0 without D8
+is B-23.
+
 **Open question 1 — which ProMotion iPhone, on which iOS.** Its iOS major version decides whether
 `XCTHitchMetric` is available as a third cross-check on that device (it is not on the XS) and how
 far it is from the XS's iOS 18. Pinned in [B-01](../backlog/B-01-pins-and-the-amendment-window.md).
+
+*Answered, then set aside.* It is an iPhone 17 Pro on iOS 26.6.2 (23G90), pinned in BRIEF.md. The owner
+reads every question on the XS (A1.7), so it is B-18, a question for the owner.
 
 ---
 
 ## 5. What happens next
 
-The gate first. The brief's open decisions ([B-02](../backlog/B-02-swift-bridge.md),
-[B-03](../backlog/B-03-filter-scenario-verdict.md)) and the probe of what free provisioning allows
-([B-04](../backlog/B-04-free-provisioning-probe.md)) come before the hello-world variants
-([B-05](../backlog/B-05-hello-world-variants.md)), because each can change the protocol, and the
-protocol can only change while the amendment window is open. [B-01](../backlog/B-01-pins-and-the-amendment-window.md)
-then settles §2, and [B-06](../backlog/B-06-rq0-the-gate.md) — RQ0 — decides whether there is a
-study at all.
+*Rewritten 2026-10-13; the original plan is in the history.* The gate passed (B-06), the window
+closed, and everything the iPhone XS can answer is measured: RQ1 (B-12, B-31), RQ2–RQ5 (B-17), with
+the method amended as §4's outcomes describe. What is left:
+- [B-19](../backlog/B-19-write-up.md), the write-up. It reports one verdict per question, negative
+  results included, and keeps every late amendment beside the figure it changed.
+- [B-18](../backlog/B-18-runs-on-the-newer-device.md), the newer device, which waits for the owner.
+- [B-23](../backlog/B-23-kotlin-2-5-round.md), the Kotlin 2.5.0 round for Swift export.
