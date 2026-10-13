@@ -73,11 +73,13 @@ def sessions():
         session = os.path.basename(os.path.dirname(path))
         for r in csv.DictReader(open(path)):
             if r["value"] != "" and r["rq"] in ("RQ2", "RQ3", "RQ4", "RQ5"):
-                found[(r["question"], r["metric"])] = (r, session)
+                found[(r["question"], r["metric"], session)] = (r, session)
     label = {"trace_process_to_list_ms": ("startup", "ms", 0, 1), verdicts.HITCH_RATIO: ("hitch time", "ms/s", 1, 1),
              verdicts.LONGEST_HITCH: ("longest hitch", "ms", 0, 1), "peak_footprint_bytes": ("peak footprint", "", 2, 1),
              "growth_cycles_5_to_50_bytes": ("footprint growth over 50 cycles", "MB", 1, MB)}
-    for (question, metric), (r, session) in sorted(found.items()):
+    # A2.5: RQ2-RQ4 are decided by {A, C} (xs-1); a later session's C against A is printed as a repeat.
+    decisive = {"RQ2": "xs-1", "RQ3": "xs-1", "RQ4": "xs-1"}
+    for (question, metric, _), (r, session) in sorted(found.items()):
         name, unit, d, scale = label.get(metric, (metric, "", 2, 1))
         if metric == "peak_footprint_bytes" and r["estimator"] == "median ratio":
             unit, scale, value = "×", 1, f"{float(r['value']):.2f}×"
@@ -92,10 +94,13 @@ def sessions():
             ci = "" if r["ci_low"] == "" else f"{nz(float(r['ci_low']) / scale, d)} to {nz(float(r['ci_high']) / scale, d)}"
         who = "C − A" if r["arm"] == "c-kmp-cmp" and r["estimator"].startswith("median d") else (
             "C / A" if r["estimator"] == "median ratio" else (f"{ARM.get(r['arm'], r['arm'])} − A" if r["rq"] == "RQ5" else ARM.get(r["arm"], r["arm"])))
-        out.append(f"| {r['rq']} — {name}, {who} | {r['verdict']} | {value}" + (f" (95 % interval {ci})" if ci else "")
+        repeat = r["rq"] in decisive and session != decisive[r["rq"]]
+        out.append(f"| {r['rq']} — {name}, {who}{' (repeat)' if repeat else ''} | {r['verdict']}{' (decides nothing)' if repeat else ''} | {value}" + (f" (95 % interval {ci})" if ci else "")
                    + f"; green {r['green_if']}, red {r['red_if']} | [logs/b-17/{session}](logs/b-17/{session}/verdicts.txt) |")
-    if not any(k[0].startswith("RQ5") for k in found):
-        missing.append("RQ5 (what Kotlin under a SwiftUI UI costs: B1, B2 and B3 against A) waits for the sessions {A, B1, B2} and {A, B3, C} (A2.5).")
+    measured = {k[0] for k in found}
+    for b in ("RQ5 b1-objc", "RQ5 b2-skie", "RQ5 b3-swift-export"):
+        if b not in measured:
+            missing.append(f"{b.replace('RQ5 ', 'RQ5 for ')} waits for its session (A2.5).")
     return out, missing
 
 
@@ -118,7 +123,7 @@ def block():
         lines += ["", f"RQ3's bars are absolute, and on this phone the native list itself is not under them: A's own hitch time on the same "
                   f"self-scrolling run is {level:.1f} ms/s (median), so C's red is read beside A's level. The scroll is driven by the app "
                   "itself, not by a finger (A2.2); on real flings through the UI-test runner the frame logger shows the same direction."]
-    lines += [""] + [f"Still open: {m}" for m in missing] + ["", END]
+    lines += [""] + ([f"Still open: {m}" for m in missing] or ["Every question that this phone can answer is measured; the write-up is B-19's."]) + ["", END]
     return "\n".join(lines)
 
 

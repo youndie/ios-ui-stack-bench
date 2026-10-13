@@ -1,0 +1,15 @@
+question,rq,arm,device,metric,estimator,value,ci_low,ci_high,runs,same_device_same_session,verdict,green_if,red_if
+RQ2,RQ2,c-kmp-cmp,older,trace_process_to_list_ms,median difference,61.48170799999997,30.869208000000015,74.92524900000001,19/19,yes,green,<= +100 ms,> +250 ms
+RQ3,RQ3,c-kmp-cmp,older,trace_hitch_time_ratio_ms_per_s,median,11.400114152852574,10.002418510365235,16.371537668205022,9,n/a,red,< 5 ms/s,> 10 ms/s
+RQ3,RQ3,c-kmp-cmp,older,trace_longest_hitch_ms,max over runs,66.785041,,,9,n/a,green,< 100 ms,>= 250 ms
+RQ4,RQ4,c-kmp-cmp,older,peak_footprint_bytes,median ratio,2.537703815573512,2.478884826876106,2.6728915553620767,9/9,yes,inconclusive,<= 2x,> 3x
+RQ4,RQ4,c-kmp-cmp,older,growth_cycles_5_to_50_bytes,median,-1228800.0,-1654784.0,-868352.0,9,n/a,green,< 5 MB,>= 20 MB
+RQ5 b1-objc,RQ5,b1-objc,older,trace_hitch_time_ratio_ms_per_s,median difference,,,,9/0,,not measured,<= +1 ms/s,> +2 ms/s
+RQ5 b1-objc,RQ5,b1-objc,older,trace_process_to_list_ms,median difference,,,,19/0,,not measured,<= +50 ms,> +150 ms
+RQ5 b1-objc,RQ5,b1-objc,older,peak_footprint_bytes,median difference,,,,9/0,,not measured,<= +20 MB,> +50 MB
+RQ5 b2-skie,RQ5,b2-skie,older,trace_hitch_time_ratio_ms_per_s,median difference,,,,9/0,,not measured,<= +1 ms/s,> +2 ms/s
+RQ5 b2-skie,RQ5,b2-skie,older,trace_process_to_list_ms,median difference,,,,19/0,,not measured,<= +50 ms,> +150 ms
+RQ5 b2-skie,RQ5,b2-skie,older,peak_footprint_bytes,median difference,,,,9/0,,not measured,<= +20 MB,> +50 MB
+RQ5 b3-swift-export,RQ5,b3-swift-export,older,trace_hitch_time_ratio_ms_per_s,median difference,-0.47331819435082245,-4.053735806257707,6.09116899361082,9/9,yes,inconclusive,<= +1 ms/s,> +2 ms/s
+RQ5 b3-swift-export,RQ5,b3-swift-export,older,trace_process_to_list_ms,median difference,9.482915999999989,0.1472079999999778,17.458332999999982,19/19,yes,green,<= +50 ms,> +150 ms
+RQ5 b3-swift-export,RQ5,b3-swift-export,older,peak_footprint_bytes,median difference,6553640.0,6258688.0,9617408.0,9/9,yes,green,<= +20 MB,> +50 MB

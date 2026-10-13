@@ -1,0 +1,7 @@
+$ xctrace record --template Activity Monitor --device 00008020-000A6CC42692002E --time-limit 110s --output /Users/youndie/Documents/GitHub/ios-ui-stack-bench/build/traces/xs-3_b3-swift-export_S4p_6_1-1.trace --launch -- io.github.youndie.iosbench.b3 -benchScenario S4p -benchAutoNavigate 50
+Starting recording with the Activity Monitor template. Launching process: io.github.youndie.iosbench.b3. Time limit: 110.0 s
+Ctrl-C to stop the recording
+Reached specified time limit, ending recording...
+Recording completed. Saving output file...
+Output file saved as: xs-3_b3-swift-export_S4p_6_1-1.trace
+exit 0

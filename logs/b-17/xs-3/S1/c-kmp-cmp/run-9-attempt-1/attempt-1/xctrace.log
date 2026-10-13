@@ -1,0 +1,11 @@
+$ xctrace record --template App Launch --device 00008020-000A6CC42692002E --time-limit 10s --output /Users/youndie/Documents/GitHub/ios-ui-stack-bench/build/traces/xs-3_c-kmp-cmp_S1_9_1-1.trace --instrument Points of Interest --launch -- io.github.youndie.iosbench.c -benchScenario S1
+Starting recording with the App Launch template and Points of Interest Instrument. Launching process: io.github.youndie.iosbench.c. Time limit: 10.0 s
+Ctrl-C to stop the recording
+Recording failed with errors. Saving output file...
+Output file saved as: xs-3_c-kmp-cmp_S1_9_1-1.trace
+Run issues were detected (trace is still ready to be viewed):
+* [Error] Request to launch io.github.youndie.iosbench.c failed.
+
+	* [Error] The request to open "io.github.youndie.iosbench.c" failed. The process did launch, but has since exited or crashed.
+
+exit 2
