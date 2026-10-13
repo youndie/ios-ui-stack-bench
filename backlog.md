@@ -19,24 +19,20 @@ publish the answer whatever it turns out to be, negative results included. The p
 This backlog is finished when [B-19](docs/backlog/B-19-write-up.md) closes — including when the
 study is killed, because a stop is written up with the same care as a result.
 
-**Build first, measure later** (amendment A1.3, owner, 2026-10-10). The brief put the gate first;
-the owner moved the device work after development. The arms, the harness, the readers and the
-analysis are built and checked on the simulator now; RQ0 ([B-06](docs/backlog/B-06-rq0-the-gate.md))
-still gates every number, and no arm is measured before it is green on a device.
+**Where the study stands (2026-10-13).** Every measurement this phone can give is taken. The
+study reads the iPhone XS only (amendment A1.7). Every RQ0 control passed but one cross-check ([GATE.md](GATE.md),
+[B-06](docs/backlog/B-06-rq0-the-gate.md)), and parity held on the first day
+([B-11](docs/backlog/B-11-parity-check.md)). RQ1 is read on Apple's download estimate
+([B-31](docs/backlog/B-31-rq1-download-size.md)). RQ2–RQ5 come from three sessions
+([B-17](docs/backlog/B-17-runs-on-the-older-device.md)). The verdicts are in [README.md](README.md),
+regenerated from `logs/`. What remains:
+- [B-19](docs/backlog/B-19-write-up.md), the write-up;
+- [B-18](docs/backlog/B-18-runs-on-the-newer-device.md), the newer device, a question for the owner;
+- [B-23](docs/backlog/B-23-kotlin-2-5-round.md), the Kotlin 2.5.0 round, which waits for that release
+  and for the write-up.
 
-**What the loop takes, and what waits for the owner.** The loop works the items that need no
-device: B-05, B-07–B-10, B-13–B-15, B-20–B-22, and — so that the devices find everything ready
-(owner, 2026-10-11) — B-25 to B-29: the session runner, the size tooling, the parity tooling,
-RQ0's control hooks, and parity reached on the simulator. The device items — [B-04](docs/backlog/B-04-free-provisioning-probe.md),
-[B-06](docs/backlog/B-06-rq0-the-gate.md), [B-11](docs/backlog/B-11-parity-check.md)'s check on the
-devices, [B-12](docs/backlog/B-12-rq1-size.md), [B-16](docs/backlog/B-16-dry-run-and-the-ruler.md)–[B-19](docs/backlog/B-19-write-up.md)
-— and [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md)'s close of the window wait for the
-owner's go. B-12 needs no device but writes the first file under `logs/`, which closes the window.
-[B-23](docs/backlog/B-23-kotlin-2-5-round.md) waits for Kotlin 2.5.0 to be stable and for the write-up.
-[B-24](docs/backlog/B-24-xctrace-record-and-readers.md) — the Instruments recording and its readers — waits for
-B-06's device traces: Instruments records no hitches on a simulator. Nothing here becomes a library, a JetBrains ticket or
-an upstream fix: all three are non-goals of the brief, and an item proposing one does not belong in
-this file.
+Nothing here becomes a library, a JetBrains ticket or an upstream fix. All three are non-goals of the
+brief, and an item that proposes one does not belong in this file.
 
 ## Stages
 
@@ -45,7 +41,7 @@ this file.
 | `stage-0-gate` | P0 — the gate | Pins, the owner's open decisions, the incoherences settled as amendments, what free provisioning allows, hello-world variants, RQ0. Kill criteria 1 and 2. |
 | `stage-1-build` | P1 — build | The fixture and the shared module, the five arms (A, B1, B2, B3, C), visual parity. Kill criterion 3. |
 | `stage-2-harness` | P2 — harness | Scenarios S1–S4, recording and readers, the analysis, the dry run with the ruler. Kill criterion 5; kill criterion 4's denominator. |
-| `stage-3-runs` | P3 — runs | RQ1 from the builds; the full matrix on both devices. Kill criterion 4. |
+| `stage-3-runs` | P3 — runs | RQ1 from the builds; the sessions on the iPhone XS (A1.7). Kill criterion 4. |
 | `stage-4-write-up` | P4 — write-up | One verdict per RQ, regenerated from the CSVs. |
 | `stage-5-later` | After the study | Rounds the owner asked for that the main study does not answer. |
 
@@ -56,8 +52,8 @@ this file.
 | 1 — no device path | [B-04](docs/backlog/B-04-free-provisioning-probe.md) finds it first; [B-06](docs/backlog/B-06-rq0-the-gate.md) decides it |
 | 2 — blind instrument | [B-06](docs/backlog/B-06-rq0-the-gate.md) |
 | 3 — parity not reached in 5 working days | [B-11](docs/backlog/B-11-parity-check.md) |
-| 4 — noise floor | measured in [B-16](docs/backlog/B-16-dry-run-and-the-ruler.md), applied in [B-17](docs/backlog/B-17-runs-on-the-older-device.md) and [B-18](docs/backlog/B-18-runs-on-the-newer-device.md) |
-| 5 — measurement contamination | [B-16](docs/backlog/B-16-dry-run-and-the-ruler.md) |
+| 4 — noise floor | measured in [B-16](docs/backlog/B-16-dry-run-and-the-ruler.md), applied in [B-17](docs/backlog/B-17-runs-on-the-older-device.md) |
+| 5 — measurement contamination | [B-16](docs/backlog/B-16-dry-run-and-the-ruler.md); it fired for memory and CPU, settled by A2.2 |
 
 ## Decisions
 
@@ -65,15 +61,15 @@ this file.
   measurement study (frozen brief, BRIEF.md, file-per-item backlog, `logs/`). Owner's answer to
   the brief's open decision "repository name and location".
 - **2026-10-10 — the newer device will be available.** The owner confirmed a 120 Hz ProMotion
-  iPhone for the "newer device" slot; its model is pinned in [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md).
-  The "older device" candidate on hand is an iPhone XS (A12, 4 GB, 60 Hz).
+  iPhone for the "newer device" slot. Both were pinned in [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md):
+  an iPhone XS and an iPhone 17 Pro. Superseded on 2026-10-11 by A1.7: the XS only.
 
 - **2026-10-10 — three Swift bridges, three B arms** ([B-02](docs/backlog/B-02-swift-bridge.md),
   amendment A1.1). B1 Objective-C export with a Swift adapter ([B-09](docs/backlog/B-09-variant-b.md)),
   B2 SKIE ([B-20](docs/backlog/B-20-variant-b2-skie.md)), B3 Swift export
   ([B-21](docs/backlog/B-21-variant-b3-swift-export.md)); C uses the Objective-C export and is paired
   with B1. RQ1's B − A and RQ5 get one verdict per arm and no best-of. Five apps under a cap of three
-  make the session plan an amendment of [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md).
+  make the session plan an amendment of [B-01](docs/backlog/B-01-pins-and-the-amendment-window.md) (A1.5, then A2.5).
 - **2026-10-10 — build first, measure later** (amendment A1.3); **the loop merges its own pull
   requests** on a green head commit (owner) — see [CLAUDE.md](CLAUDE.md), "Pull requests".
 - **2026-10-11 — amendment set A1.4; the devices come when the runs are ready** (owner). Every
@@ -85,6 +81,19 @@ this file.
   ([B-23](docs/backlog/B-23-kotlin-2-5-round.md)).
 - **2026-10-10 — S3 stays descriptive** ([B-03](docs/backlog/B-03-filter-scenario-verdict.md),
   amendment A1.2).
+- **2026-10-11 — the session plan, the parity tolerance, the older device only** (A1.5, A1.6,
+  A1.7). The runner takes one of three slots, so sessions were pairs with A as anchor; phones on
+  charge. A against the B arms is held at ≤ 1 % of differing pixels, A against C by geometry. Every
+  question is read on the XS. The window closed with B-06's first log, commit `847bd43`.
+- **2026-10-11 to 2026-10-13 — late amendments, owner** (A2.1–A2.5, BRIEF.md):
+  - CPU from the app's own clock.
+  - Memory, CPU and smoothness from launches with no runner. The runner contaminated the app's own
+    memory and CPU (kill criterion 5), and the frame logger cannot see the render server.
+  - The harness's S2 cut to three runs.
+  - RQ1 on Apple's download estimate, with the encrypted worst case printed beside it.
+  - The remaining sessions as runner-free triples.
+
+  None moves a threshold.
 
 ## Marks
 
