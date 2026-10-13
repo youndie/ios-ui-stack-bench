@@ -1,0 +1,22 @@
+bootstrap: 10000 resamples, seed 20261010, percentile 95 % interval
+read on the iPhone XS only; the newer device was not measured (BRIEF.md A1.7)
+RQ2: GREEN
+    trace_process_to_list_ms [older] median difference = 61.48170799999997 CI (30.869208000000015, 74.92524900000001) runs 19/19 same session yes -> green
+RQ3: RED
+    trace_hitch_time_ratio_ms_per_s [older] median = 11.400114152852574 CI (10.002418510365235, 16.371537668205022) runs 9 same session n/a -> red
+    trace_longest_hitch_ms [older] max over runs = 66.785041 CI (, ) runs 9 same session n/a -> green
+RQ4: INCONCLUSIVE - missed: peak_footprint_bytes on older (inconclusive)
+    peak_footprint_bytes [older] median ratio = 2.537703815573512 CI (2.478884826876106, 2.6728915553620767) runs 9/9 same session yes -> inconclusive
+    growth_cycles_5_to_50_bytes [older] median = -1228800.0 CI (-1654784.0, -868352.0) runs 9 same session n/a -> green
+RQ5 b1-objc: NOT MEASURED
+    trace_hitch_time_ratio_ms_per_s [older] median difference =  CI (, ) runs 9/0 same session  -> not measured
+    trace_process_to_list_ms [older] median difference =  CI (, ) runs 19/0 same session  -> not measured
+    peak_footprint_bytes [older] median difference =  CI (, ) runs 9/0 same session  -> not measured
+RQ5 b2-skie: NOT MEASURED
+    trace_hitch_time_ratio_ms_per_s [older] median difference =  CI (, ) runs 9/0 same session  -> not measured
+    trace_process_to_list_ms [older] median difference =  CI (, ) runs 19/0 same session  -> not measured
+    peak_footprint_bytes [older] median difference =  CI (, ) runs 9/0 same session  -> not measured
+RQ5 b3-swift-export: INCONCLUSIVE - missed: trace_hitch_time_ratio_ms_per_s on older (inconclusive)
+    trace_hitch_time_ratio_ms_per_s [older] median difference = -0.47331819435082245 CI (-4.053735806257707, 6.09116899361082) runs 9/9 same session yes -> inconclusive
+    trace_process_to_list_ms [older] median difference = 9.482915999999989 CI (0.1472079999999778, 17.458332999999982) runs 19/19 same session yes -> green
+    peak_footprint_bytes [older] median difference = 6553640.0 CI (6258688.0, 9617408.0) runs 9/9 same session yes -> green

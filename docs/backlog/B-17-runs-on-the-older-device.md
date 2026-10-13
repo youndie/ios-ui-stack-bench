@@ -1,7 +1,7 @@
 ---
 id: B-17
 title: "P3 — the full matrix on the older device: S1–S4, every arm, rotated order"
-status: wip
+status: done
 priority: P1
 size: L
 stage: stage-3-runs
@@ -32,3 +32,28 @@ at the start of the session, never in the middle of one.
 - AC: the counted-run totals per variant × scenario match the protocol, with every discarded run
   listed and its reason.
 - Anchors: `logs/b-17/`, `harness/` (target).
+
+---
+
+## Done — 2026-10-13
+
+Three sessions on the iPhone XS replace the five pairs of the plan, by the owner's amendments A2.3
+and A2.5. All three are under [logs/b-17/](../../logs/b-17/README.md). Each holds `runs.csv`,
+`verdicts.txt` and `verdicts.csv` (`analysis/verdicts.py`), and every attempt's directory.
+
+- **xs-1 {A, C}**, with the runner. Counted per arm: S1 19, S2p 9, S2 2, S3 9, S4p 9. One S2 run was
+  repeated: the phone locked, the runner could not launch, and the run left no log.
+- **xs-2 {A, B1, B2}**, no runner. Counted: S1 19 each, S2p 9 each, S4p 9 for A and 8 for B1 and B2.
+  One S2p run was repeated: that launch started without its arguments. The owner stopped the session
+  with two S4p runs left (B1, B2). No verdict reads S4p for a B arm. `runs.csv` was rebuilt from the
+  attempt directories by `harness/session.py --rebuild`, and the session now writes it after every
+  attempt.
+- **xs-3 {A, B3, C}**, no runner. Counted: S1 19, S2p 9, S4p 9 per arm. Nothing was repeated.
+
+**Verdicts** (A2.5: RQ2–RQ4 from xs-1, xs-3 printed beside as a repeat; RQ5 from each B arm's
+session). They are regenerated into README.md by `analysis/readme_results.py`. RQ2 is green. RQ3 is red, read
+beside A's own level on S2p. RQ4 is inconclusive on the peak, whose interval lies between 2× and 3×,
+and green on growth. For every B arm, RQ5 is green on startup and footprint and inconclusive on the
+hitch ratio, as B-16's ruler said it would be.
+
+**Kill criterion 4**: no runs were added to any comparison.

@@ -1,0 +1,10 @@
+$ xctrace record --template Animation Hitches --device 00008020-000A6CC42692002E --time-limit 70s --output /Users/youndie/Documents/GitHub/ios-ui-stack-bench/build/traces/xs-3_c-kmp-cmp_S2p_4_1-1.trace --instrument Points of Interest --launch -- io.github.youndie.iosbench.c -benchScenario S2p -benchAutoScroll 40
+Starting recording with the Animation Hitches template and Points of Interest Instrument. Launching process: io.github.youndie.iosbench.c. Time limit: 70.0 s
+Ctrl-C to stop the recording
+Reached specified time limit, ending recording...
+Recording completed. Saving output file...
+Output file saved as: xs-3_c-kmp-cmp_S2p_4_1-1.trace
+Timeline modification failed -- dylibs overlap by 0x138000:
+    0x105410000-0x105424000 [0x14000] (4996195647457-9223372036854775807) /private/preboot/Cryptexes/OS/usr/lib/libobjc-trampolines.dylib
+    0x105360000-0x105498000 [0x138000] (0-9223372036854775807) /usr/lib/dyld
+exit 0

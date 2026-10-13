@@ -1,7 +1,7 @@
 ---
 id: B-18
 title: "P3 — the full matrix on the newer device: S1–S4, every arm, rotated order"
-status: open
+status: question
 priority: P1
 size: L
 stage: stage-3-runs
@@ -32,3 +32,11 @@ at the start of the session, never in the middle of one.
 - AC: the counted-run totals per variant × scenario match the protocol, with every discarded run
   listed and its reason.
 - Anchors: `logs/b-18/`, `harness/` (target).
+
+---
+
+## Question — 2026-10-13
+
+The owner reads every question on the iPhone XS (A1.7). The iPhone 17 Pro is measured later or not
+at all. The tooling is ready for it: the harness ran S1 and S2 there in B-04, and every session is a
+plan with a device id. Whether and when to run it is the owner's decision.

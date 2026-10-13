@@ -5,7 +5,7 @@ status: open
 priority: P1
 size: M
 stage: stage-4-write-up
-blocked_by: [B-12, B-17, B-18]
+blocked_by: [B-12, B-17, B-31]
 ---
 
 # B-19 — The write-up

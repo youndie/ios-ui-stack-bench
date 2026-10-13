@@ -1,0 +1,7 @@
+$ xctrace record --template Animation Hitches --device 00008020-000A6CC42692002E --time-limit 70s --output /Users/youndie/Documents/GitHub/ios-ui-stack-bench/build/traces/xs-3_a-native_S2p_4_1-1.trace --instrument Points of Interest --launch -- io.github.youndie.iosbench.a -benchScenario S2p -benchAutoScroll 40
+Starting recording with the Animation Hitches template and Points of Interest Instrument. Launching process: io.github.youndie.iosbench.a. Time limit: 70.0 s
+Ctrl-C to stop the recording
+Reached specified time limit, ending recording...
+Recording completed. Saving output file...
+Output file saved as: xs-3_a-native_S2p_4_1-1.trace
+exit 0

@@ -33,19 +33,28 @@ Read on the iPhone XS only (BRIEF.md A1.7); every figure is regenerated from `lo
 | RQ1 — download size, B3 − A | green | +0.77 MB on Apple's estimate (green <= 2 MB); encrypted worst case +1.93 MB, green | [logs/b-31](logs/b-31/report.md) |
 | RQ1 — download size, C − A | green | +10.30 MB on Apple's estimate (green <= 12 MB); encrypted worst case +26.57 MB, red | [logs/b-31](logs/b-31/report.md) |
 | RQ2 — startup, C − A | green | +56 ms (95 % interval 34 to 74); green <= +100 ms, red > +250 ms | [logs/b-17/xs-1](logs/b-17/xs-1/verdicts.txt) |
+| RQ2 — startup, C − A (repeat) | green (decides nothing) | +61 ms (95 % interval 31 to 75); green <= +100 ms, red > +250 ms | [logs/b-17/xs-3](logs/b-17/xs-3/verdicts.txt) |
 | RQ3 — hitch time, C | red | 20.2 ms/s (95 % interval 17.5 to 20.9); green < 5 ms/s, red > 10 ms/s | [logs/b-17/xs-1](logs/b-17/xs-1/verdicts.txt) |
+| RQ3 — hitch time, C (repeat) | red (decides nothing) | 11.4 ms/s (95 % interval 10.0 to 16.4); green < 5 ms/s, red > 10 ms/s | [logs/b-17/xs-3](logs/b-17/xs-3/verdicts.txt) |
 | RQ3 — longest hitch, C | green | 33 ms; green < 100 ms, red >= 250 ms | [logs/b-17/xs-1](logs/b-17/xs-1/verdicts.txt) |
+| RQ3 — longest hitch, C (repeat) | green (decides nothing) | 67 ms; green < 100 ms, red >= 250 ms | [logs/b-17/xs-3](logs/b-17/xs-3/verdicts.txt) |
 | RQ4 — footprint growth over 50 cycles, C | green | -1.3 MB (95 % interval -2.3 to 0.7); green < 5 MB, red >= 20 MB | [logs/b-17/xs-1](logs/b-17/xs-1/verdicts.txt) |
+| RQ4 — footprint growth over 50 cycles, C (repeat) | green (decides nothing) | -1.2 MB (95 % interval -1.7 to -0.9); green < 5 MB, red >= 20 MB | [logs/b-17/xs-3](logs/b-17/xs-3/verdicts.txt) |
 | RQ4 — peak footprint, C / A | inconclusive | 2.51× (95 % interval 2.46–2.59); green <= 2x, red > 3x | [logs/b-17/xs-1](logs/b-17/xs-1/verdicts.txt) |
+| RQ4 — peak footprint, C / A (repeat) | inconclusive (decides nothing) | 2.54× (95 % interval 2.48–2.67); green <= 2x, red > 3x | [logs/b-17/xs-3](logs/b-17/xs-3/verdicts.txt) |
 | RQ5 — peak footprint, B1 − A | green | +6.2 MB (95 % interval +3.7 to +9.2); green <= +20 MB, red > +50 MB | [logs/b-17/xs-2](logs/b-17/xs-2/verdicts.txt) |
 | RQ5 — hitch time, B1 − A | inconclusive | +0.4 ms/s (95 % interval -1.1 to 1.3); green <= +1 ms/s, red > +2 ms/s | [logs/b-17/xs-2](logs/b-17/xs-2/verdicts.txt) |
 | RQ5 — startup, B1 − A | green | +7 ms (95 % interval 0 to 21); green <= +50 ms, red > +150 ms | [logs/b-17/xs-2](logs/b-17/xs-2/verdicts.txt) |
 | RQ5 — peak footprint, B2 − A | green | +6.7 MB (95 % interval +3.7 to +9.6); green <= +20 MB, red > +50 MB | [logs/b-17/xs-2](logs/b-17/xs-2/verdicts.txt) |
 | RQ5 — hitch time, B2 − A | inconclusive | +1.6 ms/s (95 % interval -0.5 to 2.5); green <= +1 ms/s, red > +2 ms/s | [logs/b-17/xs-2](logs/b-17/xs-2/verdicts.txt) |
 | RQ5 — startup, B2 − A | green | +13 ms (95 % interval 5 to 30); green <= +50 ms, red > +150 ms | [logs/b-17/xs-2](logs/b-17/xs-2/verdicts.txt) |
+| RQ5 — peak footprint, B3 − A | green | +6.6 MB (95 % interval +6.3 to +9.6); green <= +20 MB, red > +50 MB | [logs/b-17/xs-3](logs/b-17/xs-3/verdicts.txt) |
+| RQ5 — hitch time, B3 − A | inconclusive | -0.5 ms/s (95 % interval -4.1 to 6.1); green <= +1 ms/s, red > +2 ms/s | [logs/b-17/xs-3](logs/b-17/xs-3/verdicts.txt) |
+| RQ5 — startup, B3 − A | green | +9 ms (95 % interval 0 to 17); green <= +50 ms, red > +150 ms | [logs/b-17/xs-3](logs/b-17/xs-3/verdicts.txt) |
 
-RQ3's bars are absolute, and on this phone the native list itself is not under them: A's own hitch time on the same self-scrolling run is 15.2 ms/s (median), so C's red is read beside A's level. The scroll is driven by the app itself, not by a finger (A2.2); on real flings through the UI-test runner the frame logger shows the same direction.
+RQ3's bars are absolute, and on this phone the native list itself is not under them: A's own hitch time on the same self-scrolling run is 14.6 ms/s (median), so C's red is read beside A's level. The scroll is driven by the app itself, not by a finger (A2.2); on real flings through the UI-test runner the frame logger shows the same direction.
 
+Every question that this phone can answer is measured; the write-up is B-19's.
 
 <!-- END RESULTS -->
 
